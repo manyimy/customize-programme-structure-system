@@ -8,6 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 // const useStyles = makeStyles({
 //   table: {
@@ -31,7 +32,15 @@ export default class PSTable extends Component {
 
     render() {           
         return (
-            <table>
+            <div>
+            {/* <ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="download-table-xls-button"
+                table="table-to-xls"
+                filename="tablexls"
+                sheet="tablexls"
+                buttonText="Download as XLS"/> */}
+            <table id="table-to-xls">
                 <tr>
                     <th colSpan={2} rowSpan={3}></th>
                     <th colSpan={6}>Beta Level</th>
@@ -336,6 +345,7 @@ export default class PSTable extends Component {
                 </tr> */}
                 
             </table>
+            </div>
             // <TableContainer style={{margin: 20}} component={Paper}>
             //     <Table style={{minWidth: 700}} size="small" aria-label="a dense table">
             //         <TableHead>

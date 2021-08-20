@@ -13,16 +13,24 @@ import Grid from '@material-ui/core/Grid';
 import { getSteps, ColorlibConnector, ColorlibStepIcon } from './quontoComponent';
 import TransferList from '../../components/Home/transferList';
 import PSTable from '../../components/Home/psTable';
-import './Home.css';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import { getTheme } from '../Setting/settingsReducer';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: "100%",
   },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
+  container: {
+    backgroundColor: theme.palette.background.paper,
   },
+  btnContainer: {
+    float: "right",
+  },
+  downloadBtn: {
+    margin: theme.spacing(0.5, 0),
+    padding:  theme.spacing(1, 1.5),
+  }
   // root: {
   //   margin: 'auto',
   // },
@@ -44,7 +52,7 @@ export default function Home() {
   const classes = useStyles();
   const steps = getSteps();
   // const [checked, setChecked] = React.useState([]);
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(1);
   const [state, setState] = React.useState({
     intake: '',
     spec: '',
@@ -72,7 +80,7 @@ export default function Home() {
   };
 
   return (
-    <div id="container" className={classes.root}>
+    <div className={classes.container}>
       <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label) => (
           <Step key={label}>
@@ -150,7 +158,7 @@ export default function Home() {
                 <Paper className={classes.paper}></Paper>
               </Grid>
             </Grid>
-            <div className="btn-container">
+            <div className={classes.btnContainer}>
               <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
                 Back
               </Button>
@@ -160,12 +168,12 @@ export default function Home() {
                 onClick={handleNext}
                 className={classes.button}
               >
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                Next
               </Button>
             </div>
           </div>
         ) : (
-          <div >
+          <div className={classes.container}>
             <Grid container spacing={3} >
               <Grid item xs>
                 <Paper className={classes.paper}></Paper>
@@ -177,18 +185,25 @@ export default function Home() {
                 <Paper className={classes.paper}></Paper>
               </Grid>
             </Grid>
-            <div className="btn-container">
+            <div className={classes.btnContainer}>
               <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
                 Back
               </Button>
-              <Button
+              {/* <Button
                 variant="contained"
                 color="primary"
                 onClick={handleNext}
                 className={classes.button}
-              >
-                {activeStep === steps.length - 1 ? 'Download' : 'Next'}
-              </Button>
+              > */}
+                <ReactHTMLTableToExcel
+                  id="test-table-xls-button"
+                  className={classes.downloadBtn + " download-table-xls-button" }
+                  table="table-to-xls"
+                  filename="tablexls"
+                  sheet="tablexls"
+                  buttonText="Download"/>
+                {/* Download */}
+              {/* </Button> */}
             </div>
           </div>
         )}
