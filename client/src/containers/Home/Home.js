@@ -89,9 +89,13 @@ export default useStyles(class Home extends React.Component {
   handleChange = (event) => {
     const name = event.target.name;
     this.setState({
-      ...this.state.data,
-      [name]: event.target.value,
+      data: {
+        ...this.state.data,
+        [name]: event.target.value
+      }
     });
+    console.log(event.target.value)
+    console.log(this.state.data)
   };
   
   render(){
@@ -121,7 +125,7 @@ export default useStyles(class Home extends React.Component {
                 </Grid>
                 <Grid item xs={2}>
                   <FormControl required className={classes.formControl}>
-                    <InputLabel htmlFor="age-native-simple">Intake</InputLabel>
+                    <InputLabel htmlFor="intake-native-simple">Intake</InputLabel>
                     <Select
                       native
                       value={this.state.data.intake}
@@ -141,7 +145,7 @@ export default useStyles(class Home extends React.Component {
                 </Grid>
                 <Grid item xs={3}>
                   <FormControl required className={classes.formControl}>
-                    <InputLabel htmlFor="age-native-simple">Specialization</InputLabel>
+                    <InputLabel htmlFor="spec-native-simple">Specialization</InputLabel>
                     <Select
                       native
                       value={this.state.data.spec}
