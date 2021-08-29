@@ -15,31 +15,11 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 //     minWidth: 650,
 //   },
 // });
-
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
-
 export default class PSTable extends Component {
 
     render() {           
         return (
             <div>
-            {/* <ReactHTMLTableToExcel
-                id="test-table-xls-button"
-                className="download-table-xls-button"
-                table="table-to-xls"
-                filename="tablexls"
-                sheet="tablexls"
-                buttonText="Download as XLS"/> */}
             <table id="table-to-xls">
                 <tr>
                     <th colSpan={2} rowSpan={3}></th>
@@ -326,52 +306,9 @@ export default class PSTable extends Component {
                     <td></td>
                     <td></td>
                     <td></td>
-                </tr>
-                {/* <tr>
-                    <td>TMA1101 Calculus</td>
-                    <td>4</td>
-                </tr>
-                <tr>
-                    <td>TCP1201</td>
-                    <td>4</td>
-                </tr>
-                <tr>
-                    <td>TSE2101</td>
-                    <td>4</td>
-                </tr>
-                <tr>
-                    <td>TPT1101</td>
-                    <td>4</td>
-                </tr> */}
-                
+                </tr>                
             </table>
             </div>
-            // <TableContainer style={{margin: 20}} component={Paper}>
-            //     <Table style={{minWidth: 700}} size="small" aria-label="a dense table">
-            //         <TableHead>
-            //         <TableRow>
-            //             <TableCell>Dessert (100g serving)</TableCell>
-            //             <TableCell align="right">Calories</TableCell>
-            //             <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            //             <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            //             <TableCell align="right">Protein&nbsp;(g)</TableCell>
-            //         </TableRow>
-            //         </TableHead>
-            //         <TableBody>
-            //         {rows.map((row) => (
-            //             <TableRow key={row.name}>
-            //             <TableCell component="th" scope="row">
-            //                 {row.name}
-            //             </TableCell>
-            //             <TableCell align="right">{row.calories}</TableCell>
-            //             <TableCell align="right">{row.fat}</TableCell>
-            //             <TableCell align="right">{row.carbs}</TableCell>
-            //             <TableCell align="right">{row.protein}</TableCell>
-            //             </TableRow>
-            //         ))}
-            //         </TableBody>
-            //     </Table>
-            // </TableContainer>
         );
     }
 }
