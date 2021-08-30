@@ -10,6 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import subjects from '../../constants/subjectLists.json'
 
 const useStyles = withStyles((theme) => ({
   root: {
@@ -19,7 +20,7 @@ const useStyles = withStyles((theme) => ({
     padding: theme.spacing(1, 2),
   },
   list: {
-    width: 250,
+    width: 300,
     height: 230,
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
@@ -30,11 +31,17 @@ const useStyles = withStyles((theme) => ({
 }));
 
 export default useStyles(class TransferList extends React.Component{
-  
-  state = {
-    checked: [],
-    left: [0,1,2,3],
-    right: [4,5,6,7],
+  constructor(props) {
+    super(props);
+    this.state = {
+      checked: [],
+      left: [],
+      right: [],
+    }
+  }
+
+  componentDidMount(){
+    this.setState({left: JSON.parse(JSON.stringify(subjects))});
   }
 
   render(){
@@ -74,7 +81,7 @@ export default useStyles(class TransferList extends React.Component{
   const numberOfChecked = (items) => intersection(this.state.checked, items).length;
 
   const handleToggleAll = (items) => () => {
-    if (this.numberOfChecked(items) === items.length) {
+    if (numberOfChecked(items) === items.length) {
       this.setState({checked: not(this.state.checked, items)})
       // setChecked(not(checked, items));
     } else {
@@ -134,7 +141,7 @@ export default useStyles(class TransferList extends React.Component{
                   inputProps={{ 'aria-labelledby': labelId }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`List subject ${value + 1}`} />
+              <ListItemText id={labelId} primary={`${value}`} />
             </ListItem>
           );
         })}
