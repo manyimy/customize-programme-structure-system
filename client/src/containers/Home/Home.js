@@ -200,7 +200,7 @@ export default useStyles(class Home extends React.Component {
                   <Paper className={classes.paper}></Paper>
                 </Grid>
                 <Grid item xs={12}>
-                  <PSTable greeting="Welcome to Rex"/>
+                  <PSTable intake={this.state.data.intake}/>
                 </Grid>
                 <Grid item xs>
                   <Paper className={classes.paper}></Paper>

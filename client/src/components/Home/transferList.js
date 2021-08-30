@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import Card from '@material-ui/core/Card';
@@ -11,7 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = withStyles((theme) => ({
   root: {
     margin: 'auto',
   },
@@ -29,30 +29,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function not(a, b) {
-  return a.filter((value) => b.indexOf(value) === -1);
-}
+export default useStyles(class TransferList extends React.Component{
+  
+  state = {
+    checked: [],
+    left: [0,1,2,3],
+    right: [4,5,6,7],
+  }
 
-function intersection(a, b) {
-  return a.filter((value) => b.indexOf(value) !== -1);
-}
+  render(){
+  // const [checked, setChecked] = React.useState([]);
+  // const [left, setLeft] = React.useState([0, 1, 2, 3]);
+  // const [right, setRight] = React.useState([4, 5, 6, 7]);
+  const { classes } = this.props;
+  const leftChecked = intersection(this.state.checked, this.state.left);
+  const rightChecked = intersection(this.state.checked, this.state.right);
 
-function union(a, b) {
-  return [...a, ...not(b, a)];
-}
-
-export default function TransferList() {
-  const classes = useStyles();
-  const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([0, 1, 2, 3]);
-  const [right, setRight] = React.useState([4, 5, 6, 7]);
-
-  const leftChecked = intersection(checked, left);
-  const rightChecked = intersection(checked, right);
+  function not(a, b) {
+    return a.filter((value) => b.indexOf(value) === -1);
+  }
+  
+  function intersection(a, b) {
+    return a.filter((value) => b.indexOf(value) !== -1);
+  }
+  
+  function union(a, b) {
+    return [...a, ...not(b, a)];
+  }
 
   const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
+    const currentIndex = this.state.checked.indexOf(value);
+    const newChecked = [...this.state.checked];
 
     if (currentIndex === -1) {
       newChecked.push(value);
@@ -60,29 +67,40 @@ export default function TransferList() {
       newChecked.splice(currentIndex, 1);
     }
 
-    setChecked(newChecked);
+    this.setState({checked: newChecked});
+    // setChecked(newChecked);
   };
 
-  const numberOfChecked = (items) => intersection(checked, items).length;
+  const numberOfChecked = (items) => intersection(this.state.checked, items).length;
 
   const handleToggleAll = (items) => () => {
-    if (numberOfChecked(items) === items.length) {
-      setChecked(not(checked, items));
+    if (this.numberOfChecked(items) === items.length) {
+      this.setState({checked: not(this.state.checked, items)})
+      // setChecked(not(checked, items));
     } else {
-      setChecked(union(checked, items));
+      this.setState({checked: union(this.state.checked, items)})
+      // setChecked(union(checked, items));
     }
   };
 
   const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
-    setLeft(not(left, leftChecked));
-    setChecked(not(checked, leftChecked));
+    this.setState({right: this.state.right.concat(leftChecked)})
+    this.setState({left: not(this.state.left, leftChecked)})
+    this.setState({checked: not(this.state.checked, leftChecked)})
+
+    // setRight(right.concat(leftChecked));
+    // setLeft(not(left, leftChecked));
+    // setChecked(not(checked, leftChecked));
   };
 
   const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked));
-    setRight(not(right, rightChecked));
-    setChecked(not(checked, rightChecked));
+    this.setState({left: this.state.left.concat(rightChecked)})
+    this.setState({right: not(this.state.right, rightChecked)})
+    this.setState({checked: not(this.state.checked, rightChecked)})
+
+    // setLeft(left.concat(rightChecked));
+    // setRight(not(right, rightChecked));
+    // setChecked(not(checked, rightChecked));
   };
 
   const customList = (title, items) => (
@@ -110,7 +128,7 @@ export default function TransferList() {
             <ListItem key={value} role="listitem" button onClick={handleToggle(value)}>
               <ListItemIcon>
                 <Checkbox
-                  checked={checked.indexOf(value) !== -1}
+                  checked={this.state.checked.indexOf(value) !== -1}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{ 'aria-labelledby': labelId }}
@@ -132,7 +150,7 @@ export default function TransferList() {
       style={{justifyContent: 'center', placeItems: 'center'}}
       className={classes.root}
     >
-      <Grid item>{customList('Subject List', left)}</Grid>
+      <Grid item>{customList('Subject List', this.state.left)}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">
           <Button
@@ -157,7 +175,7 @@ export default function TransferList() {
           </Button>
         </Grid>
       </Grid>
-      <Grid item>{customList('Credit Transferred Subjects', right)}</Grid>
+      <Grid item>{customList('Credit Transferred Subjects', this.state.right)}</Grid>
     </Grid>
-  );
-}
+  )};
+});
