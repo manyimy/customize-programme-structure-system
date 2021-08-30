@@ -66,6 +66,13 @@ export default useStyles(class Home extends React.Component {
     data: {
       intake: '',
       spec: ''
+    },
+    intakeInputSize: 2,
+    specInputSize: 3
+  }
+  componentDidMount() {
+    if(window.innerWidth <= 480) {
+      this.setState({intakeInputSize: 5, specInputSize: 6});
     }
   }
 
@@ -100,6 +107,7 @@ export default useStyles(class Home extends React.Component {
   
   render(){
     const { classes } = this.props;
+
     return (
       <div className={classes.container}>
         <Stepper alternativeLabel activeStep={this.state.activeStep} connector={<ColorlibConnector />}>
@@ -120,10 +128,13 @@ export default useStyles(class Home extends React.Component {
           this.state.activeStep === 0 ? (
             <div>
               <Grid container spacing={3}>
-                <Grid item xs>
-                  <Paper className={classes.paper}></Paper>
-                </Grid>
-                <Grid item xs={2}>
+               {(window.innerWidth > 480 ? 
+                  <Grid  item xs>
+                    <Paper className={classes.paper}></Paper>
+                  </Grid>
+                  :<div></div>
+               )}
+                <Grid item xs={this.state.intakeInputSize}>
                   <FormControl required className={classes.formControl}>
                     <InputLabel htmlFor="intake-native-simple">Intake</InputLabel>
                     <Select
@@ -143,7 +154,7 @@ export default useStyles(class Home extends React.Component {
                     <FormHelperText>Required</FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={this.state.specInputSize}>
                   <FormControl required className={classes.formControl}>
                     <InputLabel htmlFor="spec-native-simple">Specialization</InputLabel>
                     <Select
@@ -164,9 +175,12 @@ export default useStyles(class Home extends React.Component {
                     <FormHelperText>Required</FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs>
-                  <Paper className={classes.paper}></Paper>
-                </Grid>
+                {(window.innerWidth > 480 ? 
+                  <Grid item xs>
+                    <Paper className={classes.paper}></Paper>
+                  </Grid>
+                  : <div></div>
+                )}
               </Grid>
               <Grid container spacing={3} >
                 <Grid item xs>

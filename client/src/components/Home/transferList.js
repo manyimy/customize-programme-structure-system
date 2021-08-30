@@ -40,15 +40,13 @@ export default useStyles(class TransferList extends React.Component{
     }
   }
 
+  // set the subjects from json file to the transfer list once this page is load
   componentDidMount(){
     this.setState({left: JSON.parse(JSON.stringify(subjects))});
   }
 
   render(){
-  // const [checked, setChecked] = React.useState([]);
-  // const [left, setLeft] = React.useState([0, 1, 2, 3]);
-  // const [right, setRight] = React.useState([4, 5, 6, 7]);
-  const { classes } = this.props;
+  const { classes } = this.props;   // for the styles
   const leftChecked = intersection(this.state.checked, this.state.left);
   const rightChecked = intersection(this.state.checked, this.state.right);
 
