@@ -10,6 +10,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { useSelector } from 'react-redux';
 
 import Home from "./containers/Home/Home";
+import Admin from "./containers/Admin/Admin";
 import Setting from "./containers/Setting/Setting";
 
 import MainLayout from "./layouts/MainLayout";
@@ -51,19 +52,20 @@ export default function App() {
 
   const theTheme = useSelector(getTheme);
 
-     return (
-      <MuiThemeProvider theme={createMuiTheme(theTheme)}>
-        <CssBaseline />
-        <div style={{ height: "100vh" }}>
-          <Router>
-            <Switch>
-              <DashboardRoute path="/dashboard" component={Home} />
-              <DashboardRoute path="/setting" component={Setting} />
-              <DashboardRoute exact path="/" component={Home} />
-              <EmptyRoute component={NotFound} />
-            </Switch>
-          </Router>
-        </div>
-      </MuiThemeProvider>
-    );
+  return (
+    <MuiThemeProvider theme={createMuiTheme(theTheme)}>
+      <CssBaseline />
+      <div style={{ height: "100vh" }}>
+        <Router>
+          <Switch>
+            <DashboardRoute path="/dashboard" component={Home} />
+            <DashboardRoute path="/admin" component={Admin} />
+            <DashboardRoute path="/setting" component={Setting} />
+            <DashboardRoute exact path="/" component={Home} />
+            <EmptyRoute component={NotFound} />
+          </Switch>
+        </Router>
+      </div>
+    </MuiThemeProvider>
+  );
 };

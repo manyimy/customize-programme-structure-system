@@ -32,5 +32,9 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
 }

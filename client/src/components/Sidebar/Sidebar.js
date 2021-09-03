@@ -5,7 +5,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import DashboardIcon from "@material-ui/icons/Dashboard";
+import HomeIcon from '@material-ui/icons/Home';
+import PermIdentityIcon from '@material-ui/icons/PermIdentity';
 import SettingsIcon from "@material-ui/icons/Settings";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
@@ -53,9 +54,17 @@ const Sidebar = props => {
         <Link to="/">
           <ListItem button>
             <ListItemIcon>
-              <DashboardIcon />
+              <HomeIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
+          </ListItem>
+        </Link>
+        <Link to="/admin">
+          <ListItem button>
+            <ListItemIcon>
+              <PermIdentityIcon />
+            </ListItemIcon>
+            <ListItemText primary="Admin" />
           </ListItem>
         </Link>
         <Link to="/setting">
