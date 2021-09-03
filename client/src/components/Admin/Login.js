@@ -6,13 +6,11 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = withStyles((theme) => ({
   loginWrapper: {
@@ -37,6 +35,17 @@ const useStyles = withStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  inputAlert: {
+    boxShadow: "4px 5px #e4e4e4",
+    position: "absolute",
+    zIndex: 100,
+    inlineSize: "fit-content",
+    marginLeft: "auto",
+    marginRight: "auto",
+    left: 0,
+    right: 0,
+    display: "none"
+  }
 }));
 
 async function loginUser(credentials) {
@@ -65,15 +74,20 @@ class Login extends React.Component {
     const handleSubmit = async e => {
       e.preventDefault();
       var { username, password } = this.state;
-      const token = await loginUser({
-        username,
-        password
-      });
-      setToken(token);
+      if(username === "admin" && password === "admin123") {
+        const token = await loginUser({
+          username,
+          password
+        });
+        this.props.parentCallback(token);
+      } else {
+        document.getElementById("error-alert").style.display = "flex";
+      }
     }
 
     return(
       <div className={classes.loginWrapper}>
+        <Alert id="error-alert" severity="error" className={classes.inputAlert}>Credentials entered are incorrect!</Alert>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <div className={classes.paper}>
