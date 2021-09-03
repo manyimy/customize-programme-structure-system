@@ -15,6 +15,9 @@ import TransferList from '../../components/Home/transferList';
 import PSTable from '../../components/Home/psTable';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { getTheme } from '../Setting/settingsReducer';
+import Alert from '@material-ui/lab/Alert';
+import Trimesters from '../../constants/trimesters.json';
+import Specs from '../../constants/specs.json';
 
 const useStyles = withStyles((theme) => ({
   formControl: {
@@ -30,22 +33,18 @@ const useStyles = withStyles((theme) => ({
   downloadBtn: {
     margin: theme.spacing(0.5, 0),
     padding:  theme.spacing(1, 1.5),
+  },
+  inputAlert: {
+    boxShadow: "4px 5px #e4e4e4",
+    position: "absolute",
+    zIndex: 100,
+    inlineSize: "fit-content",
+    marginLeft: "auto",
+    marginRight: "auto",
+    left: 0,
+    right: 0,
+    display: "none"
   }
-  // root: {
-  //   margin: 'auto',
-  // },
-  // cardHeader: {
-  //   padding: theme.spacing(1, 2),
-  // },
-  // list: {
-  //   width: 200,
-  //   height: 230,
-  //   backgroundColor: theme.palette.background.paper,
-  //   overflow: 'auto',
-  // },
-  // button: {
-  //   margin: theme.spacing(0.5, 0),
-  // },
 }));
 
 
@@ -61,24 +60,38 @@ const steps = getSteps();
 
 
 export default useStyles(class Home extends React.Component {
-  state = {
-    activeStep: 0,
-    data: {
-      intake: '',
-      spec: ''
-    },
-    intakeInputSize: 2,
-    specInputSize: 3
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeStep: 0,
+      data: {
+        intake: '',
+        year: 0,
+        spec: ''
+      },
+      intakeInputSize: 2,
+      yearInputSize: 1,
+      specInputSize: 2,
+      yearOptions: []
+    }
+    this.timerId = null;
   }
+  
   componentDidMount() {
     if(window.innerWidth <= 480) {
       this.setState({intakeInputSize: 5, specInputSize: 6});
     }
+    this.getYear();
   }
 
   handleNext = () => {
-    let prevActiveStep = this.state.activeStep;
-    this.setState({ activeStep: prevActiveStep + 1 })
+    if(this.state.data.intake && this.state.data.spec) {
+      let prevActiveStep = this.state.activeStep;
+      this.setState({ activeStep: prevActiveStep + 1 });
+    } else {
+      this.showError();
+    }
+    
     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
   
@@ -101,15 +114,32 @@ export default useStyles(class Home extends React.Component {
         [name]: event.target.value
       }
     });
-    console.log(event.target.value)
-    console.log(this.state.data)
   };
+
+  showError = () => {
+    // document.getElementById("error-alert").innerText = message;
+    document.getElementById("error-alert").style.display = "flex";
+    this.timerId = setTimeout(() => {
+      document.getElementById("error-alert").style.display = "none";
+      this.timerId = null;
+    }, 5000);
+  }
   
+  getYear = () => {
+    let thisYear = (new Date()).getFullYear();
+    let years = [];
+    for(let i = thisYear-4; years.length <= 6; i++) {
+      years.push(i);
+    }
+    this.setState({yearOptions: years});
+  }
+
   render(){
     const { classes } = this.props;
 
     return (
       <div className={classes.container}>
+        <Alert id="error-alert" severity="error" className={classes.inputAlert}>Input field(s) cannot be empty!</Alert>
         <Stepper alternativeLabel activeStep={this.state.activeStep} connector={<ColorlibConnector />}>
           {steps.map((label) => (
             <Step key={label}>
@@ -145,11 +175,33 @@ export default useStyles(class Home extends React.Component {
                         name: 'intake',
                         id: 'intake-native-simple',
                       }}
+                      required
                     >
                       <option aria-label="None" value="" />
-                      <option value={"April 2021"}>April 2021</option>
-                      <option value={"July 2021"}>July 2021</option>
-                      <option value={"September 2021"}>September 2021</option>
+                      {Trimesters.map((item, index) => {
+                        return <option key={item}>{item}</option>
+                      })}
+                    </Select>
+                    <FormHelperText>Required</FormHelperText>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={this.state.intakeInputSize}>
+                  <FormControl required className={classes.formControl}>
+                    <InputLabel htmlFor="intake-native-simple">Year</InputLabel>
+                    <Select
+                      native
+                      value={this.state.data.year}
+                      onChange={this.handleChange}
+                      inputProps={{
+                        name: 'year',
+                        id: 'year-native-simple',
+                      }}
+                      required
+                    >
+                      <option aria-label="None" value="" />
+                      {this.state.yearOptions.map((item, index) => {
+                        return <option key={item}>{item}</option>
+                      })}
                     </Select>
                     <FormHelperText>Required</FormHelperText>
                   </FormControl>
@@ -167,10 +219,9 @@ export default useStyles(class Home extends React.Component {
                       }}
                     >
                       <option aria-label="None" value="" />
-                      <option value={"Software Engineering"}>Software Engineering</option>
-                      <option value={"Game Development"}>Game Development</option>
-                      <option value={"Data Science"}>Data Science</option>
-                      <option value={"Cybersecurity"}>Cybersecurity</option>
+                      {Specs.map((item, index) => {
+                        return <option key={item}>{item}</option>
+                      })}
                     </Select>
                     <FormHelperText>Required</FormHelperText>
                   </FormControl>
@@ -183,15 +234,21 @@ export default useStyles(class Home extends React.Component {
                 )}
               </Grid>
               <Grid container spacing={3} >
+              {(window.innerWidth > 480 ? 
                 <Grid item xs>
                   <Paper className={classes.paper}></Paper>
                 </Grid>
-                <Grid item xs={5}>
+                : <div></div>
+              )}
+                <Grid item xs={12}>
                   <TransferList />
                 </Grid>
+              {(window.innerWidth > 480 ? 
                 <Grid item xs>
                   <Paper className={classes.paper}></Paper>
                 </Grid>
+                : <div></div>
+              )}
               </Grid>
               <div className={classes.btnContainer}>
                 <Button disabled={this.state.activeStep === 0} onClick={this.handleBack} className={classes.button}>
@@ -214,7 +271,10 @@ export default useStyles(class Home extends React.Component {
                   <Paper className={classes.paper}></Paper>
                 </Grid>
                 <Grid item xs={12}>
-                  <PSTable intake={this.state.data.intake}/>
+                  <PSTable
+                    intake={this.state.data.intake}
+                    year={this.state.data.year}
+                  />
                 </Grid>
                 <Grid item xs>
                   <Paper className={classes.paper}></Paper>
@@ -233,7 +293,7 @@ export default useStyles(class Home extends React.Component {
                   <ReactHTMLTableToExcel
                     id="test-table-xls-button"
                     className={classes.downloadBtn + " download-table-xls-button" }
-                    table="table-to-xls"
+                    table="ps-table"
                     filename="tablexls"
                     sheet="tablexls"
                     buttonText="Download"/>

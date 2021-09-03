@@ -20,7 +20,7 @@ const useStyles = withStyles((theme) => ({
     padding: theme.spacing(1, 2),
   },
   list: {
-    width: 300,
+    width: 380,
     height: 230,
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
