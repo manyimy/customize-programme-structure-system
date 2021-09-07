@@ -42,7 +42,11 @@ export default useStyles(class TransferList extends React.Component{
 
   // set the subjects from json file to the transfer list once this page is load
   componentDidMount(){
-    this.setState({left: JSON.parse(JSON.stringify(subjects))});
+    let subject = []
+    subjects.map((value, index) => {
+      subject.push(value.code + " " + value.name);
+    })
+    this.setState({left: subject});
   }
 
   render(){

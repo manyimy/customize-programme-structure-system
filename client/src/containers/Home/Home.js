@@ -14,7 +14,7 @@ import { getSteps, ColorlibConnector, ColorlibStepIcon } from './quontoComponent
 import TransferList from '../../components/Home/transferList';
 import PSTable from '../../components/Home/psTable';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import { getTheme } from '../Setting/settingsReducer';
+// import { getTheme } from '../Setting/settingsReducer';
 import Alert from '@material-ui/lab/Alert';
 import Trimesters from '../../constants/trimesters.json';
 import Specs from '../../constants/specs.json';
@@ -65,9 +65,9 @@ export default useStyles(class Home extends React.Component {
     this.state = {
       activeStep: 0,
       data: {
-        intake: '',
-        year: 0,
-        spec: ''
+        intake: 'July',
+        year: (new Date()).getFullYear(),
+        spec: 'Game Development'
       },
       intakeInputSize: 2,
       yearInputSize: 1,
@@ -85,7 +85,7 @@ export default useStyles(class Home extends React.Component {
   }
 
   handleNext = () => {
-    if(this.state.data.intake && this.state.data.spec) {
+    if(this.state.data.intake && this.state.data.year && this.state.data.spec) {
       let prevActiveStep = this.state.activeStep;
       this.setState({ activeStep: prevActiveStep + 1 });
     } else {

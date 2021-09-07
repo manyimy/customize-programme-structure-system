@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import './psTable.css';
 // import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-import { Button } from '@material-ui/core';
-import { border } from '@material-ui/system';
+// import Table from '@material-ui/core/Table';
+// import TableBody from '@material-ui/core/TableBody';
+// import TableCell from '@material-ui/core/TableCell';
+// import TableContainer from '@material-ui/core/TableContainer';
+// import TableHead from '@material-ui/core/TableHead';
+// import TableRow from '@material-ui/core/TableRow';
+// import Paper from '@material-ui/core/Paper';
+// import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+// import { Button } from '@material-ui/core';
+// import { border } from '@material-ui/system';
 import JulyPS from '../../constants/julyPS.json';
+import AprilPS from '../../constants/aprilPS.json';
+import NovPS from '../../constants/novPS.json';
 import aprilID from '../../constants/aprilNum.json';
 import julyID from '../../constants/julyNum.json';
 import novID from '../../constants/novNum.json';
@@ -37,7 +39,7 @@ export default class PSTable extends Component {
 
     componentDidMount() {
         this.updateTrimester(this.props.intake, parseInt(this.props.year));
-        this.updateTable();
+        this.updateTable(this.props.intake);
     }
 
     updateTrimester(inputIntake, inputYear) {
@@ -89,11 +91,16 @@ export default class PSTable extends Component {
                 break;
             default: 
                 n = 1;
+                document.getElementById("121").setAttribute("rowSpan", 14);
+                document.getElementById("121").innerText = "TPT2201	Industrial Training";
+                document.getElementById("122").setAttribute("rowSpan", 14);
+                document.getElementById("122").innerText = 4;
+                break;
         }
         let triArray = [];
         for(let i = 0; i < 9; i++) {
             triArray.push(n++);
-            if(n==4) n=1;
+            if(n === 4) n = 1;
         }
 
         this.setState({
@@ -103,13 +110,27 @@ export default class PSTable extends Component {
         });
     }
 
-    updateTable = () => {
-        console.log(document.getElementById("153"));
-        for(let i = 1, n = 0; n < 25; i+=2) {
-            if(JulyPS[n].key === i) {
-                console.log(i + "       " + n);
-                document.getElementById(i.toString()).innerText = JulyPS[n].code + " " + JulyPS[n].subject;
-                document.getElementById((i+1).toString()).innerText = JulyPS[n++].ch;
+    updateTable = (intake) => {
+        var initNum = intakeMonths.indexOf(intake);
+        let psArr = (initNum === 0)
+                        ? AprilPS
+                        : (initNum === 1)
+                            ? JulyPS
+                            : NovPS;
+        for(let i = 0; i < psArr.length; i++) {
+            console.log(i);
+            console.log(psArr[i].key);
+            console.log(document.getElementById(psArr[i].key));
+            if(initNum !== 0 && ((psArr[i].key >= 153 && psArr[i].key <= 161) || (psArr[i].key >= 177 && psArr[i].key <= 185) || (psArr[i].key >= 201 && psArr[i].key <= 209))) {
+                if(document.getElementById(psArr[i].key - 24)) {
+                document.getElementById((psArr[i].key) - 24).innerText = psArr[i].code + " " + psArr[i].subject;
+                document.getElementById((psArr[i].key) - 23).innerText = psArr[i].ch;
+                }
+            } else {
+                if(document.getElementById(psArr[i].key)) {
+                    document.getElementById(psArr[i].key).innerText = psArr[i].code + " " + psArr[i].subject;
+                    document.getElementById(psArr[i].key + 1).innerText = psArr[i].ch;
+                }
             }
         }
     }
@@ -153,48 +174,48 @@ export default class PSTable extends Component {
                         </tr>
                         <tr>
                             {aprilID[0].map((item, index) => {
-                                return <td id={item.toString()}></td>
+                                return <td id={item}></td>
                             })}
                         </tr>
                         <tr>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[1].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[1].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[1].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
                         <tr>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[2].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[2].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[2].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
                         <tr>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[3].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[3].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[3].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
@@ -205,42 +226,42 @@ export default class PSTable extends Component {
                         <tr>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[4].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[4].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[4].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
                         <tr>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[5].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[5].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[5].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
                         <tr>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[6].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[6].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[6].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
@@ -248,14 +269,14 @@ export default class PSTable extends Component {
                             <td>Elective</td>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[7].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[7].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[7].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
@@ -263,14 +284,14 @@ export default class PSTable extends Component {
                             <td colSpan={2}>Elective</td>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[8].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[8].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[8].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
@@ -278,28 +299,28 @@ export default class PSTable extends Component {
                             <td colSpan={2} rowSpan={2}>Mata Pelajaran Umum</td>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[9].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[9].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[9].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
                         <tr>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[10].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[10].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[10].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
@@ -307,14 +328,14 @@ export default class PSTable extends Component {
                             <td colSpan={2}>Compulsory University</td>
                             {(this.state.intakeNum === 0) ?
                                 aprilID[11].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : (this.state.intakeNum === 1) ?
                                 julyID[11].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             : novID[11].map((item, index) => {
-                                    return <td id={item.toString()}></td>
+                                    return <td id={item}></td>
                                 })
                             }
                         </tr>
