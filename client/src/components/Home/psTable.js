@@ -39,7 +39,7 @@ export default class PSTable extends Component {
 
     componentDidMount() {
         this.updateTrimester(this.props.intake, parseInt(this.props.year));
-        this.updateTable(this.props.intake);
+        // this.updateTable(this.props.intake);
     }
 
     updateTrimester(inputIntake, inputYear) {
@@ -68,33 +68,33 @@ export default class PSTable extends Component {
             // APRIL
             case 0: 
                 n = 3;
-                document.getElementById("145").setAttribute("rowSpan", 14);
-                document.getElementById("145").innerText = "TPT2201	Industrial Training";
-                document.getElementById("146").setAttribute("rowSpan", 14);
-                document.getElementById("146").innerText = 4;
+                // document.getElementById("145").setAttribute("rowSpan", 14);
+                // document.getElementById("145").innerText = "TPT2201	Industrial Training";
+                // document.getElementById("146").setAttribute("rowSpan", 14);
+                // document.getElementById("146").innerText = 4;
                 break;
             // JULY
             case 1:
                 n = 1;
-                document.getElementById("121").setAttribute("rowSpan", 14);
-                document.getElementById("121").innerText = "TPT2201	Industrial Training";
-                document.getElementById("122").setAttribute("rowSpan", 14);
-                document.getElementById("122").innerText = 4;
+                // document.getElementById("121").setAttribute("rowSpan", 14);
+                // document.getElementById("121").innerText = "TPT2201	Industrial Training";
+                // document.getElementById("122").setAttribute("rowSpan", 14);
+                // document.getElementById("122").innerText = 4;
                 break;
             // NOVEMBER
             case 2:
                 n = 2;
-                document.getElementById("169").setAttribute("rowSpan", 14);
-                document.getElementById("169").innerText = "TPT2201	Industrial Training";
-                document.getElementById("170").setAttribute("rowSpan", 14);
-                document.getElementById("170").innerText = 4;
+                // document.getElementById("169").setAttribute("rowSpan", 14);
+                // document.getElementById("169").innerText = "TPT2201	Industrial Training";
+                // document.getElementById("170").setAttribute("rowSpan", 14);
+                // document.getElementById("170").innerText = 4;
                 break;
             default: 
                 n = 1;
-                document.getElementById("121").setAttribute("rowSpan", 14);
-                document.getElementById("121").innerText = "TPT2201	Industrial Training";
-                document.getElementById("122").setAttribute("rowSpan", 14);
-                document.getElementById("122").innerText = 4;
+                // document.getElementById("121").setAttribute("rowSpan", 14);
+                // document.getElementById("121").innerText = "TPT2201	Industrial Training";
+                // document.getElementById("122").setAttribute("rowSpan", 14);
+                // document.getElementById("122").innerText = 4;
                 break;
         }
         let triArray = [];
@@ -150,196 +150,18 @@ export default class PSTable extends Component {
             <div>
                 {/* <div id="demo">{jsonTable()}</div> */}
                 <table id="ps-table">
-                    <thead>
-                        <tr>
-                            <th colSpan={2} rowSpan={3}></th>
-                            <th colSpan={6}>Beta Level</th>
-                            <th colSpan={6}>Gamma Level</th>
-                            <th colSpan={6}>Delta Level</th>
-                        </tr>
-                        <tr>
-                            {this.state.triNum.map((item, index) => {
-                                return <th colSpan={2}>{this.state.triMonth[index]} {this.state.triYear[index]}</th>    
-                            })}
-                        </tr>
-                        <tr>
-                            {this.state.triNum.map((item, index) => {
-                                return <><th>{"Trimester " + item}</th><th>CH</th></>
-                            })}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colSpan={2} rowSpan={5}>Core</td>
-                        </tr>
-                        <tr>
-                            {aprilID[0].map((item, index) => {
-                                return <td id={item}></td>
-                            })}
-                        </tr>
-                        <tr>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[1].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[1].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[1].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[2].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[2].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[2].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[3].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[3].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[3].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            <td rowSpan={5}>Specialization</td>
-                            <td rowSpan={4}>Core</td>
-                        </tr>
-                        <tr>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[4].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[4].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[4].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[5].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[5].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[5].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[6].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[6].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[6].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            <td>Elective</td>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[7].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[7].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[7].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>Elective</td>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[8].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[8].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[8].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            <td colSpan={2} rowSpan={2}>Mata Pelajaran Umum</td>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[9].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[9].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[9].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[10].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[10].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[10].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>Compulsory University</td>
-                            {(this.state.intakeNum === 0) ?
-                                aprilID[11].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : (this.state.intakeNum === 1) ?
-                                julyID[11].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            : novID[11].map((item, index) => {
-                                    return <td id={item}></td>
-                                })
-                            }
-                        </tr>
-                    </tbody>
+                {(this.state.intakeNum === 0) ?
+                    AprilPS.map((item, index) => {
+                        return <><tr><td>{item.subject + "  " + item.type}</td></tr></>
+                    })
+                : (this.state.intakeNum === 1) ?
+                    JulyPS.map((item, index) => {
+                        return <><tr><td>{item.subject + "  " + item.type}</td></tr></>
+                    })
+                : NovPS.map((item, index) => {
+                        return <><tr><td>{item.subject + "  " + item.type}</td></tr></>
+                    })
+                }
                 </table>
             </div>
         );

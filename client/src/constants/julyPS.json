@@ -9,7 +9,7 @@
         "defaultYear": 1
     },
     {
-        "key": 3,
+        "key": 2,
         "code": "TCP1101",
         "subject": "Programming Fundamentals",
         "ch": 4,
@@ -18,7 +18,7 @@
         "defaultYear": 1
     },
     {
-        "key": 5,
+        "key": 3,
         "code": "TMA1201",
         "subject": "Discrete Structure & Probability",
         "ch": 4,
@@ -27,7 +27,7 @@
         "defaultYear": 1
     },
     {
-        "key": 7,
+        "key": 4,
         "code": "TPT1101",
         "subject": "Professional Development",
         "ch": 4,
@@ -36,7 +36,7 @@
         "defaultYear": 1
     },
     {
-        "key": 25,
+        "key": 5,
         "code": "TMA1301",
         "subject": "Computational Methods",
         "ch": 4,
@@ -45,7 +45,7 @@
         "defaultYear": 1
     },
     {
-        "key": 27,
+        "key": 6,
         "code": "TCP1201",
         "subject": "Object Oriented Programming & Data Structures",
         "ch": 4,
@@ -54,7 +54,7 @@
         "defaultYear": 1
     },
     {
-        "key": 29,
+        "key": 7,
         "code": "TSN1101",
         "subject": "Computer Architecture & Organization",
         "ch": 4,
@@ -63,7 +63,7 @@
         "defaultYear": 1
     },
     {
-        "key": 31,
+        "key": 8,
         "code": "TIS1101",
         "subject": "Database Fundamental",
         "ch": 4,
@@ -72,7 +72,7 @@
         "defaultYear": 1
     },
     {
-        "key": 49,
+        "key": 9,
         "code": "TPT1201",
         "subject": "Research Methodology in Computer Science",
         "ch": 3,
@@ -81,7 +81,7 @@
         "defaultYear": 1
     },
     {
-        "key": 67,
+        "key": 10,
         "code": "",
         "subject": "U2",
         "ch": 3,
@@ -90,7 +90,7 @@
         "defaultYear": 1
     },
     {
-        "key": 69,
+        "key": 11,
         "code": "",
         "subject": "U4",
         "ch": 2,
@@ -99,7 +99,7 @@
         "defaultYear": 1
     },
     {
-        "key": 77,
+        "key": 12,
         "code": "TSE2101",
         "subject": "Software Engineering Fundamentals",
         "ch": 4,
@@ -108,7 +108,7 @@
         "defaultYear": 2
     },
     {
-        "key": 79,
+        "key": 13,
         "code": "TSN2101",
         "subject": "Operating Systems",
         "ch": 4,
@@ -117,7 +117,7 @@
         "defaultYear": 2
     },
     {
-        "key": 81,
+        "key": 14,
         "code": "",
         "subject": "Specialization Core #1",
         "ch": 4,
@@ -126,7 +126,7 @@
         "defaultYear": 2
     },
     {
-        "key": 83,
+        "key": 15,
         "code": "",
         "subject": "Specialization Core #2",
         "ch": 4,
@@ -135,7 +135,7 @@
         "defaultYear": 2
     },
     {
-        "key": 91,
+        "key": 16,
         "code": "",
         "subject": "U3",
         "ch": 3,
@@ -144,7 +144,7 @@
         "defaultYear": 2
     },
     {
-        "key": 105,
+        "key": 17,
         "code": "",
         "subject": "Specialization Core #3",
         "ch": 4,
@@ -153,7 +153,7 @@
         "defaultYear": 2
     },
     {
-        "key": 107,
+        "key": 18,
         "code": "",
         "subject": "Specialization Core #4",
         "ch": 4,
@@ -162,7 +162,7 @@
         "defaultYear": 2
     },
     {
-        "key": 109,
+        "key": 19,
         "code": "",
         "subject": "Specialization Core #5",
         "ch": 4,
@@ -171,7 +171,7 @@
         "defaultYear": 2
     },
     {
-        "key": 113,
+        "key": 20,
         "code": "",
         "subject": "Eective #1",
         "ch": 4,
@@ -180,7 +180,16 @@
         "defaultYear": 2
     },
     {
-        "key": 145,
+        "key": 21,
+        "code": "TPT2201",
+        "subject": "Industrial Training",
+        "ch": 6,
+        "type": "core",
+        "defaultTri": 3,
+        "defaultYear": 2
+    },
+    {
+        "key": 22,
         "code": "TPT3101",
         "subject": "Final Year Project",
         "ch": 4,
@@ -189,7 +198,7 @@
         "defaultYear": 3
     },
     {
-        "key": 153,
+        "key": 23,
         "code": "",
         "subject": "Specialization Core #6",
         "ch": 4,
@@ -198,7 +207,7 @@
         "defaultYear": 3
     },
     {
-        "key": 159,
+        "key": 24,
         "code": "",
         "subject": "Specialization Elective",
         "ch": 4,
@@ -207,7 +216,7 @@
         "defaultYear": 3
     },
     {
-        "key": 161,
+        "key": 25,
         "code": "",
         "subject": "Elective #2",
         "ch": 4,
@@ -216,7 +225,7 @@
         "defaultYear": 3
     },
     {
-        "key": 169,
+        "key": 26,
         "code": "TPT3101",
         "subject": "Final Year Project",
         "ch": 4,
@@ -225,7 +234,7 @@
         "defaultYear": 3
     },
     {
-        "key": 177,
+        "key": 27,
         "code": "",
         "subject": "Specialization Core #7",
         "ch": 4,
@@ -234,7 +243,7 @@
         "defaultYear": 3
     },
     {
-        "key": 183,
+        "key": 28,
         "code": "",
         "subject": "Specialization Elective",
         "ch": 4,
@@ -243,7 +252,7 @@
         "defaultYear": 3
     },
     {
-        "key": 185,
+        "key": 29,
         "code": "",
         "subject": "Elective #3",
         "ch": 4,
@@ -252,7 +261,7 @@
         "defaultYear": 3
     },
     {
-        "key": 211,
+        "key": 30,
         "code": "",
         "subject": "U1",
         "ch": 3,
@@ -261,7 +270,7 @@
         "defaultYear": 3
     },
     {
-        "key": 213,
+        "key": 31,
         "code": "",
         "subject": "U1",
         "ch": 3,
@@ -270,7 +279,7 @@
         "defaultYear": 3
     },
     {
-        "key": 215,
+        "key": 32,
         "code": "PWC1010",
         "subject": "Workplace Communication",
         "ch": 3,
