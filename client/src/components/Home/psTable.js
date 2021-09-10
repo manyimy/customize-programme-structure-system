@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import './psTable.css';
 // import { makeStyles } from '@material-ui/core/styles';
 // import Table from '@material-ui/core/Table';
@@ -21,12 +22,12 @@ import Trimesters from '../../constants/trimesters.json';
 
 const intakeMonths = Trimesters;
 
-// const useStyles = makeStyles({
-//   table: {
-//     minWidth: 650,
-//   },
-// });
-export default class PSTable extends Component {
+const useStyles = withStyles((theme) => ({
+  container: {
+    alignItem: 'center',
+  },
+}));
+export default useStyles(class PSTable extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -136,6 +137,7 @@ export default class PSTable extends Component {
     }
 
     render() {
+        const { classes } = this.props;
         // const jsonTable = () => {
         //     const dbParam = JSON.stringify({table:"customers",limit:20});   
         //     const xmlhttp = new XMLHttpRequest();
@@ -147,23 +149,180 @@ export default class PSTable extends Component {
         //     document.getElementById("demo").innerHTML = text;
         // }
         return (
-            <div>
+            <div className={classes.container}>
                 {/* <div id="demo">{jsonTable()}</div> */}
                 <table id="ps-table">
-                {(this.state.intakeNum === 0) ?
-                    AprilPS.map((item, index) => {
-                        return <><tr><td>{item.subject + "  " + item.type}</td></tr></>
-                    })
-                : (this.state.intakeNum === 1) ?
-                    JulyPS.map((item, index) => {
-                        return <><tr><td>{item.subject + "  " + item.type}</td></tr></>
-                    })
-                : NovPS.map((item, index) => {
-                        return <><tr><td>{item.subject + "  " + item.type}</td></tr></>
-                    })
-                }
+                    <tr>
+                        <th>Category</th>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Year</th>
+                        <th>Trimester</th>
+                    </tr>
+                    {(this.state.intakeNum === 0) ?
+                        AprilPS.map((item, index) => {
+                            if(item.defaultYear === 1) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    : (this.state.intakeNum === 1) ?
+                        JulyPS.map((item, index) => {
+                            if(item.defaultYear === 1) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    : NovPS.map((item, index) => {
+                            if(item.defaultYear === 1) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    }
+                </table>
+                <table id="ps-table">
+                    <tr>
+                        <th>Category</th>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Year</th>
+                        <th>Trimester</th>
+                    </tr>
+                    {(this.state.intakeNum === 0) ?
+                        AprilPS.map((item, index) => {
+                            if(item.defaultYear === 2) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    : (this.state.intakeNum === 1) ?
+                        JulyPS.map((item, index) => {
+                            if(item.defaultYear === 2) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    : NovPS.map((item, index) => {
+                            if(item.defaultYear === 2) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    }
+                </table>
+                <table id="ps-table">
+                    <tr>
+                        <th>Category</th>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Year</th>
+                        <th>Trimester</th>
+                    </tr>
+                    {(this.state.intakeNum === 0) ?
+                        AprilPS.map((item, index) => {
+                            if(item.defaultYear === 3) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    : (this.state.intakeNum === 1) ?
+                        JulyPS.map((item, index) => {
+                            if(item.defaultYear === 3) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    : NovPS.map((item, index) => {
+                            if(item.defaultYear === 3) {
+                                return (
+                                    <>
+                                        <tr>
+                                            <td>{ item.type }</td>
+                                            <td>{ item.code }</td>
+                                            <td>{ item.subject }</td>
+                                            <td>{ "Year " + item.defaultYear }</td>
+                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                        </tr>
+                                    </>
+                                );
+                            }
+                        })
+                    }
                 </table>
             </div>
         );
     }
-}
+});
