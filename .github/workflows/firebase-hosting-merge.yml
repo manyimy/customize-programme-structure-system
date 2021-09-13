@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout repository
-        uses: actions/cehckout@v2
+        uses: actions/checkout@v2
       - name: Run npm install, test and build
         run: 
           cd client
