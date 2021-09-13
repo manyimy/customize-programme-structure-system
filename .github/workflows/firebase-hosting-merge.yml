@@ -13,8 +13,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Run npm install, test and build
         run: 
+          cd client
           npm ci
-          npm test
           npm run build
       - name: upload build artifact 
         uses: actions/upload-artifact@v2
