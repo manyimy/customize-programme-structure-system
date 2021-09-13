@@ -1,27 +1,21 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import Button from '@material-ui/core/Button';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Select from '@material-ui/core/Select';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import { getSteps, ColorlibConnector, ColorlibStepIcon } from '../Home/quontoComponent';
-import TransferList from '../../components/Home/transferList';
-import PSTable from '../../components/Home/psTable';
-import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-// import { getTheme } from '../Setting/settingsReducer';
-// import Alert from '@material-ui/lab/Alert';
+// import {writeJsonFile} from 'write-json-file';
 
+import yourJson from '../../constants/trimesters.json';
+import TextField from '@material-ui/core/TextField';
 import Login from '../../components/Admin/Login';
 
 const useStyles = withStyles((theme) => ({
-
+  root: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
+  },
 }));
+
+const fs = require('fs')
 
 function setToken(userToken) {
   sessionStorage.setItem('token', JSON.stringify(userToken));
@@ -32,6 +26,10 @@ function getToken() {
   const userToken = JSON.parse(tokenString);
   return userToken?.token
 }
+
+// async function editTrimester (newData) {
+//   await writeJsonFile('../../constants/trimesters.json', {foo: true});
+// }
 
 
 export default useStyles(class Admin extends React.Component {
@@ -56,6 +54,11 @@ export default useStyles(class Admin extends React.Component {
 
     return (
       <div className={classes.container}>
+        <form className={classes.root} noValidate autoComplete="off">
+          <TextField id="standard-basic" label="Standard" />
+          <TextField id="standard-basic" label="Standard" />
+          <TextField id="standard-basic" label="Standard" />
+        </form>
       </div>
     );
   }
