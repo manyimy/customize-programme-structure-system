@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Run npm install, test and build
-        run: 
+        run: |
           cd client
           npm ci
           npm run build
