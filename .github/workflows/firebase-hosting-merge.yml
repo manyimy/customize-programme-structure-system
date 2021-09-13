@@ -13,6 +13,7 @@ jobs:
         uses: actions/cehckout@v2
       - name: Run npm install, test and build
         run: 
+          cd client
           npm ci
           npm test
           npm run build
