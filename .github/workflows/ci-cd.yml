@@ -20,7 +20,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with: 
           name: build
-          path: build
+          path: client/build
           retention-days: 1
   
   deploy_to_production: 
@@ -34,7 +34,7 @@ jobs:
         uses: actions/download-artifact@v2
         with: 
           name: build
-          path: build
+          path: client/build
       - name: Deploy to firebase hosting 
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
