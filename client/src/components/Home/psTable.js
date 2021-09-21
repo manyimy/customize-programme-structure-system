@@ -151,12 +151,13 @@ export default useStyles(class PSTable extends Component {
         return (
             <div className={classes.container}>
                 {/* <div id="demo">{jsonTable()}</div> */}
+                <h1>Year 1</h1>
                 <table id="ps-table">
                     <tr>
                         <th>Category</th>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
-                        <th>Year</th>
+                        {/* <th>Year</th> */}
                         <th>Trimester</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
@@ -168,8 +169,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -184,8 +185,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -199,8 +200,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -208,12 +209,13 @@ export default useStyles(class PSTable extends Component {
                         })
                     }
                 </table>
+                <h1>Year 2</h1>
                 <table id="ps-table">
                     <tr>
                         <th>Category</th>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
-                        <th>Year</th>
+                        {/* <th>Year</th> */}
                         <th>Trimester</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
@@ -225,8 +227,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -241,8 +243,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -256,8 +258,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -265,12 +267,13 @@ export default useStyles(class PSTable extends Component {
                         })
                     }
                 </table>
+                <h1>Year 3</h1>
                 <table id="ps-table">
                     <tr>
                         <th>Category</th>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
-                        <th>Year</th>
+                        {/* <th>Year</th> */}
                         <th>Trimester</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
@@ -282,8 +285,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -298,8 +301,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );
@@ -313,8 +316,8 @@ export default useStyles(class PSTable extends Component {
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            <td>{ "Year " + item.defaultYear }</td>
-                                            <td>{ "Trimester " + item.defaultTri }</td>
+                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.defaultTri }</td>
                                         </tr>
                                     </>
                                 );

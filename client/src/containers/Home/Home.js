@@ -44,6 +44,9 @@ const useStyles = withStyles((theme) => ({
     left: 0,
     right: 0,
     display: "none"
+  },
+  pstable: {
+    textAlign: "-webkit-center"
   }
 }));
 
@@ -270,7 +273,7 @@ export default useStyles(class Home extends React.Component {
                 <Grid item xs>
                   <Paper className={classes.paper}></Paper>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item className={classes.pstable} xs={12}>
                   <PSTable
                     intake={this.state.data.intake}
                     year={this.state.data.year}
