@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "config": "^3.3.2",
+    "firebase": "^9.0.2",
     "lodash": "^4.17.20"
   },
   "devDependencies": {
