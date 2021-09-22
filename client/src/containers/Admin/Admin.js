@@ -2,12 +2,17 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import {writeJsonFile} from 'write-json-file';
 
-import TriJson from '../../constants/trimesters.json';
+// import TriJson from '../../constants/trimesters.json';
 import TextField from '@material-ui/core/TextField';
 import Login from '../../components/Admin/Login';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Button } from '@material-ui/core';
+
+import axios from 'axios';
+
+const fs = require('fs');
+const path = require('path');
 
 const useStyles = withStyles((theme) => ({
   root: {
@@ -50,11 +55,14 @@ export default useStyles(class Admin extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({
-      trimester1: TriJson[0].toString(),
-      trimester2: TriJson[1].toString(),
-      trimester3: TriJson[2].toString(),
-    })
+    axios.get(process.env.REACT_APP_API_PATH + "/trimesters.json")
+      .then((response) => {
+        this.setState({
+          trimester1: response.data[0].toString(),
+          trimester2: response.data[1].toString(),
+          trimester3: response.data[2].toString(),
+        });
+      });
   }
 
   callbackFunction = (childData) => {
@@ -93,9 +101,11 @@ export default useStyles(class Admin extends React.Component {
       // fs.writeFile('../../constants/trimesters.json', JSON.stringify(newData), (err) => {
       //   if (err) console.log('Error writing file:', err);
       // })
-      writeFile(name, JSON.stringify(newData));
+      // writeFile(name, JSON.stringify(newData));
+      fs.writeFileSync(path.resolve(__dirname, 'trimesters.json'), JSON.stringify(newData));
     }
 
+    // DEBUG
     if(!this.state.token) {
       return <Login setToken={setToken} parentCallback={this.callbackFunction} />
     }

@@ -1,26 +1,9 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import './psTable.css';
-// import { makeStyles } from '@material-ui/core/styles';
-// import Table from '@material-ui/core/Table';
-// import TableBody from '@material-ui/core/TableBody';
-// import TableCell from '@material-ui/core/TableCell';
-// import TableContainer from '@material-ui/core/TableContainer';
-// import TableHead from '@material-ui/core/TableHead';
-// import TableRow from '@material-ui/core/TableRow';
-// import Paper from '@material-ui/core/Paper';
-// import ReactHTMLTableToExcel from 'react-html-table-to-excel';
-// import { Button } from '@material-ui/core';
-// import { border } from '@material-ui/system';
-import JulyPS from '../../constants/julyPS.json';
-import AprilPS from '../../constants/aprilPS.json';
-import NovPS from '../../constants/novPS.json';
-import aprilID from '../../constants/aprilNum.json';
-import julyID from '../../constants/julyNum.json';
-import novID from '../../constants/novNum.json';
-import Trimesters from '../../constants/trimesters.json';
+import axios from "axios";
 
-const intakeMonths = Trimesters;
+require('dotenv').config();
 
 const useStyles = withStyles((theme) => ({
   container: {
@@ -34,13 +17,41 @@ export default useStyles(class PSTable extends Component {
             triMonth: [],
             triYear: [],
             triNum: [],
+            JulyPS: [],
+            AprilPS: [],
+            NovPS: [],
+            Trimesters: [],
             intakeNum: null
         }
     }
 
     componentDidMount() {
         this.updateTrimester(this.props.intake, parseInt(this.props.year));
-        // this.updateTable(this.props.intake);
+        console.log(process.env.REACT_APP_API_PATH);
+        axios.get(process.env.REACT_APP_API_PATH + "/tri1PS.json")
+            .then((response) => {
+                this.setState({ 
+                    JulyPS: response.data 
+                });
+            });
+        axios.get(process.env.REACT_APP_API_PATH + "/tri2PS.json")
+            .then((response) => {
+                this.setState({ 
+                    NovPS: response.data 
+                });
+            });
+        axios.get(process.env.REACT_APP_API_PATH + "/tri3PS.json")
+            .then((response) => {
+                this.setState({ 
+                    AprilPS: response.data 
+                });
+            });
+        axios.get(process.env.REACT_APP_API_PATH + "/trimesters.json")
+            .then((response) => {
+                this.setState({ 
+                    Trimesters: response.data 
+                });
+            });
     }
 
     updateTrimester(inputIntake, inputYear) {
@@ -48,11 +59,11 @@ export default useStyles(class PSTable extends Component {
         // 0 - APRIL
         // 1 - JULY
         // 2 - NOVEMBER
-        var initNum = intakeMonths.indexOf(inputIntake);
+        var initNum = this.state.Trimesters.indexOf(inputIntake);
         this.setState({intakeNum: initNum});
         for(var i = initNum; triName.length < 9; i++){
-            triName.push(intakeMonths[i]);
-            if (i === intakeMonths.length - 1)
+            triName.push(this.state.Trimesters[i]);
+            if (i === this.state.Trimesters.length - 1)
                 i = -1;
         }
 
@@ -69,33 +80,17 @@ export default useStyles(class PSTable extends Component {
             // APRIL
             case 0: 
                 n = 3;
-                // document.getElementById("145").setAttribute("rowSpan", 14);
-                // document.getElementById("145").innerText = "TPT2201	Industrial Training";
-                // document.getElementById("146").setAttribute("rowSpan", 14);
-                // document.getElementById("146").innerText = 4;
                 break;
             // JULY
             case 1:
                 n = 1;
-                // document.getElementById("121").setAttribute("rowSpan", 14);
-                // document.getElementById("121").innerText = "TPT2201	Industrial Training";
-                // document.getElementById("122").setAttribute("rowSpan", 14);
-                // document.getElementById("122").innerText = 4;
                 break;
             // NOVEMBER
             case 2:
                 n = 2;
-                // document.getElementById("169").setAttribute("rowSpan", 14);
-                // document.getElementById("169").innerText = "TPT2201	Industrial Training";
-                // document.getElementById("170").setAttribute("rowSpan", 14);
-                // document.getElementById("170").innerText = 4;
                 break;
             default: 
                 n = 1;
-                // document.getElementById("121").setAttribute("rowSpan", 14);
-                // document.getElementById("121").innerText = "TPT2201	Industrial Training";
-                // document.getElementById("122").setAttribute("rowSpan", 14);
-                // document.getElementById("122").innerText = 4;
                 break;
         }
         let triArray = [];
@@ -112,12 +107,12 @@ export default useStyles(class PSTable extends Component {
     }
 
     updateTable = (intake) => {
-        var initNum = intakeMonths.indexOf(intake);
+        var initNum = this.state.Trimesters.indexOf(intake);
         let psArr = (initNum === 0)
-                        ? AprilPS
+                        ? this.state.AprilPS
                         : (initNum === 1)
-                            ? JulyPS
-                            : NovPS;
+                            ? this.state.JulyPS
+                            : this.state.NovPS;
         for(let i = 0; i < psArr.length; i++) {
             console.log(i);
             console.log(psArr[i].key);
@@ -138,188 +133,174 @@ export default useStyles(class PSTable extends Component {
 
     render() {
         const { classes } = this.props;
-        // const jsonTable = () => {
-        //     const dbParam = JSON.stringify({table:"customers",limit:20});   
-        //     const xmlhttp = new XMLHttpRequest();
-        //     const myObj = JSON.parse(this.responseText);
-        //     let text = "<table border='1' id='ps-table'>"
-        //     text += "<tr><th colSpan={2} rowSpan={3}></th>";
-        //     text += "<th colSpan={6}>Beta Level</th><th colSpan={6}>Gamma Level</th><th colSpan={6}>Delta Level</th></tr>";
-        //     text += "</table>";
-        //     document.getElementById("demo").innerHTML = text;
-        // }
+        
         return (
             <div className={classes.container}>
                 {/* <div id="demo">{jsonTable()}</div> */}
+                {/* <Button onClick={(e) => {tablesToExcel(e, ['ps-table-y1','ps-table-y2','ps-table-y3'], ['Year1','Year2','Year3'], 'ProgrammeStructure.xls', 'Excel')}}>Export to CSV</Button> */}
                 <h1>Year 1</h1>
-                <table id="ps-table">
+                <table id="ps-table-y1" class="table2excel">
                     <tr>
                         <th>Category</th>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
-                        {/* <th>Year</th> */}
+                        <th>CH</th>
                         <th>Trimester</th>
+                        <th>Month</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
-                        AprilPS.map((item, index) => {
+                        this.state.AprilPS.map((item, index) => {
                             if(item.defaultYear === 1) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
                     : (this.state.intakeNum === 1) ?
-                        JulyPS.map((item, index) => {
+                        this.state.JulyPS.map((item, index) => {
                             if(item.defaultYear === 1) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
-                    : NovPS.map((item, index) => {
+                    : this.state.NovPS.map((item, index) => {
                             if(item.defaultYear === 1) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
                     }
                 </table>
                 <h1>Year 2</h1>
-                <table id="ps-table">
+                <table id="ps-table-y2" class="table2excel">
                     <tr>
                         <th>Category</th>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
-                        {/* <th>Year</th> */}
+                        <th>CH</th>
                         <th>Trimester</th>
+                        <th>Month</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
-                        AprilPS.map((item, index) => {
+                        this.state.AprilPS.map((item, index) => {
                             if(item.defaultYear === 2) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
                     : (this.state.intakeNum === 1) ?
-                        JulyPS.map((item, index) => {
+                        this.state.JulyPS.map((item, index) => {
                             if(item.defaultYear === 2) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
-                    : NovPS.map((item, index) => {
+                    : this.state.NovPS.map((item, index) => {
                             if(item.defaultYear === 2) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
                     }
                 </table>
                 <h1>Year 3</h1>
-                <table id="ps-table">
+                <table id="ps-table-y3" class="table2excel">
                     <tr>
                         <th>Category</th>
                         <th>Subject Code</th>
                         <th>Subject Name</th>
-                        {/* <th>Year</th> */}
+                        <th>CH</th>
                         <th>Trimester</th>
+                        <th>Month</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
-                        AprilPS.map((item, index) => {
+                        this.state.AprilPS.map((item, index) => {
                             if(item.defaultYear === 3) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
                     : (this.state.intakeNum === 1) ?
-                        JulyPS.map((item, index) => {
+                        this.state.JulyPS.map((item, index) => {
                             if(item.defaultYear === 3) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })
-                    : NovPS.map((item, index) => {
+                    : this.state.NovPS.map((item, index) => {
                             if(item.defaultYear === 3) {
                                 return (
-                                    <>
                                         <tr>
                                             <td>{ item.type }</td>
                                             <td>{ item.code }</td>
                                             <td>{ item.subject }</td>
-                                            {/* <td>{ item.defaultYear }</td> */}
+                                            <td>{ item.ch }</td>
                                             <td>{ item.defaultTri }</td>
+                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                         </tr>
-                                    </>
                                 );
                             }
                         })

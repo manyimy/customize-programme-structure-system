@@ -10,7 +10,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import subjects from '../../constants/subjectLists.json'
+// import subjects from '../../constants/subjectLists.json'
+import axios from 'axios';
 
 const useStyles = withStyles((theme) => ({
   root: {
@@ -42,11 +43,15 @@ export default useStyles(class TransferList extends React.Component{
 
   // set the subjects from json file to the transfer list once this page is load
   componentDidMount(){
-    let subject = []
-    subjects.map((value, index) => {
-      subject.push(value.code + " " + value.name);
-    })
-    this.setState({left: subject});
+    axios.get(process.env.REACT_APP_API_PATH + "/subjectLists.json")
+      .then((response) => {
+        let subject = [];
+        response.data.map((value, index) => {
+          subject.push(value.code + " " + value.name);
+        })
+        this.setState({left: subject});
+      });
+    
   }
 
   render(){

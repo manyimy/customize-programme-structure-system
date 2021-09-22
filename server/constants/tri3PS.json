@@ -1,0 +1,290 @@
+[
+    {
+        "key": 1,
+        "code": "",
+        "subject": "U2",
+        "ch": 3,
+        "type": "mpu2",
+        "defaultTri": 3,
+        "defaultYear": 1
+    },
+    {
+        "key": 2,
+        "code": "",
+        "subject": "U4",
+        "ch": 2,
+        "type": "mpu4",
+        "defaultTri": 3,
+        "defaultYear": 1
+    },
+    {
+        "key": 3,
+        "code": "PWC1010",
+        "subject": "Workplace Communication",
+        "ch": 3,
+        "type": "uni",
+        "defaultTri": 3,
+        "defaultYear": 1
+    },
+    {
+        "key": 4,
+        "code": "TMA1101",
+        "subject": "Calculus",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 1,
+        "defaultYear": 1
+    },
+    {
+        "key": 5,
+        "code": "TCP1101",
+        "subject": "Programming Fundamentals",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 1,
+        "defaultYear": 1
+    },
+    {
+        "key": 6,
+        "code": "TMA1201",
+        "subject": "Discrete Structure & Probability",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 1,
+        "defaultYear": 1
+    },
+    {
+        "key": 7,
+        "code": "TPT1101",
+        "subject": "Professional Development",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 1,
+        "defaultYear": 1
+    },
+    {
+        "key": 8,
+        "code": "TMA1301",
+        "subject": "Computational Methods",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 2,
+        "defaultYear": 1
+    },
+    {
+        "key": 9,
+        "code": "TCP1201",
+        "subject": "Object Oriented Programming & Data Structures",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 2,
+        "defaultYear": 1
+    },
+    {
+        "key": 10,
+        "code": "TSN1101",
+        "subject": "Computer Architecture & Organization",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 2,
+        "defaultYear": 1
+    },
+    {
+        "key": 11,
+        "code": "TIS1101",
+        "subject": "Database Fundamental",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 2,
+        "defaultYear": 1
+    },
+    {
+        "key": 12,
+        "code": "TPT1201",
+        "subject": "Research Methodology in Computer Science",
+        "ch": 3,
+        "type": "core",
+        "defaultTri": 3,
+        "defaultYear": 2
+    },
+    {
+        "key": 13,
+        "code": "",
+        "subject": "U1",
+        "ch": 3,
+        "type": "mpu1",
+        "defaultTri": 3,
+        "defaultYear": 2
+    },
+    {
+        "key": 14,
+        "code": "",
+        "subject": "U1",
+        "ch": 3,
+        "type": "mpu1",
+        "defaultTri": 3,
+        "defaultYear": 2
+    },
+    {
+        "key": 15,
+        "code": "TSE2101",
+        "subject": "Software Engineering Fundamentals",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 1,
+        "defaultYear": 2
+    },
+    {
+        "key": 16,
+        "code": "TSN2101",
+        "subject": "Operating Systems",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 1,
+        "defaultYear": 2
+    },
+    {
+        "key": 17,
+        "code": "",
+        "subject": "Specialization Core #1",
+        "ch": 4,
+        "type": "spec core",
+        "defaultTri": 1,
+        "defaultYear": 2
+    },
+    {
+        "key": 18,
+        "code": "",
+        "subject": "Specialization Core #2",
+        "ch": 4,
+        "type": "spec core",
+        "defaultTri": 1,
+        "defaultYear": 2
+    },
+    {
+        "key": 19,
+        "code": "",
+        "subject": "Specialization Core #3",
+        "ch": 4,
+        "type": "spec core",
+        "defaultTri": 2,
+        "defaultYear": 2
+    },
+    {
+        "key": 20,
+        "code": "",
+        "subject": "Specialization Core #4",
+        "ch": 4,
+        "type": "spec core",
+        "defaultTri": 2,
+        "defaultYear": 2
+    },
+    {
+        "key": 21,
+        "code": "",
+        "subject": "Specialization Core #5",
+        "ch": 4,
+        "type": "spec core",
+        "defaultTri": 2,
+        "defaultYear": 2
+    },
+    {
+        "key": 22,
+        "code": "",
+        "subject": "Eective #1",
+        "ch": 4,
+        "type": "elective",
+        "defaultTri": 2,
+        "defaultYear": 2
+    },
+    {
+        "key": 23,
+        "code": "TPT2201",
+        "subject": "Industrial Training",
+        "ch": 6,
+        "type": "core",
+        "defaultTri": 3,
+        "defaultYear": 3
+    },
+    {
+        "key": 24,
+        "code": "TPT3101",
+        "subject": "Final Year Project",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 1,
+        "defaultYear": 3
+    },
+    {
+        "key": 25,
+        "code": "",
+        "subject": "Specialization Core #6",
+        "ch": 4,
+        "type": "spec core",
+        "defaultTri": 1,
+        "defaultYear": 3
+    },
+    {
+        "key": 26,
+        "code": "",
+        "subject": "Specialization Elective",
+        "ch": 4,
+        "type": "spec elec",
+        "defaultTri": 1,
+        "defaultYear": 3
+    },
+    {
+        "key": 27,
+        "code": "",
+        "subject": "Elective #2",
+        "ch": 4,
+        "type": "elec",
+        "defaultTri": 1,
+        "defaultYear": 3
+    },
+    {
+        "key": 28,
+        "code": "",
+        "subject": "U3",
+        "ch": 3,
+        "type": "mpu3",
+        "defaultTri": 1,
+        "defaultYear": 3
+    },
+    {
+        "key": 29,
+        "code": "TPT3101",
+        "subject": "Final Year Project",
+        "ch": 4,
+        "type": "core",
+        "defaultTri": 2,
+        "defaultYear": 3
+    },
+    {
+        "key": 30,
+        "code": "",
+        "subject": "Specialization Core #7",
+        "ch": 4,
+        "type": "spec core",
+        "defaultTri": 2,
+        "defaultYear": 3
+    },
+    {
+        "key": 31,
+        "code": "",
+        "subject": "Specialization Elective",
+        "ch": 4,
+        "type": "spec elec",
+        "defaultTri": 2,
+        "defaultYear": 3
+    },
+    {
+        "key": 32,
+        "code": "",
+        "subject": "Elective #3",
+        "ch": 4,
+        "type": "elec",
+        "defaultTri": 2,
+        "defaultYear": 3
+    }
+]
