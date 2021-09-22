@@ -3,16 +3,15 @@ import { withStyles } from '@material-ui/core/styles';
 // import {writeJsonFile} from 'write-json-file';
 
 // import TriJson from '../../constants/trimesters.json';
-import TextField from '@material-ui/core/TextField';
-import Login from '../../components/Admin/Login';
-import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Login from '../../components/Admin/Login';
 import { Button } from '@material-ui/core';
 
 import axios from 'axios';
-
-const fs = require('fs');
-const path = require('path');
+const API_PATH = process.env.REACT_APP_API_PATH;
 
 const useStyles = withStyles((theme) => ({
   root: {
@@ -55,7 +54,7 @@ export default useStyles(class Admin extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(process.env.REACT_APP_API_PATH + "/trimesters.json")
+    axios.get( API_PATH + "/trimesters.json")
       .then((response) => {
         this.setState({
           trimester1: response.data[0].toString(),
@@ -71,38 +70,20 @@ export default useStyles(class Admin extends React.Component {
   
   render(){
     const { classes } = this.props;
-    const fs = require('fs');
-    const writeFile = (filePath, fileContent) => {
-      return new Promise((resolve, reject) => {
-       fs.writeFile(filePath, fileContent, writeFileError => {
-        if (writeFileError) {
-         reject(writeFileError);
-         return;
-        }
-     
-        resolve(filePath);
-       });
-      });
-    };
 
     const handleChange = (event, tri) => {
       this.setState({[tri]: event.target.value});
     };
 
-    function onSubmit() {
-      // fs = require('fs');
-      var name = '../../constants/trimesters.json';
-      // var m = JSON.parse(fs.readFileSync(name).toString());
-      var newData = ["January", "February", "March"];
-      // newData.push(this.state.trimester1);
-      // newData.push(this.state.trimester2);
-      // newData.push(this.state.trimester3);
-      // fs.writeFileSync(name, JSON.stringify(newData));
-      // fs.writeFile('../../constants/trimesters.json', JSON.stringify(newData), (err) => {
-      //   if (err) console.log('Error writing file:', err);
-      // })
-      // writeFile(name, JSON.stringify(newData));
-      fs.writeFileSync(path.resolve(__dirname, 'trimesters.json'), JSON.stringify(newData));
+    const onSubmit = () => {
+      var newData = [];
+      console.log(this.state.trimester1);
+      newData.push(this.state.trimester1);
+      newData.push(this.state.trimester2);
+      newData.push(this.state.trimester3);
+      axios.post(API_PATH + '/trimesters',{
+        newData: newData
+      });
     }
 
     // DEBUG
@@ -112,71 +93,80 @@ export default useStyles(class Admin extends React.Component {
 
     return (
       <div className={classes.container}>
+        <h3>Trimester Months:</h3>
         <form className={classes.root} noValidate autoComplete="off">
-          Trimester Months: 
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={this.state.trimester1}
-            onChange={(e) => {handleChange(e, "trimester1")}}
-          >
-            <MenuItem value={"January"}>January</MenuItem>
-            <MenuItem value={"February"}>February</MenuItem>
-            <MenuItem value={"March"}>March</MenuItem>
-            <MenuItem value={"April"}>April</MenuItem>
-            <MenuItem value={"May"}>May</MenuItem>
-            <MenuItem value={"June"}>June</MenuItem>
-            <MenuItem value={"July"}>July</MenuItem>
-            <MenuItem value={"August"}>August</MenuItem>
-            <MenuItem value={"September"}>September</MenuItem>
-            <MenuItem value={"October"}>October</MenuItem>
-            <MenuItem value={"November"}>November</MenuItem>
-            <MenuItem value={"December"}>December</MenuItem>
-          </Select>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={this.state.trimester2}
-            onChange={(e) => {handleChange(e, "trimester2")}}
-          >
-            <MenuItem value={"January"}>January</MenuItem>
-            <MenuItem value={"February"}>February</MenuItem>
-            <MenuItem value={"March"}>March</MenuItem>
-            <MenuItem value={"April"}>April</MenuItem>
-            <MenuItem value={"May"}>May</MenuItem>
-            <MenuItem value={"June"}>June</MenuItem>
-            <MenuItem value={"July"}>July</MenuItem>
-            <MenuItem value={"August"}>August</MenuItem>
-            <MenuItem value={"September"}>September</MenuItem>
-            <MenuItem value={"October"}>October</MenuItem>
-            <MenuItem value={"November"}>November</MenuItem>
-            <MenuItem value={"December"}>December</MenuItem>
-          </Select>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={this.state.trimester3}
-            onChange={(e) => {handleChange(e, "trimester3")}}
-          >
-            <MenuItem value={"January"}>January</MenuItem>
-            <MenuItem value={"February"}>February</MenuItem>
-            <MenuItem value={"March"}>March</MenuItem>
-            <MenuItem value={"April"}>April</MenuItem>
-            <MenuItem value={"May"}>May</MenuItem>
-            <MenuItem value={"June"}>June</MenuItem>
-            <MenuItem value={"July"}>July</MenuItem>
-            <MenuItem value={"August"}>August</MenuItem>
-            <MenuItem value={"September"}>September</MenuItem>
-            <MenuItem value={"October"}>October</MenuItem>
-            <MenuItem value={"November"}>November</MenuItem>
-            <MenuItem value={"December"}>December</MenuItem>
-          </Select>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="trimester1-select-label">Trimester 1</InputLabel>
+            <Select
+              labelId="trimester1-select-label"
+              id="trimester1-select"
+              value={this.state.trimester1}
+              onChange={(e) => {handleChange(e, "trimester1")}}
+            >
+              <MenuItem value={"January"}>January</MenuItem>
+              <MenuItem value={"February"}>February</MenuItem>
+              <MenuItem value={"March"}>March</MenuItem>
+              <MenuItem value={"April"}>April</MenuItem>
+              <MenuItem value={"May"}>May</MenuItem>
+              <MenuItem value={"June"}>June</MenuItem>
+              <MenuItem value={"July"}>July</MenuItem>
+              <MenuItem value={"August"}>August</MenuItem>
+              <MenuItem value={"September"}>September</MenuItem>
+              <MenuItem value={"October"}>October</MenuItem>
+              <MenuItem value={"November"}>November</MenuItem>
+              <MenuItem value={"December"}>December</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="trimester2-select-label">Trimester 2</InputLabel>
+            <Select
+              labelId="trimester2-select-label"
+              id="trimester2-select"
+              value={this.state.trimester2}
+              onChange={(e) => {handleChange(e, "trimester2")}}
+            >
+              <MenuItem value={"January"}>January</MenuItem>
+              <MenuItem value={"February"}>February</MenuItem>
+              <MenuItem value={"March"}>March</MenuItem>
+              <MenuItem value={"April"}>April</MenuItem>
+              <MenuItem value={"May"}>May</MenuItem>
+              <MenuItem value={"June"}>June</MenuItem>
+              <MenuItem value={"July"}>July</MenuItem>
+              <MenuItem value={"August"}>August</MenuItem>
+              <MenuItem value={"September"}>September</MenuItem>
+              <MenuItem value={"October"}>October</MenuItem>
+              <MenuItem value={"November"}>November</MenuItem>
+              <MenuItem value={"December"}>December</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="trimester3-select-label">Trimester 3</InputLabel>
+            <Select
+              labelId="trimester3-select-label"
+              id="trimester3-select"
+              value={this.state.trimester3}
+              onChange={(e) => {handleChange(e, "trimester3")}}
+            >
+              <MenuItem value={"January"}>January</MenuItem>
+              <MenuItem value={"February"}>February</MenuItem>
+              <MenuItem value={"March"}>March</MenuItem>
+              <MenuItem value={"April"}>April</MenuItem>
+              <MenuItem value={"May"}>May</MenuItem>
+              <MenuItem value={"June"}>June</MenuItem>
+              <MenuItem value={"July"}>July</MenuItem>
+              <MenuItem value={"August"}>August</MenuItem>
+              <MenuItem value={"September"}>September</MenuItem>
+              <MenuItem value={"October"}>October</MenuItem>
+              <MenuItem value={"November"}>November</MenuItem>
+              <MenuItem value={"December"}>December</MenuItem>
+            </Select>
+          </FormControl>
         </form>
         <Button 
           className={classes.submitBtn} 
           variant="contained" 
           color="primary"
-          // onClick={onSubmit}
+          onClick={onSubmit}
         >
           Submit
         </Button>

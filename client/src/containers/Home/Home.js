@@ -60,9 +60,9 @@ export default useStyles(class Home extends React.Component {
     this.state = {
       activeStep: 0,
       data: {
-        intake: 'July',
+        intake: '',
         year: (new Date()).getFullYear(),
-        spec: 'Game Development'
+        spec: ''
       },
       intakeInputSize: 2,
       yearInputSize: 1,

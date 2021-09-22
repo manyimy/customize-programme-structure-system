@@ -17,9 +17,9 @@ export default useStyles(class PSTable extends Component {
             triMonth: [],
             triYear: [],
             triNum: [],
-            JulyPS: [],
-            AprilPS: [],
-            NovPS: [],
+            Tri1PS: [],
+            Tri2PS: [],
+            Tri3PS: [],
             Trimesters: [],
             intakeNum: null
         }
@@ -31,19 +31,19 @@ export default useStyles(class PSTable extends Component {
         axios.get(process.env.REACT_APP_API_PATH + "/tri1PS.json")
             .then((response) => {
                 this.setState({ 
-                    JulyPS: response.data 
+                    Tri1PS: response.data 
                 });
             });
         axios.get(process.env.REACT_APP_API_PATH + "/tri2PS.json")
             .then((response) => {
                 this.setState({ 
-                    NovPS: response.data 
+                    Tri2PS: response.data 
                 });
             });
         axios.get(process.env.REACT_APP_API_PATH + "/tri3PS.json")
             .then((response) => {
                 this.setState({ 
-                    AprilPS: response.data 
+                    Tri3PS: response.data 
                 });
             });
         axios.get(process.env.REACT_APP_API_PATH + "/trimesters.json")
@@ -78,15 +78,15 @@ export default useStyles(class PSTable extends Component {
         var n = 0;
         switch(initNum) {
             // APRIL
-            case 0: 
+            case 2: 
                 n = 3;
                 break;
             // JULY
-            case 1:
+            case 0:
                 n = 1;
                 break;
             // NOVEMBER
-            case 2:
+            case 1:
                 n = 2;
                 break;
             default: 
@@ -106,30 +106,30 @@ export default useStyles(class PSTable extends Component {
         });
     }
 
-    updateTable = (intake) => {
-        var initNum = this.state.Trimesters.indexOf(intake);
-        let psArr = (initNum === 0)
-                        ? this.state.AprilPS
-                        : (initNum === 1)
-                            ? this.state.JulyPS
-                            : this.state.NovPS;
-        for(let i = 0; i < psArr.length; i++) {
-            console.log(i);
-            console.log(psArr[i].key);
-            console.log(document.getElementById(psArr[i].key));
-            if(initNum !== 0 && ((psArr[i].key >= 153 && psArr[i].key <= 161) || (psArr[i].key >= 177 && psArr[i].key <= 185) || (psArr[i].key >= 201 && psArr[i].key <= 209))) {
-                if(document.getElementById(psArr[i].key - 24)) {
-                document.getElementById((psArr[i].key) - 24).innerText = psArr[i].code + " " + psArr[i].subject;
-                document.getElementById((psArr[i].key) - 23).innerText = psArr[i].ch;
-                }
-            } else {
-                if(document.getElementById(psArr[i].key)) {
-                    document.getElementById(psArr[i].key).innerText = psArr[i].code + " " + psArr[i].subject;
-                    document.getElementById(psArr[i].key + 1).innerText = psArr[i].ch;
-                }
-            }
-        }
-    }
+    // updateTable = (intake) => {
+    //     var initNum = this.state.Trimesters.indexOf(intake);
+    //     let psArr = (initNum === 2)
+    //                     ? this.state.AprilPS
+    //                     : (initNum === 0)
+    //                         ? this.state.JulyPS
+    //                         : this.state.NovPS;
+    //     for(let i = 0; i < psArr.length; i++) {
+    //         console.log(i);
+    //         console.log(psArr[i].key);
+    //         console.log(document.getElementById(psArr[i].key));
+    //         if(initNum !== 0 && ((psArr[i].key >= 153 && psArr[i].key <= 161) || (psArr[i].key >= 177 && psArr[i].key <= 185) || (psArr[i].key >= 201 && psArr[i].key <= 209))) {
+    //             if(document.getElementById(psArr[i].key - 24)) {
+    //             document.getElementById((psArr[i].key) - 24).innerText = psArr[i].code + " " + psArr[i].subject;
+    //             document.getElementById((psArr[i].key) - 23).innerText = psArr[i].ch;
+    //             }
+    //         } else {
+    //             if(document.getElementById(psArr[i].key)) {
+    //                 document.getElementById(psArr[i].key).innerText = psArr[i].code + " " + psArr[i].subject;
+    //                 document.getElementById(psArr[i].key + 1).innerText = psArr[i].ch;
+    //             }
+    //         }
+    //     }
+    // }
 
     render() {
         const { classes } = this.props;
@@ -137,7 +137,6 @@ export default useStyles(class PSTable extends Component {
         return (
             <div className={classes.container}>
                 {/* <div id="demo">{jsonTable()}</div> */}
-                {/* <Button onClick={(e) => {tablesToExcel(e, ['ps-table-y1','ps-table-y2','ps-table-y3'], ['Year1','Year2','Year3'], 'ProgrammeStructure.xls', 'Excel')}}>Export to CSV</Button> */}
                 <h1>Year 1</h1>
                 <table id="ps-table-y1" class="table2excel">
                     <tr>
@@ -149,46 +148,46 @@ export default useStyles(class PSTable extends Component {
                         <th>Month</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
-                        this.state.AprilPS.map((item, index) => {
+                        this.state.Tri1PS.map((item, index) => {
                             if(item.defaultYear === 1) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
                     : (this.state.intakeNum === 1) ?
-                        this.state.JulyPS.map((item, index) => {
+                        this.state.Tri2PS.map((item, index) => {
                             if(item.defaultYear === 1) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
-                    : this.state.NovPS.map((item, index) => {
+                    : this.state.Tri3PS.map((item, index) => {
                             if(item.defaultYear === 1) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
@@ -205,46 +204,46 @@ export default useStyles(class PSTable extends Component {
                         <th>Month</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
-                        this.state.AprilPS.map((item, index) => {
+                        this.state.Tri1PS.map((item, index) => {
                             if(item.defaultYear === 2) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
                     : (this.state.intakeNum === 1) ?
-                        this.state.JulyPS.map((item, index) => {
+                        this.state.Tri2PS.map((item, index) => {
                             if(item.defaultYear === 2) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
-                    : this.state.NovPS.map((item, index) => {
+                    : this.state.Tri3PS.map((item, index) => {
                             if(item.defaultYear === 2) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
@@ -261,46 +260,46 @@ export default useStyles(class PSTable extends Component {
                         <th>Month</th>
                     </tr>
                     {(this.state.intakeNum === 0) ?
-                        this.state.AprilPS.map((item, index) => {
+                        this.state.Tri1PS.map((item, index) => {
                             if(item.defaultYear === 3) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
                     : (this.state.intakeNum === 1) ?
-                        this.state.JulyPS.map((item, index) => {
+                        this.state.Tri2PS.map((item, index) => {
                             if(item.defaultYear === 3) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })
-                    : this.state.NovPS.map((item, index) => {
+                    : this.state.Tri3PS.map((item, index) => {
                             if(item.defaultYear === 3) {
                                 return (
-                                        <tr>
-                                            <td>{ item.type }</td>
-                                            <td>{ item.code }</td>
-                                            <td>{ item.subject }</td>
-                                            <td>{ item.ch }</td>
-                                            <td>{ item.defaultTri }</td>
-                                            <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
-                                        </tr>
+                                    <tr>
+                                        <td>{ item.type }</td>
+                                        <td>{ item.code }</td>
+                                        <td>{ item.subject }</td>
+                                        <td>{ item.ch }</td>
+                                        <td>{ item.defaultTri }</td>
+                                        <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
+                                    </tr>
                                 );
                             }
                         })

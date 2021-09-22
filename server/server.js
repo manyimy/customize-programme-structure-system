@@ -2,8 +2,11 @@ const express = require("express");
 const app = express();
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/login', (req, res) => {
   res.send({
@@ -21,6 +24,18 @@ app.get('/*', (req, res) => {
 // app.get("/", (req, res, next) => {
 //   res.send("Civil management");
 // });
+
+app.post('/trimesters', (req, res) => {
+  filePath = __dirname + '/constants/trimesters.json';
+  console.log(req.body.newData);
+
+  fs.writeFile(filePath, JSON.stringify(req.body.newData), function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was saved!");
+  });
+});
 
 app.listen(4000, () => {
   console.log("Listing on port 4000");
