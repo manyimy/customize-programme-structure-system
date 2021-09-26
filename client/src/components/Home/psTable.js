@@ -160,7 +160,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     : (this.state.intakeNum === 1) ?
                         this.state.Tri2PS.map((item, index) => {
@@ -175,7 +175,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     : this.state.Tri3PS.map((item, index) => {
                             if(item.defaultYear === 1) {
@@ -189,7 +189,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     }
                 </table>
@@ -216,7 +216,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     : (this.state.intakeNum === 1) ?
                         this.state.Tri2PS.map((item, index) => {
@@ -231,7 +231,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     : this.state.Tri3PS.map((item, index) => {
                             if(item.defaultYear === 2) {
@@ -245,7 +245,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     }
                 </table>
@@ -272,7 +272,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     : (this.state.intakeNum === 1) ?
                         this.state.Tri2PS.map((item, index) => {
@@ -287,7 +287,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     : this.state.Tri3PS.map((item, index) => {
                             if(item.defaultYear === 3) {
@@ -301,7 +301,7 @@ export default useStyles(class PSTable extends Component {
                                         <td>{ this.state.Trimesters[item.defaultTri-1] }</td>
                                     </tr>
                                 );
-                            }
+                            } else { return <></> }
                         })
                     }
                 </table>

@@ -69,7 +69,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, setToken } = this.props;
+    const { classes } = this.props;
 
     const handleSubmit = async e => {
       e.preventDefault();

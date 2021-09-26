@@ -178,9 +178,9 @@ export default useStyles(class Home extends React.Component {
               var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
               dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerHTML;
               var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
-              dataFormula = (dataFormula)?dataFormula:(appname=='Calc' && dataType=='DateTime')?dataValue:null;
-              ctx = {  attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
-                     , nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
+              dataFormula = (dataFormula)?dataFormula:(appname==='Calc' && dataType==='DateTime')?dataValue:null;
+              ctx = {  attributeStyleID: (dataStyle==='Currency' || dataStyle==='Date')?' ss:StyleID="'+dataStyle+'"':''
+                     , nameType: (dataType==='Number' || dataType==='DateTime' || dataType==='Boolean' || dataType==='Error')?dataType:'String'
                      , data: (dataFormula)?'':dataValue
                      , attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
                     };

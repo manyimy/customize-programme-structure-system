@@ -47,7 +47,7 @@ export default useStyles(class TransferList extends React.Component{
       .then((response) => {
         let subject = [];
         response.data.map((value, index) => {
-          subject.push(value.code + " " + value.name);
+          return subject.push(value.code + " " + value.name);
         })
         this.setState({left: subject});
       });
