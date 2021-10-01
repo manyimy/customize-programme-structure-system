@@ -99,6 +99,18 @@ export default useStyles(class EditSubjectList extends React.Component {
       this.setState({
         subjects: list
       });
+      axios.post(API_PATH + '/subjectLists', {
+        subjects: list
+      }).then((res) => {
+        this.setState({
+          addPopMsg: 'Subject list updated successfully.',
+          alertSev: 'success',
+          openAddPop: true,
+          openList: false
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
     };
 
     const handleAdd = (event) => {
@@ -120,6 +132,18 @@ export default useStyles(class EditSubjectList extends React.Component {
           subjects: list,
           newCode: '',
           newSubject: ''
+        });
+        axios.post(API_PATH + '/subjectLists', {
+          subjects: list
+        }).then((res) => {
+          this.setState({
+            addPopMsg: 'Subject list updated successfully.',
+            alertSev: 'success',
+            openAddPop: true,
+            openList: false
+          });
+        }).catch((err) => {
+          console.log(err);
         });
       }
     };
