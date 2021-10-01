@@ -121,10 +121,10 @@ class Login extends React.Component {
                 autoComplete="current-password"
                 onChange={e => {this.setState({password: e.target.value})}}
               />
-              <FormControlLabel
+              {/* <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
-              />
+              /> */}
               <Button
                 type="submit"
                 fullWidth

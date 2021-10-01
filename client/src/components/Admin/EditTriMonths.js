@@ -1,8 +1,5 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import {writeJsonFile} from 'write-json-file';
-
-// import TriJson from '../../constants/trimesters.json';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';

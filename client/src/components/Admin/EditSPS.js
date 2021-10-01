@@ -1,18 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import {writeJsonFile} from 'write-json-file';
 
-// import TriJson from '../../constants/trimesters.json';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import axios from 'axios';
@@ -29,6 +17,7 @@ export default useStyles(class EditSPS extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      psList: []
     }
   }
 

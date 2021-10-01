@@ -12,9 +12,14 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+// import MuiDialogContent from '@material-ui/core/DialogContent';
+// import MuiDialogActions from '@material-ui/core/DialogActions';
 import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
 import MuiAlert from '@material-ui/lab/Alert';
+import Paper from '@material-ui/core/Paper';
 
 import axios from 'axios';
 const API_PATH = process.env.REACT_APP_API_PATH;
@@ -27,6 +32,25 @@ const useStyles = withStyles((theme) => ({
   btnSL: {
     width: "100%",
     marginTop: 30
+  },
+  listPaper: {
+    width: "80vw",
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginBottom: "15px",
+    height: "70vh",
+    overflowY: "scroll",
+  },
+  gridContainer: {
+    width: "80vw",
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  codeInput: {
+    marginRight: "20px",
+  },
+  addBtn: {
+    float: "right"
   }
 }));
 
@@ -35,7 +59,6 @@ export default useStyles(class EditSubjectList extends React.Component {
     super(props);
     this.state = {
       subjects: [],
-      openList: false,
       openAddPop: false,
       addPopMsg: '',
       newCode: '',
@@ -74,14 +97,6 @@ export default useStyles(class EditSubjectList extends React.Component {
 
   render(){
     const { classes } = this.props;
-    const handleListOpen = () => {
-      this.setState({openList: true});
-    };
-  
-    const handleCloseList = () => {
-      this.setState({openList: false});
-    };
-
     const handleCloseSnackbar = () => {
       this.setState({openAddPop: false});
     };
@@ -118,57 +133,28 @@ export default useStyles(class EditSubjectList extends React.Component {
       }
     };
 
-    const handleDoneList = (event) => {
-      event.preventDefault();
-      axios.post(API_PATH + '/subjectLists', {
-        subjects: this.state.subjects
-      }).then((res) => {
-        this.setState({
-          addPopMsg: 'Subject list updated successfully.',
-          alertSev: 'success',
-          openAddPop: true,
-          openList: false
-        });
-      }).catch((err) => {
-        console.log(err);
-      })
-    }
-
     return (
       <div>
-        <Grid container spacing={3}>
-          <Grid item xs>
-          </Grid>
-          <Grid item xs={1.5}>
-            <Button className={classes.btnSL} variant="contained" color="primary" onClick={handleListOpen}>
-              Edit Subject List
-            </Button>
-          </Grid>
-          <Grid item xs>
-          </Grid>
-        </Grid>          
-        <Dialog open={this.state.openList} onClose={handleCloseList} aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Edit Subject List</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <List dense={true}>
-                {this.state.subjects.map((value, index) => {
-                  const labelId = `checkbox-list-label-${value.code}`;
+        <Paper className={classes.listPaper} elevation={2}>
+          <List dense={true}>
+            {this.state.subjects.map((value, index) => {
+              const labelId = `checkbox-list-label-${value.code}`;
 
-                  return (
-                    <ListItem onClick={(e) => {handleDelete(e, index)}} >
-                      <ListItemText id={labelId} primary={`${value.code + " - " + value.name}`} />
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItem>
-                  );
-                })}
-              </List>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
+              return (
+                <ListItem onClick={(e) => {handleDelete(e, index)}} >
+                  <ListItemText id={labelId} primary={`${value.code + " - " + value.name}`} />
+                  <IconButton edge="end" aria-label="delete">
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Paper>
+        <Grid container spacing={3} className={classes.gridContainer}>
+          <Grid item xs={8}>
             <TextField
+              className={classes.codeInput}
               margin="dense"
               id="code"
               placeholder="Code"
@@ -188,8 +174,12 @@ export default useStyles(class EditSubjectList extends React.Component {
               onChange={this.onChange.bind(this)}
               value={this.state.newSubject}
             />
-            <Button 
+          </Grid>
+          <Grid item xs={4}>
+            <Button
+              className={classes.addBtn}
               id="add-subject-button"
+              variant="contained"
               onClick={handleAdd} 
               color="primary"
               disabled={
@@ -200,14 +190,8 @@ export default useStyles(class EditSubjectList extends React.Component {
             >
               Add
             </Button>
-            <Button onClick={handleCloseList} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleDoneList} color="primary">
-              Done
-            </Button>
-          </DialogActions>
-        </Dialog>
+          </Grid>
+        </Grid>
         <Snackbar open={this.state.openAddPop} autoHideDuration={6000} onClose={handleCloseSnackbar}>
           <Alert onClose={handleCloseSnackbar} severity={this.state.alertSev}>
             {this.state.addPopMsg}
