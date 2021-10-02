@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 
 import EditSubjectList from '../../components/Admin/EditSubjectList';
 import EditTriMonths from '../../components/Admin/EditTriMonths';
+import EditSPS from '../../components/Admin/EditSPS';
 
 const useStyles = withStyles((theme) => ({
   container: {
@@ -69,7 +70,7 @@ export default useStyles(class Admin extends React.Component {
     super(props);
     this.state = {
       token: getToken(),
-      value: 0,
+      value: 2,
     }
   }
 
@@ -85,9 +86,9 @@ export default useStyles(class Admin extends React.Component {
     };
 
     // DEBUG
-    if(!this.state.token) {
-      return <Login setToken={setToken} parentCallback={this.callbackFunction} />
-    }
+    // if(!this.state.token) {
+    //   return <Login setToken={setToken} parentCallback={this.callbackFunction} />
+    // }
 
     return (
       <div className={classes.container}>
@@ -111,7 +112,7 @@ export default useStyles(class Admin extends React.Component {
           <EditSubjectList />
         </TabPanel>
         <TabPanel value={this.state.value} index={2}>
-          Item Three
+          <EditSPS />
         </TabPanel>
       </div>
     );

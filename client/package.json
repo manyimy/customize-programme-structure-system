@@ -37,6 +37,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@mui/x-data-grid-generator": "^4.0.1",
+    "@mui/x-data-grid-pro": "^4.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1"
   }
