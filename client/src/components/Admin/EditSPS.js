@@ -84,7 +84,9 @@ export default useStyles(class EditSPS extends React.Component {
       psList: [],
       trimesters: [],
       openSaveBtn: false,
-      openAddPop: false,
+      openSnackbar: false,
+      snackbarMsg: '',
+      snackbarSev: 'error',
       openDialog: false,
       toDelete: null,
       selectedTri: null,
@@ -143,7 +145,11 @@ export default useStyles(class EditSPS extends React.Component {
     const { classes } = this.props;
 
     const handleCloseSnackbar = () => {
-      this.setState({openAddPop: false});
+      this.setState({
+        snackbarMsg: '',
+        snackbarSev: '',
+        openSnackbar: false
+      });
     };
 
     const onChange = (e, year) => {
@@ -193,33 +199,48 @@ export default useStyles(class EditSPS extends React.Component {
 
     const handleAdd = (e, year) => {
       e.preventDefault();
-      let updatePS = this.state.editingPS;
-      updatePS.push({
-        "key": updatePS[updatePS.length-1].key + 1,
-        "code": this.state.inputs[year].code,
-        "subject": this.state.inputs[year].subject,
-        "ch": Number(this.state.inputs[year].ch),
-        "type": this.state.inputs[year].type,
-        "defaultTri": Number(this.state.inputs[year].defaultTri),
-        "defaultYear": year + 1
-      })
-      // this.setState({editingPS: updatePS});
-      console.log(year);
-      console.log(this.state.inputs);
-      this.setState((prevState, props) => ({
-        inputs: [
-          ...prevState.inputs.slice(0, year),
-          { 
-            type: "",
-            code: "",
-            subject: "",
-            ch: "",
-            defaultTri: "",
-          },
-          ...prevState.inputs.slice(year + 1),
-        ],
-        editingPS: JSON.parse(JSON.stringify(updatePS))
-      }));
+      if(!this.state.inputs[year].subject || !this.state.inputs[year].ch ||
+        !this.state.inputs[year].defaultTri) {
+        this.setState({
+          snackbarMsg: 'Subject name, credit hours and default trimesters cannot be empty.',
+          snackbarSev: 'error',
+          openSnackbar: true
+        });
+      } else if(this.state.inputs[year].ch === 0) {
+        this.setState({
+          snackbarMsg: 'Credit hours cannot be zero.',
+          snackbarSev: 'error',
+          openSnackbar: true
+        });
+      } else {
+        let updatePS = this.state.editingPS;
+        updatePS.push({
+          "key": updatePS[updatePS.length-1].key + 1,
+          "code": this.state.inputs[year].code,
+          "subject": this.state.inputs[year].subject,
+          "ch": Number(this.state.inputs[year].ch),
+          "type": this.state.inputs[year].type,
+          "defaultTri": Number(this.state.inputs[year].defaultTri),
+          "defaultYear": year + 1
+        })
+        // this.setState({editingPS: updatePS});
+        console.log(year);
+        console.log(this.state.inputs);
+        this.setState((prevState, props) => ({
+          inputs: [
+            ...prevState.inputs.slice(0, year),
+            { 
+              type: "",
+              code: "",
+              subject: "",
+              ch: "",
+              defaultTri: "",
+            },
+            ...prevState.inputs.slice(year + 1),
+          ],
+          editingPS: JSON.parse(JSON.stringify(updatePS))
+        }));
+      }
     }
 
     const handleDelete = (e) => {
@@ -235,7 +256,9 @@ export default useStyles(class EditSPS extends React.Component {
         ps: this.state.editingPS
       }).then((res) => {
         this.setState({
-          openAddPop: true,
+          snackbarMsg: 'Updated Successfully.',
+          snackbarSev: 'success',
+          openSnackbar: true,
           selectedTri: null
         });
         window.location.reload(false);
@@ -308,6 +331,7 @@ export default useStyles(class EditSPS extends React.Component {
                       margin="dense"
                       id="ch"
                       placeholder="Credit Hour"
+                      type="number"
                       onChange={(e) => onChange(e, 0)}
                       value={this.state.inputs[0].ch}
                       name="ch"
@@ -319,6 +343,7 @@ export default useStyles(class EditSPS extends React.Component {
                       margin="dense"
                       id="defaultTri"
                       placeholder="Default Trimester"
+                      type="number"
                       onChange={(e) => onChange(e, 0)}
                       value={this.state.inputs[0].defaultTri}
                       name="defaultTri"
@@ -422,6 +447,7 @@ export default useStyles(class EditSPS extends React.Component {
                       margin="dense"
                       id="ch"
                       placeholder="Credit Hour"
+                      type="number"
                       onChange={(e) => onChange(e, 1)}
                       value={this.state.inputs[1].ch}
                       name="ch"
@@ -433,6 +459,7 @@ export default useStyles(class EditSPS extends React.Component {
                       margin="dense"
                       id="defaultTri"
                       placeholder="Default Trimester"
+                      type="number"
                       onChange={(e) => onChange(e, 1)}
                       value={this.state.inputs[1].defaultTri}
                       name="defaultTri"
@@ -536,6 +563,7 @@ export default useStyles(class EditSPS extends React.Component {
                       margin="dense"
                       id="ch"
                       placeholder="Credit Hour"
+                      type="number"
                       onChange={(e) => onChange(e, 2)}
                       value={this.state.inputs[2].ch}
                       name="ch"
@@ -547,6 +575,7 @@ export default useStyles(class EditSPS extends React.Component {
                       margin="dense"
                       id="defaultTri"
                       placeholder="Default Trimester"
+                      type="number"
                       onChange={(e) => onChange(e, 2)}
                       value={this.state.inputs[2].defaultTri}
                       name="defaultTri"
@@ -643,9 +672,9 @@ export default useStyles(class EditSPS extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-        <Snackbar open={this.state.openAddPop} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity="success">
-            Updated successfully.
+        <Snackbar open={this.state.openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity={this.state.snackbarSev}>
+            {this.state.snackbarMsg}
           </Alert>
         </Snackbar>
       </div>
