@@ -11,6 +11,11 @@ import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import axios from 'axios';
 const API_PATH = process.env.REACT_APP_API_PATH;
@@ -55,7 +60,9 @@ export default useStyles(class EditSubjectList extends React.Component {
       newCode: '',
       newSubject: '',
       errorCode: false,
-      alertSev: 'error'
+      alertSev: 'error',
+      openDialog: false,
+      deletingItem: null,
     }
   }
 
@@ -92,10 +99,10 @@ export default useStyles(class EditSubjectList extends React.Component {
       this.setState({openAddPop: false});
     };
 
-    const handleDelete = (e, key) => {
+    const handleDelete = (e) => {
       e.preventDefault();
       var list = this.state.subjects;
-      list.splice(key, 1);
+      list.splice(this.state.deletingItem, 1);
       this.setState({
         subjects: list
       });
@@ -111,6 +118,8 @@ export default useStyles(class EditSubjectList extends React.Component {
       }).catch((err) => {
         console.log(err);
       });
+
+      handleCloseDialog(e);
     };
 
     const handleAdd = (event) => {
@@ -148,6 +157,22 @@ export default useStyles(class EditSubjectList extends React.Component {
       }
     };
 
+    const handleOpenDialog = (event, index) => {
+      event.preventDefault();
+      this.setState({
+        deletingItem: index,
+        openDialog: true
+      });
+    }
+
+    const handleCloseDialog = (event) => {
+      event.preventDefault();
+      this.setState({
+        deletingItem: null,
+        openDialog: false
+      });
+    }
+
     return (
       <div>
         <Paper className={classes.listPaper} elevation={2}>
@@ -156,7 +181,7 @@ export default useStyles(class EditSubjectList extends React.Component {
               const labelId = `checkbox-list-label-${value.code}`;
 
               return (
-                <ListItem onClick={(e) => {handleDelete(e, index)}} >
+                <ListItem onClick={(e) => {handleOpenDialog(e, index)}} >
                   <ListItemText id={labelId} primary={`${value.code + " - " + value.name}`} />
                   <IconButton edge="end" aria-label="delete">
                     <DeleteIcon />
@@ -212,6 +237,27 @@ export default useStyles(class EditSubjectList extends React.Component {
             {this.state.addPopMsg}
           </Alert>
         </Snackbar>
+        <Dialog
+          open={this.state.openDialog}
+          onClose={handleCloseDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Remove subject from list?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure to remove the subject permanently?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary" autoFocus>
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} color="primary">
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

@@ -55,6 +55,20 @@ app.post('/subjectLists', (req, res) => {
   });
 });
 
+app.post('/updatePS', (req, res) => {
+  const { tri } = req.body;
+  filePath = __dirname + '/constants/tri' + tri + 'PS.json';
+  console.log(req.body.ps);
+
+  fs.writeFile(filePath, JSON.stringify(req.body.ps), function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was saved!");
+    res.status(200).send("The file was saved!");
+  });
+});
+
 app.listen(4000, () => {
   console.log("Listing on port 4000");
 });
