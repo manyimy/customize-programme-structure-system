@@ -250,24 +250,6 @@ export default useStyles(
         });
       };
 
-      // const onClickTriBtns = (e, index) => {
-      //   e.preventDefault();
-      //   let selectedTriPS =
-      //     index === 1
-      //       ? this.state.tri1PS
-      //       : index === 2
-      //       ? this.state.tri2PS
-      //       : this.state.tri3PS;
-      //   this.setState({
-      //     selectedTri: index,
-      //     editingPS: JSON.parse(JSON.stringify(selectedTriPS)),
-      //     openSaveBtn: true,
-      //   });
-
-      //   this.setState({ selectedTri: index });
-      //   // document.getElementById("psTable-container").style.display = "block";
-      // };
-
       // Confirmation dialog for delete subject from programme structure
       const handleOpenDialog = (event, index) => {
         event.preventDefault();
@@ -436,38 +418,9 @@ export default useStyles(
         this.setState({openDeletePS: false});
       };
 
-      // const onClickTriBtns = (e, index) => {
-      //   e.preventDefault();
-      //   let selectedTriPS =
-      //     index === 1
-      //       ? this.state.tri1PS
-      //       : index === 2
-      //       ? this.state.tri2PS
-      //       : this.state.tri3PS;
-      //   this.setState({
-      //     selectedTri: index,
-      //     editingPS: JSON.parse(JSON.stringify(selectedTriPS)),
-      //     openSaveBtn: true,
-      //   });
-
-      //   this.setState({ selectedTri: index });
-      //   // document.getElementById("psTable-container").style.display = "block";
-      // };
-
       // Action: Add New Programme Structure
       const handleActionAddPS = (e) => {
         e.preventDefault();
-        // for (let i = 0; i < this.state.standardPS.length; i++) {
-        //   const element = this.state.standardPS[i];
-        //   if(element.intake === this.state.selectedIntake) {
-
-        //   }
-          
-        // }
-        // this.setState({
-        //   editingPS: JSON.parse(JSON.stringify(selectedTriPS)),
-        //   openSaveBtn: true,
-        // });
         this.setState({
           openAddPS: true,
         })
@@ -616,27 +569,6 @@ export default useStyles(
               </FormControl>
             </Grid>
           </Grid>
-          {/* <div className={classes.btnGrpCont}>
-            <ButtonGroup aria-label="outlined primary button group">
-              {this.state.trimesters.map((item, index) => {
-                return (
-                  <Button
-                    variant={
-                      this.state.selectedTri === index + 1
-                        ? "contained"
-                        : "outlined"
-                    }
-                    color="primary"
-                    onClick={(e) => {
-                      onClickTriBtns(e, index + 1);
-                    }}
-                  >
-                    {"Trimester " + (index + 1)}
-                  </Button>
-                );
-              })}
-            </ButtonGroup>
-          </div> */}
           <Paper
             id="psTable-container"
             style={{ display: this.state.selectedTri ? "block" : "none" }}
@@ -676,42 +608,6 @@ export default useStyles(
                         </Select>
                       </FormControl>
                     </Grid>
-                    {/* <Grid item xs>
-                      <TextField
-                        margin="dense"
-                        id="code"
-                        placeholder="Subject Code"
-                        inputProps={{ maxLength: 7 }}
-                        // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
-                        onChange={(e) => onChange(e, 0)}
-                        // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
-                        value={this.state.inputs[0].code}
-                        name="code"
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <TextField
-                        required
-                        margin="dense"
-                        id="name"
-                        placeholder="Subject Name"
-                        onChange={(e) => onChange(e, 0)}
-                        value={this.state.inputs[0].name}
-                        name="name"
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <TextField
-                        required
-                        margin="dense"
-                        id="ch"
-                        placeholder="Credit Hour"
-                        type="number"
-                        onChange={(e) => onChange(e, 0)}
-                        value={this.state.inputs[0].ch}
-                        name="ch"
-                      />
-                    </Grid> */}
                     <Grid item xs={6}>
                       <FormControl className={classes.formControl}>
                         <Select
@@ -866,42 +762,6 @@ export default useStyles(
                         </Select>
                       </FormControl>
                     </Grid>
-                    {/* <Grid item xs>
-                      <TextField
-                        margin="dense"
-                        id="code"
-                        placeholder="Subject Code"
-                        inputProps={{ maxLength: 7 }}
-                        // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
-                        onChange={(e) => onChange(e, 1)}
-                        // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
-                        value={this.state.inputs[1].code}
-                        name="code"
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <TextField
-                        required
-                        margin="dense"
-                        id="name"
-                        placeholder="Subject Name"
-                        onChange={(e) => onChange(e, 1)}
-                        value={this.state.inputs[1].name}
-                        name="name"
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <TextField
-                        required
-                        margin="dense"
-                        id="ch"
-                        placeholder="Credit Hour"
-                        type="number"
-                        onChange={(e) => onChange(e, 1)}
-                        value={this.state.inputs[1].ch}
-                        name="ch"
-                      />
-                    </Grid> */}
                     <Grid item xs={6}>
                       <FormControl className={classes.formControl}>
                         <Select
@@ -1056,42 +916,6 @@ export default useStyles(
                         </Select>
                       </FormControl>
                     </Grid>
-                    {/* <Grid item xs>
-                      <TextField
-                        margin="dense"
-                        id="code"
-                        placeholder="Subject Code"
-                        inputProps={{ maxLength: 7 }}
-                        // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
-                        onChange={(e) => onChange(e, 2)}
-                        // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
-                        value={this.state.inputs[2].code}
-                        name="code"
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <TextField
-                        required
-                        margin="dense"
-                        id="name"
-                        placeholder="Subject Name"
-                        onChange={(e) => onChange(e, 2)}
-                        value={this.state.inputs[2].name}
-                        name="name"
-                      />
-                    </Grid>
-                    <Grid item xs>
-                      <TextField
-                        required
-                        margin="dense"
-                        id="ch"
-                        placeholder="Credit Hour"
-                        type="number"
-                        onChange={(e) => onChange(e, 2)}
-                        value={this.state.inputs[2].ch}
-                        name="ch"
-                      />
-                    </Grid> */}
                     <Grid item xs={6}>
                       <FormControl className={classes.formControl}>
                         <Select
@@ -1212,29 +1036,6 @@ export default useStyles(
                 </TableBody>
               </Table>
             </TableContainer>
-            {/* <Tooltip title="Save Changes" aria-label="save">
-              <Fab
-                className={classes.saveBtn}
-                color="primary"
-                aria-label="save"
-                disabled={
-                  (this.state.selectedTri === 1 &&
-                    JSON.stringify(this.state.editingPS) ===
-                      JSON.stringify(this.state.tri1PS)) ||
-                  (this.state.selectedTri === 2 &&
-                    JSON.stringify(this.state.editingPS) ===
-                      JSON.stringify(this.state.tri2PS)) ||
-                  (this.state.selectedTri === 3 &&
-                    JSON.stringify(this.state.editingPS) ===
-                      JSON.stringify(this.state.tri3PS))
-                    ? true
-                    : false
-                }
-                onClick={handleSave}
-              >
-                <SaveIcon />
-              </Fab>
-            </Tooltip> */}
           </Paper>
 
           {/* Delete Subject From Programme Structure Confirmation Dialog */}
