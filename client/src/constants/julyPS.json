@@ -85,7 +85,7 @@
         "code": "",
         "subject": "U2",
         "ch": 3,
-        "type": "mpu2",
+        "type": "mpu",
         "defaultTri": 3,
         "defaultYear": 1
     },
@@ -94,7 +94,7 @@
         "code": "",
         "subject": "U4",
         "ch": 2,
-        "type": "mpu4",
+        "type": "mpu",
         "defaultTri": 3,
         "defaultYear": 1
     },
@@ -139,7 +139,7 @@
         "code": "",
         "subject": "U3",
         "ch": 3,
-        "type": "mpu3",
+        "type": "mpu",
         "defaultTri": 1,
         "defaultYear": 2
     },
@@ -265,7 +265,7 @@
         "code": "",
         "subject": "U1",
         "ch": 3,
-        "type": "mpu1",
+        "type": "mpu",
         "defaultTri": 3,
         "defaultYear": 3
     },
@@ -274,7 +274,7 @@
         "code": "",
         "subject": "U1",
         "ch": 3,
-        "type": "mpu1",
+        "type": "mpu",
         "defaultTri": 3,
         "defaultYear": 3
     },
@@ -283,7 +283,7 @@
         "code": "PWC1010",
         "subject": "Workplace Communication",
         "ch": 3,
-        "type": "uni",
+        "type": "core",
         "defaultTri": 3,
         "defaultYear": 3
     }

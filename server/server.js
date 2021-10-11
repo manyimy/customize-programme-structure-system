@@ -42,8 +42,8 @@ app.post('/trimesters', (req, res) => {
   });
 });
 
-app.post('/subjectLists', (req, res) => {
-  filePath = __dirname + '/constants/subjectLists.json';
+app.post('/subjectList', (req, res) => {
+  filePath = __dirname + '/constants/subjectList.json';
   console.log(req.body.subjects);
 
   fs.writeFile(filePath, JSON.stringify(req.body.subjects), function(err) {
@@ -61,6 +61,20 @@ app.post('/updatePS', (req, res) => {
   console.log(req.body.ps);
 
   fs.writeFile(filePath, JSON.stringify(req.body.ps), function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was saved!");
+    res.status(200).send("The file was saved!");
+  });
+});
+
+app.post('/standardPS', (req, res) => {
+  const { newPS } = req.body;
+  filePath = __dirname + '/constants/standardPS.json';
+  console.log(req.body.newPS);
+
+  fs.writeFile(filePath, JSON.stringify(req.body.newPS), function(err) {
     if(err) {
         return console.log(err);
     }

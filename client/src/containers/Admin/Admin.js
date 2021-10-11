@@ -10,7 +10,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 
 import EditSubjectList from '../../components/Admin/EditSubjectList';
-import EditTriMonths from '../../components/Admin/EditTriMonths';
+// import EditTriMonths from '../../components/Admin/EditTriMonths';
 import EditSPS from '../../components/Admin/EditSPS';
 
 const useStyles = withStyles((theme) => ({
@@ -70,7 +70,7 @@ export default useStyles(class Admin extends React.Component {
     super(props);
     this.state = {
       token: getToken(),
-      value: 2,
+      value: 1,
     }
   }
 
@@ -100,18 +100,18 @@ export default useStyles(class Admin extends React.Component {
             textColor="primary"
             centered
           >
-            <Tab label="Edit Trimesters Month" {...a11yProps(0)} />
-            <Tab label="Edit Subject List" {...a11yProps(1)} />
-            <Tab label="Edit Programme Structure" {...a11yProps(2)} />
+            {/* <Tab label="Edit Trimesters Month" {...a11yProps(0)}/> */}
+            <Tab label="Edit Subject List" {...a11yProps(0)}/>
+            <Tab label="Edit Programme Structure" {...a11yProps(1)}/>
           </Tabs>
         </Paper>
-        <TabPanel value={this.state.value} index={0}>
+        {/* <TabPanel value={this.state.value} index={0}>
           <EditTriMonths />
-        </TabPanel>
-        <TabPanel value={this.state.value} index={1}>
+        </TabPanel> */}
+        <TabPanel value={this.state.value} index={0}>
           <EditSubjectList />
         </TabPanel>
-        <TabPanel value={this.state.value} index={2}>
+        <TabPanel value={this.state.value} index={1}>
           <EditSPS />
         </TabPanel>
       </div>

@@ -30,7 +30,7 @@ const useStyles = withStyles((theme) => ({
     marginTop: 30
   },
   listPaper: {
-    width: "80vw",
+    width: "45vw",
     marginLeft: "auto",
     marginRight: "auto",
     marginBottom: "15px",
@@ -38,12 +38,17 @@ const useStyles = withStyles((theme) => ({
     overflowY: "scroll",
   },
   gridContainer: {
-    width: "80vw",
+    width: "45vw",
     marginLeft: "auto",
     marginRight: "auto",
   },
   codeInput: {
-    marginRight: "20px",
+    // marginRight: "20px",
+  },
+  addBtnGrid: {
+    display: "flex",
+    justifyContent: "right",
+    alignItems: "center",
   },
   addBtn: {
     float: "right"
@@ -57,17 +62,17 @@ export default useStyles(class EditSubjectList extends React.Component {
       subjects: [],
       openAddPop: false,
       addPopMsg: '',
+      alertSev: 'error',
       newCode: '',
       newSubject: '',
       errorCode: false,
-      alertSev: 'error',
       openDialog: false,
       deletingItem: null,
     }
   }
 
   componentDidMount() {
-    axios.get( API_PATH + "/subjectLists.json")
+    axios.get( API_PATH + "/subjectList.json")
       .then((response) => {
         this.setState({
           subjects: response.data
@@ -80,12 +85,12 @@ export default useStyles(class EditSubjectList extends React.Component {
       this.setState({
         newCode: event.target.value
       });
-      if (event.target.value.match(/[A-Z]{3}[0-9]{4}/)) {
-        this.setState({ errorCode: false });
-      } else {
-        this.setState({ errorCode: true });
-        event.target.helperText = "Invalid format: ABC1234";
-      }
+      // if (event.target.value.match(/[A-Z]{3}[0-9]{4}/)) {
+      //   this.setState({ errorCode: false });
+      // } else {
+      //   this.setState({ errorCode: true });
+      //   event.target.helperText = "Invalid format: ABC1234";
+      // }
     } else {
       this.setState({
         newSubject: event.target.value
@@ -106,7 +111,7 @@ export default useStyles(class EditSubjectList extends React.Component {
       this.setState({
         subjects: list
       });
-      axios.post(API_PATH + '/subjectLists', {
+      axios.post(API_PATH + '/subjectList', {
         subjects: list
       }).then((res) => {
         this.setState({
@@ -142,7 +147,7 @@ export default useStyles(class EditSubjectList extends React.Component {
           newCode: '',
           newSubject: ''
         });
-        axios.post(API_PATH + '/subjectLists', {
+        axios.post(API_PATH + '/subjectList', {
           subjects: list
         }).then((res) => {
           this.setState({
@@ -192,7 +197,7 @@ export default useStyles(class EditSubjectList extends React.Component {
           </List>
         </Paper>
         <Grid container spacing={3} className={classes.gridContainer}>
-          <Grid item xs={8}>
+          <Grid item xs={4}>
             <TextField
               className={classes.codeInput}
               margin="dense"
@@ -204,7 +209,9 @@ export default useStyles(class EditSubjectList extends React.Component {
               variant="outlined"
               helperText={ this.state.errorCode ? "Invalid format: ABC1234" : ""}
               value={this.state.newCode}
-            />
+            />            
+          </Grid>
+          <Grid item xs={4}>
             <TextField
               required
               margin="dense"
@@ -215,7 +222,7 @@ export default useStyles(class EditSubjectList extends React.Component {
               value={this.state.newSubject}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid className={classes.addBtnGrid} item xs={4}>
             <Button
               className={classes.addBtn}
               id="add-subject-button"
@@ -223,8 +230,9 @@ export default useStyles(class EditSubjectList extends React.Component {
               onClick={handleAdd} 
               color="primary"
               disabled={
-                (this.state.newCode && this.state.newSubject && 
-                  this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)) 
+                (this.state.newCode && this.state.newSubject 
+                  // && this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)
+                  ) 
                   ? false : true
               }
             >

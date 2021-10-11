@@ -10,7 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-// import subjects from '../../constants/subjectLists.json'
+// import subjects from '../../constants/subjectList.json'
 import axios from 'axios';
 
 const useStyles = withStyles((theme) => ({
@@ -22,7 +22,7 @@ const useStyles = withStyles((theme) => ({
   },
   list: {
     width: 380,
-    height: 230,
+    height: 300,
     backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
   },
@@ -43,7 +43,7 @@ export default useStyles(class TransferList extends React.Component{
 
   // set the subjects from json file to the transfer list once this page is load
   componentDidMount(){
-    axios.get(process.env.REACT_APP_API_PATH + "/subjectLists.json")
+    axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")
       .then((response) => {
         let subject = [];
         response.data.map((value, index) => {

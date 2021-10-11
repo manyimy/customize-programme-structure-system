@@ -1,31 +1,48 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import { withStyles } from "@material-ui/core/styles";
 
-import MuiAlert from '@material-ui/lab/Alert';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import SaveIcon from '@material-ui/icons/Save';
-import Fab from '@material-ui/core/Fab';
-import Tooltip from '@material-ui/core/Tooltip';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from "@material-ui/lab/Alert";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
+import { ButtonGroup } from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import SaveIcon from "@material-ui/icons/Save";
+import Fab from "@material-ui/core/Fab";
+import Tooltip from "@material-ui/core/Tooltip";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Snackbar from "@material-ui/core/Snackbar";
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Switch from '@material-ui/core/Switch';
+import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+import FileCopyIcon from '@material-ui/icons/FileCopyOutlined';
+import PrintIcon from '@material-ui/icons/Print';
+import ShareIcon from '@material-ui/icons/Share';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 
-import axios from 'axios';
+import axios from "axios";
 const API_PATH = process.env.REACT_APP_API_PATH;
 
 function Alert(props) {
@@ -33,17 +50,14 @@ function Alert(props) {
 }
 
 const useStyles = withStyles((theme) => ({
-  root: {
-
-  },
-  tableCont: {
-    // display: "none",
+  selectionCont: {
+    justifyContent: "center"
   },
   table: {
     width: "70vw",
     marginLeft: "auto",
     marginRight: "auto",
-    overflowX: "visible"
+    overflowX: "visible",
   },
   tableBody: {
     overflowY: "scroll",
@@ -53,631 +67,1309 @@ const useStyles = withStyles((theme) => ({
     marginBottom: "20px",
   },
   typoh1: {
-    textAlign: "center"
-  },
-  gridContainer: {
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-  codeInput: {
-    marginRight: "20px",
+    textAlign: "center",
   },
   addBtn: {
-    float: "right"
+    float: "right",
   },
   saveBtn: {
     float: "right",
     position: "fixed",
     bottom: "3vh",
     right: "3vw",
-  }
+  },
+  formControl: {
+    // margin: theme.spacing(1),
+    minWidth: "100%",
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(0.5),
+  },
+  speedDial: {
+    position: 'fixed',
+    '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
+      bottom: theme.spacing(5),
+      right: theme.spacing(5),
+    },
+    '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
+      top: theme.spacing(5),
+      left: theme.spacing(5),
+    },
+    zIndex: 10
+  },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-export default useStyles(class EditSPS extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      psList: [],
-      trimesters: [],
-      openSaveBtn: false,
-      openSnackbar: false,
-      snackbarMsg: '',
-      snackbarSev: 'error',
-      openDialog: false,
-      toDelete: null,
-      selectedTri: null,
-      tri1PS: [],
-      tri2PS: [],
-      tri3PS: [],
-      editingPS: [],
-      inputs: [
-        {
-          type: null,
-          code: null,
-          subject: null,
-          ch: null,
-          defaultTri: null,
-        },
-        {
-          type: null,
-          code: null,
-          subject: null,
-          ch: null,
-          defaultTri: null,
-        },
-        {
-          type: null,
-          code: null,
-          subject: null,
-          ch: null,
-          defaultTri: null,
-        },
-      ]
-    }
-  }
-
-  componentDidMount() {
-    axios.get( API_PATH + "/trimesters.json")
-      .then((response) => {
-        this.setState({
-          trimesters: response.data
-        });
-      });
-    for(let i = 1; i < 4; i++){
-      let name = "tri" + i + "PS";
-      axios.get( API_PATH + "/" + name + ".json")
-        .then((ps) => {
-          console.log(ps.data);
-          this.setState({
-            [name]: ps.data
-          });
-        }).catch((err) => {
-          console.log(err);
-        });
-    }
-  }
-  
-  render(){
-    const { classes } = this.props;
-
-    const handleCloseSnackbar = () => {
-      this.setState({
-        snackbarMsg: '',
-        snackbarSev: '',
-        openSnackbar: false
-      });
-    };
-
-    const onChange = (e, year) => {
-      let { name, value } = e.target;
-      this.setState((prevState, props) => ({
+export default useStyles(
+  class EditSPS extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        years: [],
+        // trimesters: [],
+        subjectList: [],
+        selectionDisable: false,    // disable initial selection of intake and spec
+        openSaveBtn: false,   // save programme structure button visibility
+        openSnackbar: false,  // snackbar visibility
+        snackbarMsg: "",      // snackbar message
+        snackbarSev: "error", // snackbar severity
+        openDeetePSDialog: false,    // open confirmation dialog
+        openSpeedDial: false, // open speed dial all actions
+        toDelete: -99,        // index of subject to delete
+        selectedIntake: "",   // initial selection intake
+        selectedSpec: "",     // initial selection specialization
+        standardPS: [],       // standard programme structure from server JSON file
+        // tri1PS: [],           // old
+        // tri2PS: [],           // old
+        // tri3PS: [],           // old
+        editingPS: [],        // current editting programme structure (old)
         inputs: [
-          ...prevState.inputs.slice(0, year),
-          { 
-            ...prevState.inputs[year],
-            [name]: value
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
           },
-          ...prevState.inputs.slice(year + 1),
-        ]
-      }));
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+        ],
+        openAddPS: false,
+        newIntakeMonth: "",
+        newIntakeYear: "",
+      };
     }
 
-    const onClickTriBtns = (e, index) => {
-      e.preventDefault();
-      let selectedTriPS = (index === 1) ? this.state.tri1PS 
-                          : (index === 2) ? this.state.tri2PS 
-                            : this.state.tri3PS;
-      this.setState({
-        selectedTri: index,
-        editingPS: JSON.parse(JSON.stringify(selectedTriPS)),
-        openSaveBtn: true
-      });
-  
-      this.setState({selectedTri: index});
-      // document.getElementById("psTable-container").style.display = "block";
-    }
-
-    const handleOpenDialog = (event, index) => {
-      event.preventDefault();
-      this.setState({
-        toDelete: index,
-        openDialog: true
-      });
-    }
-
-    const handleCloseDialog = (event) => {
-      event.preventDefault();
-      this.setState({
-        toDelete: null,
-        openDialog: false
-      });
-    }
-
-    const handleAdd = (e, year) => {
-      e.preventDefault();
-      if(!this.state.inputs[year].subject || !this.state.inputs[year].ch ||
-        !this.state.inputs[year].defaultTri) {
+    componentDidMount() {
+      axios.get(API_PATH + "/subjectList.json").then((response) => {
         this.setState({
-          snackbarMsg: 'Subject name, credit hours and default trimesters cannot be empty.',
-          snackbarSev: 'error',
-          openSnackbar: true
+          subjectList: response.data,
         });
-      } else if(this.state.inputs[year].ch === 0) {
+        console.log(response.data);
+      });
+      axios.get(API_PATH + "/standardPS.json").then((response) => {
+        console.log(response.data);
+        console.log(response.data[0].PS["Software Engineering"][response.data[0].PS["Software Engineering"].length-1].key);
+        console.log(response.data[0].intake);
         this.setState({
-          snackbarMsg: 'Credit hours cannot be zero.',
-          snackbarSev: 'error',
-          openSnackbar: true
+          standardPS: response.data,
         });
-      } else {
-        let updatePS = this.state.editingPS;
-        updatePS.push({
-          "key": updatePS[updatePS.length-1].key + 1,
-          "code": this.state.inputs[year].code,
-          "subject": this.state.inputs[year].subject,
-          "ch": Number(this.state.inputs[year].ch),
-          "type": this.state.inputs[year].type,
-          "defaultTri": Number(this.state.inputs[year].defaultTri),
-          "defaultYear": year + 1
-        })
-        // this.setState({editingPS: updatePS});
-        console.log(year);
-        console.log(this.state.inputs);
+      });
+      // for (let i = 1; i < 4; i++) {
+      //   let name = "tri" + i + "PS";
+      //   axios
+      //     .get(API_PATH + "/" + name + ".json")
+      //     .then((ps) => {
+      //       console.log(ps.data);
+      //       this.setState({
+      //         [name]: ps.data,
+      //       });
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //     });
+      // }
+      let thisYear = (new Date()).getFullYear();
+      let years = [];
+      for(let i = thisYear-1; years.length <= 5; i++) {
+        years.push(i);
+      }
+      this.setState({years});
+    }
+
+    render() {
+      const { classes } = this.props;
+
+      const actions = [
+        { icon: <AddIcon />, name: 'Add', action: (e) => handleActionAddPS(e), disabled: this.state.selectionDisable },
+        { icon: <FileCopyIcon />, name: 'Copy', action: (e) => clickAction(e), disabled: this.state.selectionDisable },
+        { icon: <EditIcon />, name: 'Edit', action: (e) => handleActionEditPS(e), disabled: (this.state.selectedIntake && this.state.selectedSpec) ? false : true },
+        { icon: <SaveIcon />, name: 'Save', action: (e) => handleSave(e), disabled: !this.state.selectionDisable },
+        { icon: <DeleteIcon />, name: 'Delete', action: (e) => handleActionDeletePS(e), disabled: (this.state.selectedIntake) ? false : true },
+      ];
+
+      const handleCloseSnackbar = () => {
+        this.setState({
+          snackbarMsg: "",
+          snackbarSev: "",
+          openSnackbar: false,
+        });
+      };
+
+      // onchange input new subjects 
+      const onChange = (e, year) => {
+        let { name, value } = e.target;
         this.setState((prevState, props) => ({
           inputs: [
             ...prevState.inputs.slice(0, year),
-            { 
-              type: "",
-              code: "",
-              subject: "",
-              ch: "",
-              defaultTri: "",
+            {
+              ...prevState.inputs[year],
+              [name]: (name === "ch" || name === "defaultTri") ? Number(value) : value,
             },
             ...prevState.inputs.slice(year + 1),
           ],
-          editingPS: JSON.parse(JSON.stringify(updatePS))
         }));
-      }
-    }
+        if(name === "subject") {
+          // console.log(value.substring());
+          // console.log(this.state.subjectList[key].code);
+          this.setState((prevState, props) => ({
+            inputs: [
+              ...prevState.inputs.slice(0, year),
+              {
+                ...prevState.inputs[year],
+                code: value.substring(0, value.indexOf(" - ")),
+                name: value.substring(value.indexOf(" - ") + 3, value.indexOf(" [") - 1),
+                ch: Number(value.substring(value.length - 2, value.length - 1)),
+              },
+              ...prevState.inputs.slice(year + 1),
+            ],
+          }));
+        }
+        console.log(this.state.inputs);
+      };
 
-    const handleDelete = (e) => {
-      let arrayCopy = this.state.editingPS;
-      arrayCopy.splice(this.state.toDelete, 1);
-      this.setState({editingPS: JSON.parse(JSON.stringify(arrayCopy))});
-      handleCloseDialog(e);
-    }
-
-    const handleSave = () => {
-      axios.post(API_PATH + '/updatePS',{
-        tri: this.state.selectedTri,
-        ps: this.state.editingPS
-      }).then((res) => {
+      // on select intake and specialization
+      const onChangeSelection = (e) => {
+        let { name, value } = e.target;
         this.setState({
-          snackbarMsg: 'Updated Successfully.',
-          snackbarSev: 'success',
-          openSnackbar: true,
-          selectedTri: null
+          [name]: value
         });
-        window.location.reload(false);
-      }).catch((err) => {
-        console.log(err);
-      });
-    }
+      };
 
-    return (
-      <div className={classes.root}>
-        <div className={classes.btnGrpCont}>
-          <ButtonGroup aria-label="outlined primary button group">
-            {this.state.trimesters.map((item, index) => {
-              return(
-                <Button
-                  variant={(this.state.selectedTri === index+1) ? "contained" : "outlined"}
-                  color="primary"
-                  onClick={(e) => {onClickTriBtns(e, index + 1)}}
-                >{ "Trimester " + (index + 1) }
-                </Button>
-              );
-            })}
-          </ButtonGroup>
-        </div>
-        <Paper id="psTable-container" className={classes.tableCont} style={{display: (this.state.selectedTri) ? "block" : "none"}}>
-          <TableContainer className={classes.table}>
-            <h1 className={classes.typoh1}>Year 1</h1>
-            <Table className={classes.table} size="small" stickyHeader aria-label="caption table">
-              <caption>
-                <Grid container spacing={3} className={classes.gridContainer}>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="category"
-                      placeholder="Category"
-                      onChange={(e) => onChange(e, 0)}
-                      value={this.state.inputs[0].type}
-                      name="type"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      className={classes.codeInput}
-                      margin="dense"
-                      id="code"
-                      placeholder="Subject Code"
-                      inputProps={{ maxLength: 7 }}
-                      // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
-                      onChange={(e) => onChange(e, 0)}
-                      // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
-                      value={this.state.inputs[0].code}
-                      name="code"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="name"
-                      placeholder="Subject Name"
-                      onChange={(e) => onChange(e, 0)}
-                      value={this.state.inputs[0].subject}
-                      name="subject"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="ch"
-                      placeholder="Credit Hour"
-                      type="number"
-                      onChange={(e) => onChange(e, 0)}
-                      value={this.state.inputs[0].ch}
-                      name="ch"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="defaultTri"
-                      placeholder="Default Trimester"
-                      type="number"
-                      onChange={(e) => onChange(e, 0)}
-                      value={this.state.inputs[0].defaultTri}
-                      name="defaultTri"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <Button
-                      className={classes.addBtn}
-                      id="add-subject-button"
-                      variant="contained"
-                      onClick={(e) => {handleAdd(e, 0)}}
-                      color="primary"
-                      // disabled={
-                      //   (this.state.newCode && this.state.newSubject && 
-                      //     this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)) 
-                      //     ? false : true
-                      // }
-                    >
-                      Add
-                    </Button>
-                  </Grid>
-                </Grid>
-              </caption>
-              <TableHead>
-                <TableRow>
-                  <TableCell width="10%" align="center">Category</TableCell>
-                  <TableCell width="15%" align="center">Subject Code</TableCell>
-                  <TableCell width="40%" align="center">Subject Name</TableCell>
-                  <TableCell width="10%" align="center">CH</TableCell>
-                  <TableCell width="15%" align="center">Default Trimester</TableCell>
-                  <TableCell width="10%" align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody className={classes.tableBody}>
-                {this.state.editingPS.map((item, index) => {
-                  if(item.defaultYear === 1) {
-                    return (
-                      <TableRow key={item.key}>
-                        <TableCell align="center" component="th" scope="row">
-                          {item.type}
-                        </TableCell>
-                        <TableCell align="center">{item.code}</TableCell>
-                        <TableCell>{item.subject}</TableCell>
-                        <TableCell align="center">{item.ch}</TableCell>
-                        <TableCell align="center">{item.defaultTri}</TableCell>
-                        <TableCell align="right">
-                          <IconButton onClick={(e) => handleOpenDialog(e, index)}>
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  } else { return <></> }
-                })}
-              </TableBody>
-            </Table>
-            
-            <h1 className={classes.typoh1}>Year 2</h1>
-            <Table className={classes.table} size="small" stickyHeader aria-label="caption table">
-            <caption>
-                <Grid container spacing={3} className={classes.gridContainer}>
-                <Grid item xs>
-                  <TextField
-                      required
-                      margin="dense"
-                      id="category"
-                      placeholder="Category"
-                      onChange={(e) => onChange(e, 1)}
-                      value={this.state.inputs[1].type}
-                      name="type"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                  <TextField
-                      className={classes.codeInput}
-                      margin="dense"
-                      id="code"
-                      placeholder="Subject Code"
-                      inputProps={{ maxLength: 7 }}
-                      // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
-                      onChange={(e) => onChange(e, 1)}
-                      // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
-                      value={this.state.inputs[1].code}
-                      name="code"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="name"
-                      placeholder="Subject Name"
-                      onChange={(e) => onChange(e, 1)}
-                      value={this.state.inputs[1].subject}
-                      name="subject"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="ch"
-                      placeholder="Credit Hour"
-                      type="number"
-                      onChange={(e) => onChange(e, 1)}
-                      value={this.state.inputs[1].ch}
-                      name="ch"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="defaultTri"
-                      placeholder="Default Trimester"
-                      type="number"
-                      onChange={(e) => onChange(e, 1)}
-                      value={this.state.inputs[1].defaultTri}
-                      name="defaultTri"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <Button
-                      className={classes.addBtn}
-                      id="add-subject-button"
-                      variant="contained"
-                      onClick={(e) => {handleAdd(e, 1)}}
-                      color="primary"
-                      // disabled={
-                      //   (this.state.newCode && this.state.newSubject && 
-                      //     this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)) 
-                      //     ? false : true
-                      // }
-                    >
-                      Add
-                    </Button>
-                  </Grid>
-                </Grid>
-              </caption>
-              <TableHead>
-                <TableRow>
-                  <TableCell width="10%" align="center">Category</TableCell>
-                  <TableCell width="15%" align="center">Subject Code</TableCell>
-                  <TableCell width="40%" align="center">Subject Name</TableCell>
-                  <TableCell width="10%" align="center">CH</TableCell>
-                  <TableCell width="15%" align="center">Default Trimester</TableCell>
-                  <TableCell width="10%" align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody className={classes.tableBody}>
-                {this.state.editingPS.map((item, index) => {
-                  if(item.defaultYear === 2) {
-                    return (
-                      <TableRow key={item.key}>
-                        <TableCell align="center" component="th" scope="row">
-                          {item.type}
-                        </TableCell>
-                        <TableCell align="center">{item.code}</TableCell>
-                        <TableCell>{item.subject}</TableCell>
-                        <TableCell align="center">{item.ch}</TableCell>
-                        <TableCell align="center">{item.defaultTri}</TableCell>
-                        <TableCell align="right">
-                          <IconButton onClick={(e) => handleOpenDialog(e, index)}>
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  } else { return <></> }
-                })}
-              </TableBody>
-            </Table>
+      // const onClickTriBtns = (e, index) => {
+      //   e.preventDefault();
+      //   let selectedTriPS =
+      //     index === 1
+      //       ? this.state.tri1PS
+      //       : index === 2
+      //       ? this.state.tri2PS
+      //       : this.state.tri3PS;
+      //   this.setState({
+      //     selectedTri: index,
+      //     editingPS: JSON.parse(JSON.stringify(selectedTriPS)),
+      //     openSaveBtn: true,
+      //   });
 
-            <h1 className={classes.typoh1}>Year 3</h1>
-            <Table className={classes.table} size="small" stickyHeader aria-label="caption table">
-            <caption>
-                <Grid container spacing={3} className={classes.gridContainer}>
-                <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="category"
-                      placeholder="Category"
-                      onChange={(e) => onChange(e, 2)}
-                      value={this.state.inputs[2].type}
-                      name="type"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                  <TextField
-                      className={classes.codeInput}
-                      margin="dense"
-                      id="code"
-                      placeholder="Subject Code"
-                      inputProps={{ maxLength: 7 }}
-                      // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
-                      onChange={(e) => onChange(e, 2)}
-                      // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
-                      value={this.state.inputs[2].code}
-                      name="code"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="name"
-                      placeholder="Subject Name"
-                      onChange={(e) => onChange(e, 2)}
-                      value={this.state.inputs[2].subject}
-                      name="subject"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="ch"
-                      placeholder="Credit Hour"
-                      type="number"
-                      onChange={(e) => onChange(e, 2)}
-                      value={this.state.inputs[2].ch}
-                      name="ch"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <TextField
-                      required
-                      margin="dense"
-                      id="defaultTri"
-                      placeholder="Default Trimester"
-                      type="number"
-                      onChange={(e) => onChange(e, 2)}
-                      value={this.state.inputs[2].defaultTri}
-                      name="defaultTri"
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <Button
-                      className={classes.addBtn}
-                      id="add-subject-button"
-                      variant="contained"
-                      onClick={(e) => {handleAdd(e, 2)}}
-                      color="primary"
-                      // disabled={
-                      //   (this.state.newCode && this.state.newSubject && 
-                      //     this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)) 
-                      //     ? false : true
-                      // }
-                    >
-                      Add
-                    </Button>
-                  </Grid>
-                </Grid>
-              </caption>
-              <TableHead>
-                <TableRow>
-                  <TableCell width="10%" align="center">Category</TableCell>
-                  <TableCell width="15%" align="center">Subject Code</TableCell>
-                  <TableCell width="40%" align="center">Subject Name</TableCell>
-                  <TableCell width="10%" align="center">CH</TableCell>
-                  <TableCell width="15%" align="center">Default Trimester</TableCell>
-                  <TableCell width="10%" align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody className={classes.tableBody}>
-                {this.state.editingPS.map((item, index) => {
-                  if(item.defaultYear === 3) {
+      //   this.setState({ selectedTri: index });
+      //   // document.getElementById("psTable-container").style.display = "block";
+      // };
+
+      // Confirmation dialog for delete subject from programme structure
+      const handleOpenDialog = (event, index) => {
+        event.preventDefault();
+        this.setState({
+          toDelete: index,
+          openDeetePSDialog: true,
+        });
+      };
+
+      const handleCloseDialog = (event) => {
+        event.preventDefault();
+        this.setState({
+          toDelete: null,
+          openDeetePSDialog: false,
+        });
+      };
+
+      // handle add subject to programme structure
+      const handleAdd = (e, year) => {
+        e.preventDefault();
+        if (
+          !this.state.inputs[year].subject ||
+          !this.state.inputs[year].defaultTri
+        ) {
+          this.setState({
+            snackbarMsg:
+              "Subject and default trimesters cannot be empty.",
+            snackbarSev: "error",
+            openSnackbar: true,
+          });
+        } else {
+          let updatePS = this.state.editingPS;
+          console.log(updatePS);
+          updatePS.push({
+            key: (updatePS.length === 0) ? 1 : updatePS[updatePS.length - 1].key + 1,
+            code: this.state.inputs[year].code,
+            name: this.state.inputs[year].name,
+            ch: Number(this.state.inputs[year].ch),
+            type: this.state.inputs[year].type,
+            defaultTri: Number(this.state.inputs[year].defaultTri),
+            defaultYear: year + 1,
+          });
+          // this.setState({editingPS: updatePS});
+          console.log(year);
+          console.log(this.state.inputs);
+          this.setState((prevState, props) => ({
+            inputs: [
+              ...prevState.inputs.slice(0, year),
+              {
+                type: "",
+                code: "",
+                name: "",
+                ch: "",
+                subject: "",
+                defaultTri: "",
+              },
+              ...prevState.inputs.slice(year + 1),
+            ],
+            editingPS: JSON.parse(JSON.stringify(updatePS)),
+          }));
+        }
+      };
+
+      // handle delete subject from programme structure
+      const handleDelete = (e) => {
+        let arrayCopy = this.state.editingPS;
+        arrayCopy.splice(this.state.toDelete, 1);
+        this.setState({
+          editingPS: JSON.parse(JSON.stringify(arrayCopy)),
+          snackbarMsg: "Subject removed.",
+          snackbarSev: "success",
+          openSnackbar: true,
+        });
+        handleCloseDialog(e);
+      };
+
+      // handle save modified programme structure
+      const handleSave = (e) => {
+        e.preventDefault();
+        let copyStandard = JSON.parse(JSON.stringify(this.state.standardPS));
+        for (let i = 0; i < this.state.standardPS.length; i++) {
+          const element = this.state.standardPS[i];
+          if(this.state.selectedIntake === element.intake) {
+            copyStandard[i].PS[this.state.selectedSpec] = this.state.editingPS;
+            break;
+          }
+        }
+        this.setState({
+          standardPS: JSON.parse(JSON.stringify(copyStandard)),
+          selectionDisable: false
+        });
+        axios
+          .post(API_PATH + "/standardPS", {
+            newPS: copyStandard,
+          })
+          .then((res) => {
+            this.setState({
+              snackbarMsg: "Updated Successfully.",
+              snackbarSev: "success",
+              openSnackbar: true,
+              selectedTri: null,
+            });
+            // refresh
+            // window.location.reload(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        document.getElementById("psTable-container").style.display = "none";
+      };
+      
+      // Speed Dial
+      const handleCloseSpeedDial = () => {
+        this.setState({openSpeedDial: false});
+      };
+      
+      const handleOpenSpeedDial = () => {
+        this.setState({openSpeedDial: true});
+      };
+
+      // Action: Delete Selected Programme Structure
+      const handleActionDeletePS = (e) => {
+        e.preventDefault();
+        this.setState({
+          openDeletePS: true
+        });
+      };
+
+      const handleCloseDeletePSDialog = (event) => {
+        event.preventDefault();
+        this.setState({
+          openDeletePS: false,
+        });
+      };
+
+      const confirmDeletePS = () => {
+        let toDeletePS = this.state.selectedIntake;
+        let temp = JSON.parse(JSON.stringify(this.state.standardPS));
+        for (let i = 0; i < this.state.standardPS.length; i++) {
+          const ps = this.state.standardPS[i];
+          if(ps.intake === toDeletePS) {
+            console.log(temp);
+            console.log(i);
+            temp.splice(i, 1);
+            console.log(temp);
+          }
+        }
+        this.setState({standardPS: temp});
+        axios
+          .post(API_PATH + "/standardPS", {
+            newPS: temp
+          })
+          .then((res) => {
+            this.setState({
+              snackbarMsg: this.state.selectedIntake + " has been deleted.",
+              snackbarSev: "success",
+              openSnackbar: true,
+              selectedIntake: "",
+            });
+            // refresh
+            // window.location.reload(false);~
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        this.setState({openDeletePS: false});
+      };
+
+      // const onClickTriBtns = (e, index) => {
+      //   e.preventDefault();
+      //   let selectedTriPS =
+      //     index === 1
+      //       ? this.state.tri1PS
+      //       : index === 2
+      //       ? this.state.tri2PS
+      //       : this.state.tri3PS;
+      //   this.setState({
+      //     selectedTri: index,
+      //     editingPS: JSON.parse(JSON.stringify(selectedTriPS)),
+      //     openSaveBtn: true,
+      //   });
+
+      //   this.setState({ selectedTri: index });
+      //   // document.getElementById("psTable-container").style.display = "block";
+      // };
+
+      // Action: Add New Programme Structure
+      const handleActionAddPS = (e) => {
+        e.preventDefault();
+        // for (let i = 0; i < this.state.standardPS.length; i++) {
+        //   const element = this.state.standardPS[i];
+        //   if(element.intake === this.state.selectedIntake) {
+
+        //   }
+          
+        // }
+        // this.setState({
+        //   editingPS: JSON.parse(JSON.stringify(selectedTriPS)),
+        //   openSaveBtn: true,
+        // });
+        this.setState({
+          openAddPS: true,
+        })
+      };
+
+      const handleCloseAddPSDialog = (event) => {
+        event.preventDefault();
+        this.setState({
+          openAddPS: false,
+        });
+      };
+
+      const confirmAddPS = () => {
+        let newIntakePS = {
+          "intake": this.state.newIntakeMonth + " " + this.state.newIntakeYear ,
+          "PS": {
+            "Software Engineering": [],
+            "Data Science": [],
+            "Game Development": [],
+            "Cybersecurity": [],
+          }
+        };
+        let currentPS = this.state.standardPS;
+        currentPS.push(newIntakePS);
+        this.setState({standardPS: currentPS});
+        axios
+          .post(API_PATH + "/standardPS", {
+            newPS: currentPS
+          })
+          .then((res) => {
+            this.setState({
+              snackbarMsg: "New Intake Added.",
+              snackbarSev: "success",
+              openSnackbar: true,
+              openAddPS: false,
+            });
+            // refresh
+            // window.location.reload(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+
+      // Action: handle edit programme structure
+      const handleActionEditPS = (e) => {
+        e.preventDefault();
+        let index = -9;
+        for (let i = 0; i < this.state.standardPS.length; i++) {
+          const element = this.state.standardPS[i];
+          if(element.intake === this.state.selectedIntake) {
+            index = i;
+            console.log("found " + i);
+            break;
+          }
+        }
+        console.log(this.state.standardPS[index]);
+        console.log(this.state.standardPS[index].PS[this.state.selectedSpec]);
+        let toEditPS = this.state.standardPS[index].PS[this.state.selectedSpec];
+        console.log(toEditPS);
+        this.setState({
+          editingPS: toEditPS,
+          selectionDisable: true
+        })
+        document.getElementById("psTable-container").style.display = "block";
+      };
+
+      function clickAction(e) {
+        e.preventDefault();
+        console.log("pleasseeee");
+      }
+
+      return (
+        <div>
+          <SpeedDial
+            ariaLabel="SpeedDial example"
+            className={classes.speedDial}
+            hidden={false}
+            icon={<SpeedDialIcon />}
+            onClose={handleCloseSpeedDial}
+            onOpen={handleOpenSpeedDial}
+            open={this.state.openSpeedDial}
+            direction="up"
+          >
+            {actions.map((action) => (
+              <SpeedDialAction
+                key={action.name}
+                icon={action.icon}
+                disabled={action.disabled}
+                tooltipTitle={action.name}
+                onClick={action.action}
+              />
+            ))}
+          </SpeedDial>
+          <Grid container spacing={3} className={classes.selectionCont}>
+            <Grid item>
+              <FormControl id="selection-intake" disabled={this.state.selectionDisable}>
+                <Select
+                  style={{width: "200px"}}
+                  value={this.state.selectedIntake}
+                  onChange={onChangeSelection}
+                  name="selectedIntake"
+                  displayEmpty
+                  className={classes.selectEmpty}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return <div style={{font: "inherit", color: "#aaa"}}>Intake</div>;
+                    }
+        
+                    return selected;
+                  }}
+                  inputProps={{ 'aria-label': 'Without label' }}
+                >
+                  {this.state.standardPS.map((item, index) => {
                     return (
-                      <TableRow key={item.key}>
-                        <TableCell align="center" component="th" scope="row">
-                          {item.type}
-                        </TableCell>
-                        <TableCell align="center">{item.code}</TableCell>
-                        <TableCell>{item.subject}</TableCell>
-                        <TableCell align="center">{item.ch}</TableCell>
-                        <TableCell align="center">{item.defaultTri}</TableCell>
-                        <TableCell align="right">
-                          <IconButton onClick={(e) => handleOpenDialog(e, index)}>
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
+                      <MenuItem value={item.intake}>{item.intake}</MenuItem>
                     );
-                  } else { return <></> }
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl disabled={this.state.selectionDisable}>
+                <Select
+                  id="selection-spec"
+                  style={{width: "200px"}}
+                  value={this.state.selectedSpec}
+                  onChange={onChangeSelection}
+                  name="selectedSpec"
+                  displayEmpty
+                  className={classes.selectEmpty}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return <div style={{font: "inherit", color: "#aaa"}}>Specialization</div>;
+                    }
+        
+                    return selected;
+                  }}
+                  inputProps={{ 'aria-label': 'Without label' }}
+                >
+                  <MenuItem value="Software Engineering">Software Engineering</MenuItem>
+                  <MenuItem value="Data Science">Data Science</MenuItem>
+                  <MenuItem value="Game Development">Game Development</MenuItem>
+                  <MenuItem value="Cybersecurity">Cybersecurity</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          {/* <div className={classes.btnGrpCont}>
+            <ButtonGroup aria-label="outlined primary button group">
+              {this.state.trimesters.map((item, index) => {
+                return (
+                  <Button
+                    variant={
+                      this.state.selectedTri === index + 1
+                        ? "contained"
+                        : "outlined"
+                    }
+                    color="primary"
+                    onClick={(e) => {
+                      onClickTriBtns(e, index + 1);
+                    }}
+                  >
+                    {"Trimester " + (index + 1)}
+                  </Button>
+                );
+              })}
+            </ButtonGroup>
+          </div> */}
+          <Paper
+            id="psTable-container"
+            style={{ display: this.state.selectedTri ? "block" : "none" }}
+          >
+            <TableContainer className={classes.table}>
+              <h1 className={classes.typoh1}>Year 1</h1>
+              <Table
+                className={classes.table}
+                size="small"
+                stickyHeader
+                aria-label="caption table"
+              >
+                <caption>
+                  <Grid container spacing={3} className={classes.gridContainer}>
+                    <Grid item xs>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[0].type}
+                          onChange={(e) => onChange(e, 0)}
+                          name="type"
+                          displayEmpty
+                          className={classes.selectEmpty}
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Category</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="core">Core</MenuItem>
+                          <MenuItem value="mpu">MPU</MenuItem>
+                          <MenuItem value="spec core">Specialization Core</MenuItem>
+                          <MenuItem value="elective">Elective</MenuItem>
+                          <MenuItem value="spec elec">Specialization Elective</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {/* <Grid item xs>
+                      <TextField
+                        margin="dense"
+                        id="code"
+                        placeholder="Subject Code"
+                        inputProps={{ maxLength: 7 }}
+                        // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
+                        onChange={(e) => onChange(e, 0)}
+                        // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
+                        value={this.state.inputs[0].code}
+                        name="code"
+                      />
+                    </Grid>
+                    <Grid item xs>
+                      <TextField
+                        required
+                        margin="dense"
+                        id="name"
+                        placeholder="Subject Name"
+                        onChange={(e) => onChange(e, 0)}
+                        value={this.state.inputs[0].name}
+                        name="name"
+                      />
+                    </Grid>
+                    <Grid item xs>
+                      <TextField
+                        required
+                        margin="dense"
+                        id="ch"
+                        placeholder="Credit Hour"
+                        type="number"
+                        onChange={(e) => onChange(e, 0)}
+                        value={this.state.inputs[0].ch}
+                        name="ch"
+                      />
+                    </Grid> */}
+                    <Grid item xs={6}>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[0].subject}
+                          onChange={(e) => onChange(e, 0)}
+                          name="subject"
+                          displayEmpty
+                          className={classes.selectEmpty}
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Subject</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          {this.state.subjectList.map((item, index) => {
+                            return (
+                              <MenuItem value={item.code + " - " + item.name + "  [" + item.ch + "]"}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[0].defaultTri}
+                          onChange={(e) => onChange(e, 0)}
+                          name="defaultTri"
+                          displayEmpty
+                          className={classes.selectEmpty}
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Default Trimester</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="1">1</MenuItem>
+                          <MenuItem value="2">2</MenuItem>
+                          <MenuItem value="3">3</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs>
+                      <Button
+                        className={classes.addBtn}
+                        id="add-subject-button"
+                        variant="contained"
+                        onClick={(e) => {
+                          handleAdd(e, 0);
+                        }}
+                        color="primary"
+                        // disabled={
+                        //   (this.state.newCode && this.state.newSubject &&
+                        //     this.state.newCode.match(/[A-Z]{3}[0-9]{4}/))
+                        //     ? false : true
+                        // }
+                      >
+                        Add
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </caption>
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="10%" align="center">
+                      Category
+                    </TableCell>
+                    <TableCell width="15%" align="center">
+                      Subject Code
+                    </TableCell>
+                    <TableCell width="40%" align="center">
+                      Subject Name
+                    </TableCell>
+                    <TableCell width="10%" align="center">
+                      CH
+                    </TableCell>
+                    <TableCell width="15%" align="center">
+                      Default Trimester
+                    </TableCell>
+                    <TableCell width="10%" align="center">
+                      Action
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody className={classes.tableBody}>
+                  {this.state.editingPS.map((item, index) => {
+                    if (item.defaultYear === 1) {
+                      return (
+                        <TableRow key={item.key}>
+                          <TableCell align="center" component="th" scope="row">
+                            {item.type}
+                          </TableCell>
+                          <TableCell align="center">{item.code}</TableCell>
+                          <TableCell>{item.name}</TableCell>
+                          <TableCell align="center">{item.ch}</TableCell>
+                          <TableCell align="center">
+                            {item.defaultTri}
+                          </TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              onClick={(e) => handleOpenDialog(e, index)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    } else {
+                      return <></>;
+                    }
+                  })}
+                </TableBody>
+              </Table>
+
+              <h1 className={classes.typoh1}>Year 2</h1>
+              <Table
+                className={classes.table}
+                size="small"
+                stickyHeader
+                aria-label="caption table"
+              >
+                <caption>
+                  <Grid container spacing={3} className={classes.gridContainer}>
+                    <Grid item xs>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[1].type}
+                          onChange={(e) => onChange(e, 1)}
+                          name="type"
+                          displayEmpty
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Category</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          className={classes.selectEmpty}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="core">Core</MenuItem>
+                          <MenuItem value="mpu">MPU</MenuItem>
+                          <MenuItem value="spec core">Specialization Core</MenuItem>
+                          <MenuItem value="elective">Elective</MenuItem>
+                          <MenuItem value="spec elec">Specialization Elective</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {/* <Grid item xs>
+                      <TextField
+                        margin="dense"
+                        id="code"
+                        placeholder="Subject Code"
+                        inputProps={{ maxLength: 7 }}
+                        // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
+                        onChange={(e) => onChange(e, 1)}
+                        // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
+                        value={this.state.inputs[1].code}
+                        name="code"
+                      />
+                    </Grid>
+                    <Grid item xs>
+                      <TextField
+                        required
+                        margin="dense"
+                        id="name"
+                        placeholder="Subject Name"
+                        onChange={(e) => onChange(e, 1)}
+                        value={this.state.inputs[1].name}
+                        name="name"
+                      />
+                    </Grid>
+                    <Grid item xs>
+                      <TextField
+                        required
+                        margin="dense"
+                        id="ch"
+                        placeholder="Credit Hour"
+                        type="number"
+                        onChange={(e) => onChange(e, 1)}
+                        value={this.state.inputs[1].ch}
+                        name="ch"
+                      />
+                    </Grid> */}
+                    <Grid item xs={6}>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[1].subject}
+                          onChange={(e) => onChange(e, 1)}
+                          name="subject"
+                          displayEmpty
+                          className={classes.selectEmpty}
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Subject</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          {this.state.subjectList.map((item, index) => {
+                            return (
+                              <MenuItem value={item.code + " - " + item.name + "  [" + item.ch + "]"}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[1].defaultTri}
+                          onChange={(e) => onChange(e, 1)}
+                          name="defaultTri"
+                          displayEmpty
+                          className={classes.selectEmpty}
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Default Trimester</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="1">1</MenuItem>
+                          <MenuItem value="2">2</MenuItem>
+                          <MenuItem value="3">3</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs>
+                      <Button
+                        className={classes.addBtn}
+                        id="add-subject-button"
+                        variant="contained"
+                        onClick={(e) => {
+                          handleAdd(e, 1);
+                        }}
+                        color="primary"
+                        // disabled={
+                        //   (this.state.newCode && this.state.newSubject &&
+                        //     this.state.newCode.match(/[A-Z]{3}[0-9]{4}/))
+                        //     ? false : true
+                        // }
+                      >
+                        Add
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </caption>
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="10%" align="center">
+                      Category
+                    </TableCell>
+                    <TableCell width="15%" align="center">
+                      Subject Code
+                    </TableCell>
+                    <TableCell width="40%" align="center">
+                      Subject Name
+                    </TableCell>
+                    <TableCell width="10%" align="center">
+                      CH
+                    </TableCell>
+                    <TableCell width="15%" align="center">
+                      Default Trimester
+                    </TableCell>
+                    <TableCell width="10%" align="center">
+                      Action
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody className={classes.tableBody}>
+                  {this.state.editingPS.map((item, index) => {
+                    if (item.defaultYear === 2) {
+                      return (
+                        <TableRow key={item.key}>
+                          <TableCell align="center" component="th" scope="row">
+                            {item.type}
+                          </TableCell>
+                          <TableCell align="center">{item.code}</TableCell>
+                          <TableCell>{item.name}</TableCell>
+                          <TableCell align="center">{item.ch}</TableCell>
+                          <TableCell align="center">
+                            {item.defaultTri}
+                          </TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              onClick={(e) => handleOpenDialog(e, index)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    } else {
+                      return <></>;
+                    }
+                  })}
+                </TableBody>
+              </Table>
+
+              <h1 className={classes.typoh1}>Year 3</h1>
+              <Table
+                className={classes.table}
+                size="small"
+                stickyHeader
+                aria-label="caption table"
+              >
+                <caption>
+                  <Grid container spacing={3} className={classes.gridContainer}>
+                    <Grid item xs>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[2].type}
+                          onChange={(e) => onChange(e, 2)}
+                          name="type"
+                          displayEmpty
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Category</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          className={classes.selectEmpty}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="core">Core</MenuItem>
+                          <MenuItem value="mpu">MPU</MenuItem>
+                          <MenuItem value="spec core">Specialization Core</MenuItem>
+                          <MenuItem value="elective">Elective</MenuItem>
+                          <MenuItem value="spec elec">Specialization Elective</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    {/* <Grid item xs>
+                      <TextField
+                        margin="dense"
+                        id="code"
+                        placeholder="Subject Code"
+                        inputProps={{ maxLength: 7 }}
+                        // error= {(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? false : true}
+                        onChange={(e) => onChange(e, 2)}
+                        // helperText={(e) => (e.target.value.match(/[A-Z]{3}[0-9]{4}/)) ? "" : "Invalid format: ABC1234"}
+                        value={this.state.inputs[2].code}
+                        name="code"
+                      />
+                    </Grid>
+                    <Grid item xs>
+                      <TextField
+                        required
+                        margin="dense"
+                        id="name"
+                        placeholder="Subject Name"
+                        onChange={(e) => onChange(e, 2)}
+                        value={this.state.inputs[2].name}
+                        name="name"
+                      />
+                    </Grid>
+                    <Grid item xs>
+                      <TextField
+                        required
+                        margin="dense"
+                        id="ch"
+                        placeholder="Credit Hour"
+                        type="number"
+                        onChange={(e) => onChange(e, 2)}
+                        value={this.state.inputs[2].ch}
+                        name="ch"
+                      />
+                    </Grid> */}
+                    <Grid item xs={6}>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[2].subject}
+                          onChange={(e) => onChange(e, 2)}
+                          name="subject"
+                          displayEmpty
+                          className={classes.selectEmpty}
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Subject</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          {this.state.subjectList.map((item, index) => {
+                            return (
+                              <MenuItem value={item.code + " - " + item.name + "  [" + item.ch + "]"}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs>
+                      <FormControl className={classes.formControl}>
+                        <Select
+                          value={this.state.inputs[2].defaultTri}
+                          onChange={(e) => onChange(e, 2)}
+                          name="defaultTri"
+                          displayEmpty
+                          className={classes.selectEmpty}
+                          renderValue={(selected) => {
+                            if (!selected) {
+                              return <div style={{font: "inherit", color: "#aaa"}}>Default Trimester</div>;
+                            }
+                
+                            return selected;
+                          }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="1">1</MenuItem>
+                          <MenuItem value="2">2</MenuItem>
+                          <MenuItem value="3">3</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs>
+                      <Button
+                        className={classes.addBtn}
+                        id="add-subject-button"
+                        variant="contained"
+                        onClick={(e) => {
+                          handleAdd(e, 2);
+                        }}
+                        color="primary"
+                        // disabled={
+                        //   (this.state.newCode && this.state.newSubject &&
+                        //     this.state.newCode.match(/[A-Z]{3}[0-9]{4}/))
+                        //     ? false : true
+                        // }
+                      >
+                        Add
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </caption>
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="10%" align="center">
+                      Category
+                    </TableCell>
+                    <TableCell width="15%" align="center">
+                      Subject Code
+                    </TableCell>
+                    <TableCell width="40%" align="center">
+                      Subject Name
+                    </TableCell>
+                    <TableCell width="10%" align="center">
+                      CH
+                    </TableCell>
+                    <TableCell width="15%" align="center">
+                      Default Trimester
+                    </TableCell>
+                    <TableCell width="10%" align="center">
+                      Action
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody className={classes.tableBody}>
+                  {this.state.editingPS.map((item, index) => {
+                    if (item.defaultYear === 3) {
+                      return (
+                        <TableRow key={item.key}>
+                          <TableCell align="center" component="th" scope="row">
+                            {item.type}
+                          </TableCell>
+                          <TableCell align="center">{item.code}</TableCell>
+                          <TableCell>{item.name}</TableCell>
+                          <TableCell align="center">{item.ch}</TableCell>
+                          <TableCell align="center">
+                            {item.defaultTri}
+                          </TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              onClick={(e) => handleOpenDialog(e, index)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    } else {
+                      return <></>;
+                    }
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* <Tooltip title="Save Changes" aria-label="save">
+              <Fab
+                className={classes.saveBtn}
+                color="primary"
+                aria-label="save"
+                disabled={
+                  (this.state.selectedTri === 1 &&
+                    JSON.stringify(this.state.editingPS) ===
+                      JSON.stringify(this.state.tri1PS)) ||
+                  (this.state.selectedTri === 2 &&
+                    JSON.stringify(this.state.editingPS) ===
+                      JSON.stringify(this.state.tri2PS)) ||
+                  (this.state.selectedTri === 3 &&
+                    JSON.stringify(this.state.editingPS) ===
+                      JSON.stringify(this.state.tri3PS))
+                    ? true
+                    : false
+                }
+                onClick={handleSave}
+              >
+                <SaveIcon />
+              </Fab>
+            </Tooltip> */}
+          </Paper>
+
+          {/* Delete Subject From Programme Structure Confirmation Dialog */}
+          <Dialog
+            open={this.state.openDeetePSDialog}
+            onClose={handleCloseDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              Remove subject?
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure to remove the subject?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog} color="primary" autoFocus>
+                Cancel
+              </Button>
+              <Button onClick={handleDelete} color="primary">
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Delete Programme Structure Confirmation Dialog */}
+          <Dialog
+            open={this.state.openDeletePS}
+            onClose={handleCloseDeletePSDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Remove " + this.state.selectedIntake + "?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {"Are you sure to remove " + this.state.selectedIntake + "'s programme strucure?"}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDeletePSDialog} color="primary" autoFocus>
+                Cancel
+              </Button>
+              <Button onClick={confirmDeletePS} color="primary">
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+          
+          {/* Add Programme Structure Details */}
+          <Dialog open={this.state.openAddPS} onClose={handleCloseAddPSDialog} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Select  intake month and year</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                
+              </DialogContentText>
+              <Select
+                style={{width: "190px", marginRight: "20px"}}
+                value={this.state.newIntakeMonth}
+                onChange={onChangeSelection}
+                name="newIntakeMonth"
+                displayEmpty
+                className={classes.selectEmpty}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <div style={{font: "inherit", color: "#aaa"}}>Month</div>;
+                  }
+      
+                  return selected;
+                }}
+                inputProps={{ 'aria-label': 'Without label' }}
+              >
+                <MenuItem value="January">January</MenuItem>
+                <MenuItem value="February">February</MenuItem>
+                <MenuItem value="March">March</MenuItem>
+                <MenuItem value="April">April</MenuItem>
+                <MenuItem value="May">May</MenuItem>
+                <MenuItem value="June">June</MenuItem>
+                <MenuItem value="July">July</MenuItem>
+                <MenuItem value="August">August</MenuItem>
+                <MenuItem value="September">September</MenuItem>
+                <MenuItem value="October">October</MenuItem>
+                <MenuItem value="November">November</MenuItem>
+                <MenuItem value="December">December</MenuItem>
+              </Select>
+              <Select
+                style={{width: "130px"}}
+                value={this.state.newIntakeYear}
+                onChange={onChangeSelection}
+                name="newIntakeYear"
+                displayEmpty
+                className={classes.selectEmpty}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <div style={{font: "inherit", color: "#aaa"}}>Year</div>;
+                  }
+      
+                  return selected;
+                }}
+                inputProps={{ 'aria-label': 'Without label' }}
+              >
+                {this.state.years.map((item, index) => {
+                  return (
+                    <MenuItem value={item}>{item}</MenuItem>
+                  );
                 })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Tooltip title="Save Changes" aria-label="save">
-            <Fab
-              className={classes.saveBtn}
-              color="primary"
-              aria-label="save"
-              disabled={
-                ((this.state.selectedTri === 1 && JSON.stringify(this.state.editingPS) === JSON.stringify(this.state.tri1PS)) ||
-                  (this.state.selectedTri === 2 && JSON.stringify(this.state.editingPS) === JSON.stringify(this.state.tri2PS)) ||
-                  (this.state.selectedTri === 3 && JSON.stringify(this.state.editingPS) === JSON.stringify(this.state.tri3PS)))
-                  ? true 
-                  : false
-              }
-              onClick={handleSave}
+              </Select>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseAddPSDialog} color="primary" autoFocus>
+                Cancel
+              </Button>
+              <Button onClick={confirmAddPS} disabled={(this.state.newIntakeMonth && this.state.newIntakeYear) ? false : true} color="primary">
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Snackbar
+            open={this.state.openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={this.state.snackbarSev}
             >
-              <SaveIcon />
-            </Fab>
-          </Tooltip>
-        </Paper>
-        <Dialog
-          open={this.state.openDialog}
-          onClose={handleCloseDialog}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Remove subject?"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Are you sure to remove the subject?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary" autoFocus>
-              Cancel
-            </Button>
-            <Button onClick={handleDelete} color="primary">
-              Confirm
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Snackbar open={this.state.openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity={this.state.snackbarSev}>
-            {this.state.snackbarMsg}
-          </Alert>
-        </Snackbar>
-      </div>
-    );
+              {this.state.snackbarMsg}
+            </Alert>
+          </Snackbar>
+        </div>
+      );
+    }
   }
-});
+);

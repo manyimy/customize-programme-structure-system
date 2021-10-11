@@ -137,7 +137,7 @@ export default useStyles(class Home extends React.Component {
   getYear = () => {
     let thisYear = (new Date()).getFullYear();
     let years = [];
-    for(let i = thisYear-4; years.length <= 6; i++) {
+    for(let i = thisYear-4; years.length <= 7; i++) {
       years.push(i);
     }
     this.setState({yearOptions: years});
@@ -361,15 +361,7 @@ export default useStyles(class Home extends React.Component {
                   onClick={(e) => {tablesToExcel(e, ['ps-table-y1','ps-table-y2','ps-table-y3'], ['Year1','Year2','Year3'], 'ProgrammeStructure.xls', 'Excel')}}
                   className={classes.button}
                 >
-                  {/* <ReactHTMLTableToExcel
-                    id="test-table-xls-button"
-                    className={classes.downloadBtn + " download-table-xls-button" }
-                    table="ps-table"
-                    filename="tablexls"
-                    sheet="tablexls"
-                    buttonText="Download"/> */}
-                      Export to Excel
-                  {/* Download */}
+                  Export to Excel
                 </Button>
               </div>
             </div>
