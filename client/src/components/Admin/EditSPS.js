@@ -149,8 +149,10 @@ export default useStyles(
           },
         ],
         openAddPS: false,
-        newIntakeMonth: "",
-        newIntakeYear: "",
+        openCopyPS: false, 
+        newIntakeMonth: "",       // month of new intake to be created
+        newIntakeYear: "",        // year of new intake to be created
+        copyFromIntake: "",       // intake to be copy from
       };
     }
 
@@ -161,28 +163,14 @@ export default useStyles(
         });
         console.log(response.data);
       });
+      
       axios.get(API_PATH + "/standardPS.json").then((response) => {
         console.log(response.data);
-        console.log(response.data[0].PS["Software Engineering"][response.data[0].PS["Software Engineering"].length-1].key);
-        console.log(response.data[0].intake);
         this.setState({
           standardPS: response.data,
         });
       });
-      // for (let i = 1; i < 4; i++) {
-      //   let name = "tri" + i + "PS";
-      //   axios
-      //     .get(API_PATH + "/" + name + ".json")
-      //     .then((ps) => {
-      //       console.log(ps.data);
-      //       this.setState({
-      //         [name]: ps.data,
-      //       });
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
-      // }
+
       let thisYear = (new Date()).getFullYear();
       let years = [];
       for(let i = thisYear-1; years.length <= 5; i++) {
@@ -196,7 +184,7 @@ export default useStyles(
 
       const actions = [
         { icon: <AddIcon />, name: 'Add', action: (e) => handleActionAddPS(e), disabled: this.state.selectionDisable },
-        { icon: <FileCopyIcon />, name: 'Copy', action: (e) => clickAction(e), disabled: this.state.selectionDisable },
+        { icon: <FileCopyIcon />, name: 'Copy', action: (e) => handleActionCopyPS(e), disabled: this.state.selectionDisable },
         { icon: <EditIcon />, name: 'Edit', action: (e) => handleActionEditPS(e), disabled: (this.state.selectedIntake && this.state.selectedSpec) ? false : true },
         { icon: <SaveIcon />, name: 'Save', action: (e) => handleSave(e), disabled: !this.state.selectionDisable },
         { icon: <DeleteIcon />, name: 'Delete', action: (e) => handleActionDeletePS(e), disabled: (this.state.selectedIntake) ? false : true },
@@ -433,7 +421,8 @@ export default useStyles(
         });
       };
 
-      const confirmAddPS = () => {
+      const confirmAddPS = (e) => {
+        e.preventDefault();
         let newIntakePS = {
           "intake": this.state.newIntakeMonth + " " + this.state.newIntakeYear ,
           "PS": {
@@ -488,10 +477,58 @@ export default useStyles(
         document.getElementById("psTable-container").style.display = "block";
       };
 
-      function clickAction(e) {
+      // Action: handle copy programme structure
+
+      const handleActionCopyPS = (e) => {
         e.preventDefault();
-        console.log("pleasseeee");
-      }
+        this.setState({
+          openCopyPS: true,
+        })
+      };
+
+      const handleCloseCopyPSDialog = (event) => {
+        event.preventDefault();
+        this.setState({
+          openCopyPS: false,
+        });
+      };
+
+      const confirmCopyPS = () => {
+        let copyOfSelectedPS;
+        for (let i = 0; i < this.state.standardPS.length; i++) {
+          const element = this.state.standardPS[i];
+          if(element.intake === this.state.copyFromIntake) {
+            copyOfSelectedPS = {
+              "intake": this.state.newIntakeMonth + " " + this.state.newIntakeYear,
+              "PS": element.PS
+            };
+            let copyStandard = JSON.parse(JSON.stringify(this.state.standardPS));
+            console.log(copyStandard);
+            copyStandard.push(copyOfSelectedPS);
+            console.log(copyStandard);
+            this.setState({standardPS: copyStandard});
+            axios
+              .post(API_PATH + "/standardPS", {
+                newPS: copyStandard
+              })
+              .then((res) => {
+                this.setState({
+                  snackbarMsg: "Intake " + this.state.copyFromIntake + " Copied to " + this.state.newIntakeMonth + " " + this.state.newIntakeYear + ".",
+                  snackbarSev: "success",
+                  openSnackbar: true,
+                  openAddPS: false,
+                });
+                // refresh
+                // window.location.reload(false);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            this.setState({openCopyPS: false});
+            break;
+          }
+        }
+      };
 
       return (
         <div>
@@ -1090,10 +1127,10 @@ export default useStyles(
           
           {/* Add Programme Structure Details */}
           <Dialog open={this.state.openAddPS} onClose={handleCloseAddPSDialog} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Select  intake month and year</DialogTitle>
+            <DialogTitle id="form-dialog-title">Add New Programme Structure</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                
+                Select intake month and year
               </DialogContentText>
               <Select
                 style={{width: "190px", marginRight: "20px"}}
@@ -1152,6 +1189,105 @@ export default useStyles(
                 Cancel
               </Button>
               <Button onClick={confirmAddPS} disabled={(this.state.newIntakeMonth && this.state.newIntakeYear) ? false : true} color="primary">
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Copy Programme Structure Details Dialog */}
+          <Dialog open={this.state.openCopyPS} onClose={handleCloseCopyPSDialog} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Copy Programme Structure</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Select existing programme structure to copy from then select details for intake to copy to.
+              </DialogContentText>
+              <Grid container spacing={3}>
+                <Grid item xs={7}>
+                  <Select
+                    style={{width: "100%", marginRight: "20px"}}
+                    value={this.state.copyFromIntake}
+                    onChange={onChangeSelection}
+                    name="copyFromIntake"
+                    displayEmpty
+                    className={classes.selectEmpty}
+                    renderValue={(selected) => {
+                      if (!selected) {
+                        return <div style={{font: "inherit", color: "#aaa"}}>Intake to copy from</div>;
+                      }
+          
+                      return selected;
+                    }}
+                    inputProps={{ 'aria-label': 'Without label' }}
+                  >
+                    {this.state.standardPS.map((item, index) => {
+                      return (
+                        <MenuItem value={item.intake}>{item.intake}</MenuItem>
+                      );
+                    })}
+                  </Select>
+                </Grid>
+                <Grid item xs={3}>
+                  <Select
+                    style={{width: "100%", marginRight: "20px"}}
+                    value={this.state.newIntakeMonth}
+                    onChange={onChangeSelection}
+                    name="newIntakeMonth"
+                    displayEmpty
+                    className={classes.selectEmpty}
+                    renderValue={(selected) => {
+                      if (!selected) {
+                        return <div style={{font: "inherit", color: "#aaa"}}>Month</div>;
+                      }
+          
+                      return selected;
+                    }}
+                    inputProps={{ 'aria-label': 'Without label' }}
+                  >
+                    <MenuItem value="January">January</MenuItem>
+                    <MenuItem value="February">February</MenuItem>
+                    <MenuItem value="March">March</MenuItem>
+                    <MenuItem value="April">April</MenuItem>
+                    <MenuItem value="May">May</MenuItem>
+                    <MenuItem value="June">June</MenuItem>
+                    <MenuItem value="July">July</MenuItem>
+                    <MenuItem value="August">August</MenuItem>
+                    <MenuItem value="September">September</MenuItem>
+                    <MenuItem value="October">October</MenuItem>
+                    <MenuItem value="November">November</MenuItem>
+                    <MenuItem value="December">December</MenuItem>
+                  </Select>
+                </Grid>
+                <Grid item xs>
+                  <Select
+                    style={{width: "100%"}}
+                    value={this.state.newIntakeYear}
+                    onChange={onChangeSelection}
+                    name="newIntakeYear"
+                    displayEmpty
+                    className={classes.selectEmpty}
+                    renderValue={(selected) => {
+                      if (!selected) {
+                        return <div style={{font: "inherit", color: "#aaa"}}>Year</div>;
+                      }
+          
+                      return selected;
+                    }}
+                    inputProps={{ 'aria-label': 'Without label' }}
+                  >
+                    {this.state.years.map((item, index) => {
+                      return (
+                        <MenuItem value={item}>{item}</MenuItem>
+                      );
+                    })}
+                  </Select>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseCopyPSDialog} color="primary" autoFocus>
+                Cancel
+              </Button>
+              <Button onClick={confirmCopyPS} disabled={(this.state.newIntakeMonth && this.state.newIntakeYear) ? false : true} color="primary">
                 Confirm
               </Button>
             </DialogActions>

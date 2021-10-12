@@ -68,8 +68,8 @@ export default useStyles(class Home extends React.Component {
       yearInputSize: 1,
       specInputSize: 2,
       yearOptions: [],
-      Trimesters: [],
-      Specs: []
+      Specs: [],
+      standardPS: []
     }
     this.timerId = null;
   }
@@ -78,12 +78,13 @@ export default useStyles(class Home extends React.Component {
     if(window.innerWidth <= 480) {
       this.setState({intakeInputSize: 5, specInputSize: 6});
     }
-    axios.get(process.env.REACT_APP_API_PATH + "/trimesters.json")
+    axios.get(process.env.REACT_APP_API_PATH + "/standardPS.json")
       .then((response) => {
-        this.setState({ 
-          Trimesters: response.data 
+        this.setState({
+          standardPS: response.data 
         });
       });
+    
     axios.get(process.env.REACT_APP_API_PATH + "/specs.json")
       .then((response) => {
         this.setState({ 
@@ -249,14 +250,14 @@ export default useStyles(class Home extends React.Component {
                       required
                     >
                       <option aria-label="None" value="" />
-                      {this.state.Trimesters.map((item, index) => {
-                        return <option key={item}>{item}</option>
+                      {this.state.standardPS.map((item, index) => {
+                        return <option key={item.intake}>{item.intake}</option>
                       })}
                     </Select>
                     <FormHelperText>Required</FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={this.state.intakeInputSize}>
+                {/* <Grid item xs={this.state.intakeInputSize}>
                   <FormControl required className={classes.formControl}>
                     <InputLabel htmlFor="intake-native-simple">Year</InputLabel>
                     <Select
@@ -276,7 +277,7 @@ export default useStyles(class Home extends React.Component {
                     </Select>
                     <FormHelperText>Required</FormHelperText>
                   </FormControl>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={this.state.specInputSize}>
                   <FormControl required className={classes.formControl}>
                     <InputLabel htmlFor="spec-native-simple">Specialization</InputLabel>
@@ -344,7 +345,7 @@ export default useStyles(class Home extends React.Component {
                 <Grid item className={classes.pstable} xs={12}>
                   <PSTable
                     intake={this.state.data.intake}
-                    year={this.state.data.year}
+                    spec={this.state.data.spec}
                   />
                 </Grid>
                 <Grid item xs>
