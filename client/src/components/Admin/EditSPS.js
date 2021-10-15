@@ -532,26 +532,6 @@ export default useStyles(
 
       return (
         <div>
-          <SpeedDial
-            ariaLabel="SpeedDial example"
-            className={classes.speedDial}
-            hidden={false}
-            icon={<SpeedDialIcon />}
-            onClose={handleCloseSpeedDial}
-            onOpen={handleOpenSpeedDial}
-            open={this.state.openSpeedDial}
-            direction="up"
-          >
-            {actions.map((action) => (
-              <SpeedDialAction
-                key={action.name}
-                icon={action.icon}
-                disabled={action.disabled}
-                tooltipTitle={action.name}
-                onClick={action.action}
-              />
-            ))}
-          </SpeedDial>
           <Grid container spacing={3} className={classes.selectionCont}>
             <Grid item>
               <FormControl id="selection-intake" disabled={this.state.selectionDisable}>
@@ -605,6 +585,28 @@ export default useStyles(
                 </Select>
               </FormControl>
             </Grid>
+            <Grid>
+              <SpeedDial
+                ariaLabel="SpeedDial example"
+                // className={classes.speedDial}
+                hidden={false}
+                icon={<SpeedDialIcon />}
+                onClose={handleCloseSpeedDial}
+                onOpen={handleOpenSpeedDial}
+                open={this.state.openSpeedDial}
+                direction="down"
+              >
+                {actions.map((action) => (
+                  <SpeedDialAction
+                    key={action.name}
+                    icon={action.icon}
+                    disabled={action.disabled}
+                    tooltipTitle={action.name}
+                    onClick={action.action}
+                  />
+                ))}
+              </SpeedDial>
+            </Grid>
           </Grid>
           <Paper
             id="psTable-container"
@@ -638,9 +640,9 @@ export default useStyles(
                           inputProps={{ 'aria-label': 'Without label' }}
                         >
                           <MenuItem value="core">Core</MenuItem>
+                          <MenuItem value="elective">Elective</MenuItem>
                           <MenuItem value="mpu">MPU</MenuItem>
                           <MenuItem value="spec core">Specialization Core</MenuItem>
-                          <MenuItem value="elective">Elective</MenuItem>
                           <MenuItem value="spec elec">Specialization Elective</MenuItem>
                         </Select>
                       </FormControl>
@@ -792,9 +794,9 @@ export default useStyles(
                           inputProps={{ 'aria-label': 'Without label' }}
                         >
                           <MenuItem value="core">Core</MenuItem>
+                          <MenuItem value="elective">Elective</MenuItem>
                           <MenuItem value="mpu">MPU</MenuItem>
                           <MenuItem value="spec core">Specialization Core</MenuItem>
-                          <MenuItem value="elective">Elective</MenuItem>
                           <MenuItem value="spec elec">Specialization Elective</MenuItem>
                         </Select>
                       </FormControl>
@@ -946,9 +948,9 @@ export default useStyles(
                           inputProps={{ 'aria-label': 'Without label' }}
                         >
                           <MenuItem value="core">Core</MenuItem>
+                          <MenuItem value="elective">Elective</MenuItem>
                           <MenuItem value="mpu">MPU</MenuItem>
                           <MenuItem value="spec core">Specialization Core</MenuItem>
-                          <MenuItem value="elective">Elective</MenuItem>
                           <MenuItem value="spec elec">Specialization Elective</MenuItem>
                         </Select>
                       </FormControl>

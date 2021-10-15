@@ -55,7 +55,7 @@ function TabPanel(props) {
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
+  activeTab: PropTypes.any.isRequired,
 };
 
 function a11yProps(index) {
@@ -70,7 +70,7 @@ export default useStyles(class Admin extends React.Component {
     super(props);
     this.state = {
       token: getToken(),
-      value: 1,
+      activeTab: 0,
     }
   }
 
@@ -82,7 +82,7 @@ export default useStyles(class Admin extends React.Component {
     const { classes } = this.props;
 
     const handleChange = (event, newValue) => {
-      this.setState({value: newValue});
+      this.setState({activeTab: newValue});
     };
 
     // DEBUG
@@ -94,7 +94,7 @@ export default useStyles(class Admin extends React.Component {
       <div className={classes.container}>
         <Paper className={classes.root}>
           <Tabs
-            value={this.state.value}
+            value={this.state.activeTab}
             onChange={handleChange}
             indicatorColor="primary"
             textColor="primary"
@@ -108,10 +108,10 @@ export default useStyles(class Admin extends React.Component {
         {/* <TabPanel value={this.state.value} index={0}>
           <EditTriMonths />
         </TabPanel> */}
-        <TabPanel value={this.state.value} index={0}>
+        <TabPanel value={this.state.activeTab} index={0}>
           <EditSubjectList />
         </TabPanel>
-        <TabPanel value={this.state.value} index={1}>
+        <TabPanel value={this.state.activeTab} index={1}>
           <EditSPS />
         </TabPanel>
       </div>

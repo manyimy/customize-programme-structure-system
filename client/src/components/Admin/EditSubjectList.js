@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -16,6 +17,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 import axios from 'axios';
 const API_PATH = process.env.REACT_APP_API_PATH;
@@ -29,18 +35,34 @@ const useStyles = withStyles((theme) => ({
     width: "100%",
     marginTop: 30
   },
-  listPaper: {
-    width: "45vw",
+  listPaper:  {
+    width: "50vw",
     marginLeft: "auto",
     marginRight: "auto",
+    ['@media (max-width:1023px)']: {
+      width: "70vw",
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+    ['@media (max-width:733px)']: {
+      width: "90vw",
+    },
     marginBottom: "15px",
     height: "70vh",
     overflowY: "scroll",
   },
   gridContainer: {
-    width: "45vw",
+    width: "50vw",
     marginLeft: "auto",
     marginRight: "auto",
+    ['@media (max-width:1023px)']: {
+      width: "70vw",
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+    ['@media (max-width:733px)']: {
+      width: "90vw",
+    },
   },
   codeInput: {
     // marginRight: "20px",
@@ -52,6 +74,11 @@ const useStyles = withStyles((theme) => ({
   },
   addBtn: {
     float: "right"
+  },
+  multiSelect: {
+    margin: theme.spacing(1),
+    minWidth: 125,
+    maxWidth: 125,
   }
 }));
 
@@ -65,6 +92,8 @@ export default useStyles(class EditSubjectList extends React.Component {
       alertSev: 'error',
       newCode: '',
       newSubject: '',
+      newCH: '',
+      newPreReq: [],
       errorCode: false,
       openDialog: false,
       deletingItem: null,
@@ -81,25 +110,25 @@ export default useStyles(class EditSubjectList extends React.Component {
   }
 
   onChange(event) {
-    if (event.target.id === "code") {
-      this.setState({
-        newCode: event.target.value
-      });
-      // if (event.target.value.match(/[A-Z]{3}[0-9]{4}/)) {
-      //   this.setState({ errorCode: false });
-      // } else {
-      //   this.setState({ errorCode: true });
-      //   event.target.helperText = "Invalid format: ABC1234";
-      // }
-    } else {
-      this.setState({
-        newSubject: event.target.value
-      });
-    }
+    const { name } = event.target;
+    this.setState({
+      [name]: (name === "newCH") ? Number(event.target.value) : event.target.value
+    });
   }
 
   render(){
     const { classes } = this.props;
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 200;
+    const MenuProps = {
+      PaperProps: {
+        style: {
+          maxHeight: ITEM_HEIGHT * 4 + ITEM_PADDING_TOP,
+          // width: 400,
+        },
+      },
+    };
+
     const handleCloseSnackbar = () => {
       this.setState({openAddPop: false});
     };
@@ -140,12 +169,15 @@ export default useStyles(class EditSubjectList extends React.Component {
       } else {
         list.push({
           code: this.state.newCode,
-          name: this.state.newSubject
+          name: this.state.newSubject,
+          ch: this.state.newCH
         });
         this.setState({
           subjects: list,
           newCode: '',
-          newSubject: ''
+          newSubject: '',
+          newCH: '',
+          prereq: ''
         });
         axios.post(API_PATH + '/subjectList', {
           subjects: list
@@ -178,6 +210,10 @@ export default useStyles(class EditSubjectList extends React.Component {
       });
     }
 
+    const handleChangePreReq = (event) => {
+      this.setState({newPreReq: event.target.value});
+    };
+
     return (
       <div>
         <Paper className={classes.listPaper} elevation={2}>
@@ -187,8 +223,10 @@ export default useStyles(class EditSubjectList extends React.Component {
 
               return (
                 <ListItem onClick={(e) => {handleOpenDialog(e, index)}} >
-                  <ListItemText id={labelId} primary={`${value.code + " - " + value.name}`} />
-                  <IconButton edge="end" aria-label="delete">
+                  <ListItemText id={labelId} style={{textAlign: "left", width: "15%"}} primary={`${value.code} - `} />
+                  <ListItemText id={labelId} style={{textAlign: "left", width: "75%"}} primary={`${value.name}`} />
+                  <ListItemText style={{textAlign: "center", width: "10%"}} primary={`${value.ch} CH`} />
+                  <IconButton style={{width: "5%"}} edge="end" aria-label="delete">
                     <DeleteIcon />
                   </IconButton>
                 </ListItem>
@@ -196,12 +234,13 @@ export default useStyles(class EditSubjectList extends React.Component {
             })}
           </List>
         </Paper>
-        <Grid container spacing={3} className={classes.gridContainer}>
-          <Grid item xs={4}>
+        <Grid container spacing={2} className={classes.gridContainer}>
+          <Grid item xs={2}>
             <TextField
               className={classes.codeInput}
               margin="dense"
               id="code"
+              name="newCode"
               placeholder="Code"
               inputProps={{ maxLength: 7 }}
               error= {this.state.errorCode}
@@ -211,18 +250,62 @@ export default useStyles(class EditSubjectList extends React.Component {
               value={this.state.newCode}
             />            
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <TextField
               required
               margin="dense"
               id="name"
+              name="newSubject"
               placeholder="Subject Name"
               variant="outlined"
               onChange={this.onChange.bind(this)}
               value={this.state.newSubject}
             />
           </Grid>
-          <Grid className={classes.addBtnGrid} item xs={4}>
+          <Grid item xs={2}>
+            <TextField
+              required
+              margin="dense"
+              id="ch"
+              name="newCH"
+              type="number"
+              placeholder="Credit Hour"
+              variant="outlined"
+              onChange={this.onChange.bind(this)}
+              value={this.state.newCH}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl className={classes.multiSelect}>
+              <Select
+                multiple
+                displayEmpty
+                value={this.state.newPreReq}
+                onChange={handleChangePreReq}
+                input={<OutlinedInput margin="dense"/>}
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return <div style={{font: "inherit", color: "#aaa"}}>Placeholder</div>;
+                  }
+
+                  return selected.join(', ');
+                }}
+                MenuProps={MenuProps}
+                inputProps={{ 'aria-label': 'Without label'}}
+                // style={{padding: "10.5px 14px"}}
+              >
+                <MenuItem disabled value="">
+                  <div style={{font: "inherit", color: "#aaa"}}>Placeholder</div>
+                </MenuItem>
+                {this.state.subjects.map((subject) => (
+                  <MenuItem key={subject.code} value={subject.code}>
+                    {subject.code + ' - ' + subject.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid className={classes.addBtnGrid} item xs={1}>
             <Button
               className={classes.addBtn}
               id="add-subject-button"
@@ -230,7 +313,7 @@ export default useStyles(class EditSubjectList extends React.Component {
               onClick={handleAdd} 
               color="primary"
               disabled={
-                (this.state.newCode && this.state.newSubject 
+                (this.state.newCode && this.state.newSubject && this.state.newCH
                   // && this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)
                   ) 
                   ? false : true
