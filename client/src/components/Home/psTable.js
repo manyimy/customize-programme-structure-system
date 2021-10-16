@@ -9,93 +9,73 @@ const useStyles = withStyles((theme) => ({
   container: {
     alignItem: "center",
   },
+  table: {
+    maxWidth: "50vw"
+  }
 }));
 export default useStyles(
   class PSTable extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        // triMonth: [],
-        // triYear: [],
-        // triNum: [],
-        // Tri1PS: [],
-        // Tri2PS: [],
-        // Tri3PS: [],
-        // Trimesters: [],
         standardPS: [],
         intakeNum: null,
         selectedPS:[],
+        afterRemovePS: []
       };
     }
 
     componentDidMount() {
-      console.log(process.env.REACT_APP_API_PATH);
+      // console.log(process.env.REACT_APP_API_PATH);
       axios
         .get(process.env.REACT_APP_API_PATH + "/standardPS.json")
         .then((response) => {
-          let ps = [];
           for (let i = 0; i < response.data.length; i++) {
             const element = response.data[i];
             if(element.intake === this.props.intake) {
               console.log(element.PS[this.props.spec]);
+              let afterPS = [];
+              console.log(this.props.trans);
+              let x = 0;
+              for (let i = 0; i < element.PS[this.props.spec].length; i++) {
+                const subject = element.PS[this.props.spec][i];
+                console.log(subject.code + " " + subject.name);
+                console.log(this.props.trans.includes(subject.code + " " + subject.name));
+                if(!this.props.trans.includes(subject.code + " " + subject.name)) {
+                  afterPS.push(subject);
+                  x++;
+                }
+              }
+              // afterPS.map((subject, index) => {
+              //   console.log(subject.code + " " + subject.name);
+              //   console.log(this.props.trans.includes(subject.code + " " + subject.name));
+              //   if(this.props.trans.includes(subject.code + " " + subject.name)) {
+              //     afterPS.splice(index, 1);
+              //   }
+              // })
+              console.log(afterPS);
               this.setState({
-                selectedPS: element.PS[this.props.spec],
+                selectedPS: afterPS,
                 standardPS: response.data
               });
               break;
             }
           }
         });
+      console.log(this.props.trans);
     }
 
-    // updateTrimester(inputIntake, inputYear) {
-    //   var triName = [];
-    //   // 0 - APRIL
-    //   // 1 - JULY
-    //   // 2 - NOVEMBER
-    //   var initNum = this.state.Trimesters.indexOf(inputIntake);
-    //   this.setState({ intakeNum: initNum });
-    //   for (var i = initNum; triName.length < 9; i++) {
-    //     triName.push(this.state.Trimesters[i]);
-    //     if (i === this.state.Trimesters.length - 1) i = -1;
-    //   }
-
-    //   var triYear = [];
-    //   for (var j = 0, y = 0; triYear.length < 9; ) {
-    //     triYear.push(inputYear + y);
-    //     j++;
-    //     if (triName[j] === "July") y++;
-    //   }
-
-    //   var n = 0;
-    //   switch (initNum) {
-    //     // APRIL
-    //     case 2:
-    //       n = 3;
-    //       break;
-    //     // JULY
-    //     case 0:
-    //       n = 1;
-    //       break;
-    //     // NOVEMBER
-    //     case 1:
-    //       n = 2;
-    //       break;
-    //     default:
-    //       n = 1;
-    //       break;
-    //   }
-    //   let triArray = [];
-    //   for (let i = 0; i < 9; i++) {
-    //     triArray.push(n++);
-    //     if (n === 4) n = 1;
-    //   }
-
-    //   this.setState({
-    //     triMonth: triName,
-    //     triYear: triYear,
-    //     triNum: triArray,
-    //   });
+    // removeTransferredSubject = (afterPS) => {
+    //   let afterPS = JSON.parse(JSON.stringify(this.state.selectedPS));
+    //   console.log(afterPS);
+    //   let x = 0;
+    //   afterPS.map((subject, index) => {
+    //     if(this.props.trans.includes(subject.code + " " + subject.name)) {
+    //       afterPS.splice(index, 1);
+    //       x++;
+    //     }
+    //   })
+    //   this.setState({afterRemovePS: afterPS});
     // }
 
     render() {
@@ -103,14 +83,15 @@ export default useStyles(
 
       return (
         <div className={classes.container}>
+          <button onClick={this.removeTransferredSubject}>Click</button>
           <h1>Year 1</h1>
-          <table id="ps-table-y1" class="table2excel">
+          <table id="ps-table-y1" className={classes.table}>
             <tr>
-              <th>Category</th>
-              <th>Subject Code</th>
-              <th>Subject Name</th>
-              <th>CH</th>
-              <th>Trimester</th>
+              <th style={{padding: "6px 30px", width: "10%"}}>Category</th>
+              <th style={{padding: "6px 30px", width: "20%"}}>Subject Code</th>
+              <th style={{padding: "6px 30px", width: "55%"}}>Subject Name</th>
+              <th style={{padding: "6px 30px", width: "5%"}}>CH</th>
+              <th style={{padding: "6px 30px", width: "10%"}}>Trimester</th>
             </tr>
             {this.state.selectedPS.map((item, index) => {
               if (item.defaultYear === 1) {
@@ -129,14 +110,13 @@ export default useStyles(
             })}
           </table>
           <h1>Year 2</h1>
-          <table id="ps-table-y2" class="table2excel">
+          <table id="ps-table-y2" className={classes.table}>
             <tr>
-              <th>Category</th>
-              <th>Subject Code</th>
-              <th>Subject Name</th>
-              <th>CH</th>
-              <th>Trimester</th>
-              {/* <th>Month</th> */}
+              <th style={{padding: "6px 30px", width: "10%"}}>Category</th>
+              <th style={{padding: "6px 30px", width: "20%"}}>Subject Code</th>
+              <th style={{padding: "6px 30px", width: "55%"}}>Subject Name</th>
+              <th style={{padding: "6px 30px", width: "5%"}}>CH</th>
+              <th style={{padding: "6px 30px", width: "10%"}}>Trimester</th>
             </tr>
             {this.state.selectedPS.map((item, index) => {
               if (item.defaultYear === 2) {
@@ -155,14 +135,13 @@ export default useStyles(
             })}
           </table>
           <h1>Year 3</h1>
-          <table id="ps-table-y3" class="table2excel">
+          <table id="ps-table-y3" className={classes.table}>
             <tr>
-              <th>Category</th>
-              <th>Subject Code</th>
-              <th>Subject Name</th>
-              <th>CH</th>
-              <th>Trimester</th>
-              {/* <th>Month</th> */}
+              <th style={{padding: "6px 30px", width: "10%"}}>Category</th>
+              <th style={{padding: "6px 30px", width: "20%"}}>Subject Code</th>
+              <th style={{padding: "6px 30px", width: "55%"}}>Subject Name</th>
+              <th style={{padding: "6px 30px", width: "5%"}}>CH</th>
+              <th style={{padding: "6px 30px", width: "10%"}}>Trimester</th>
             </tr>
             {this.state.selectedPS.map((item, index) => {
               if (item.defaultYear === 3) {

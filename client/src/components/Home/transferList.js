@@ -46,9 +46,10 @@ export default useStyles(class TransferList extends React.Component{
     axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")
       .then((response) => {
         let subject = [];
-        response.data.map((value, index) => {
-          return subject.push(value.code + " " + value.name);
-        })
+        response.data.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+          .map((value, index) => {
+            return subject.push(value.code + " " + value.name);
+          })
         this.setState({left: subject});
       });
     
@@ -98,8 +99,8 @@ export default useStyles(class TransferList extends React.Component{
   };
 
   const handleCheckedRight = () => {
-    this.setState({right: this.state.right.concat(leftChecked)})
-    this.setState({left: not(this.state.left, leftChecked)})
+    this.setState({right: this.state.right.concat(leftChecked).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))})
+    this.setState({left: not(this.state.left, leftChecked).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))})
     this.setState({checked: not(this.state.checked, leftChecked)})
 
     // setRight(right.concat(leftChecked));
@@ -108,8 +109,8 @@ export default useStyles(class TransferList extends React.Component{
   };
 
   const handleCheckedLeft = () => {
-    this.setState({left: this.state.left.concat(rightChecked)})
-    this.setState({right: not(this.state.right, rightChecked)})
+    this.setState({left: this.state.left.concat(rightChecked).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))})
+    this.setState({right: not(this.state.right, rightChecked).sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))})
     this.setState({checked: not(this.state.checked, rightChecked)})
 
     // setLeft(left.concat(rightChecked));

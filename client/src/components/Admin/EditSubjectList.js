@@ -17,7 +17,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Input from '@material-ui/core/Input';
+import Typography from '@material-ui/core/Typography';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -77,8 +77,12 @@ const useStyles = withStyles((theme) => ({
   },
   multiSelect: {
     margin: theme.spacing(1),
-    minWidth: 125,
-    maxWidth: 125,
+    maxWidth: "90%",
+  },
+  prereq: {
+    '&::-webkit-scrollbar': {
+      display: "none"
+    }
   }
 }));
 
@@ -97,6 +101,7 @@ export default useStyles(class EditSubjectList extends React.Component {
       errorCode: false,
       openDialog: false,
       deletingItem: null,
+      removeMsg: ''
     }
   }
 
@@ -104,7 +109,7 @@ export default useStyles(class EditSubjectList extends React.Component {
     axios.get( API_PATH + "/subjectList.json")
       .then((response) => {
         this.setState({
-          subjects: response.data
+          subjects: response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))
         })
       });
   }
@@ -168,16 +173,17 @@ export default useStyles(class EditSubjectList extends React.Component {
         });
       } else {
         list.push({
-          code: this.state.newCode,
-          name: this.state.newSubject,
-          ch: this.state.newCH
+          code: this.state.newCode.trim(),
+          name: this.state.newSubject.trim(),
+          ch: this.state.newCH,
+          prereq: this.state.newPreReq
         });
         this.setState({
           subjects: list,
           newCode: '',
           newSubject: '',
           newCH: '',
-          prereq: ''
+          newPreReq: []
         });
         axios.post(API_PATH + '/subjectList', {
           subjects: list
@@ -198,6 +204,7 @@ export default useStyles(class EditSubjectList extends React.Component {
       event.preventDefault();
       this.setState({
         deletingItem: index,
+        removeMsg: "Are you sure to remove " + this.state.subjects[index].code + " " + this.state.subjects[index].name + " permanently?",
         openDialog: true
       });
     }
@@ -222,11 +229,11 @@ export default useStyles(class EditSubjectList extends React.Component {
               const labelId = `checkbox-list-label-${value.code}`;
 
               return (
-                <ListItem onClick={(e) => {handleOpenDialog(e, index)}} >
-                  <ListItemText id={labelId} style={{textAlign: "left", width: "15%"}} primary={`${value.code} - `} />
-                  <ListItemText id={labelId} style={{textAlign: "left", width: "75%"}} primary={`${value.name}`} />
-                  <ListItemText style={{textAlign: "center", width: "10%"}} primary={`${value.ch} CH`} />
-                  <IconButton style={{width: "5%"}} edge="end" aria-label="delete">
+                <ListItem >
+                  <ListItemText id={labelId} style={{textAlign: "left", width: "70%", marginRight: "10px"}} primary={`${value.code} \t-\t ${value.name}`} />
+                  <ListItemText style={{textAlign: "right", width: "10%"}} primary={<Typography className={classes.prereq} style={{overflow: "scroll"}}>{value.prereq.toString()}</Typography>} />
+                  <ListItemText style={{textAlign: "right", marginRight: "5px"}} primary={`${value.ch} CH`} />
+                  <IconButton onClick={(e) => {handleOpenDialog(e, index)}} style={{width: "min-content"}} edge="end" aria-label="delete">
                     <DeleteIcon />
                   </IconButton>
                 </ListItem>
@@ -285,7 +292,7 @@ export default useStyles(class EditSubjectList extends React.Component {
                 input={<OutlinedInput margin="dense"/>}
                 renderValue={(selected) => {
                   if (selected.length === 0) {
-                    return <div style={{font: "inherit", color: "#aaa"}}>Placeholder</div>;
+                    return <div style={{font: "inherit", color: "#aaa"}}>Prerequisites</div>;
                   }
 
                   return selected.join(', ');
@@ -295,7 +302,7 @@ export default useStyles(class EditSubjectList extends React.Component {
                 // style={{padding: "10.5px 14px"}}
               >
                 <MenuItem disabled value="">
-                  <div style={{font: "inherit", color: "#aaa"}}>Placeholder</div>
+                  <div style={{font: "inherit", color: "#aaa"}}>Prerequisites</div>
                 </MenuItem>
                 {this.state.subjects.map((subject) => (
                   <MenuItem key={subject.code} value={subject.code}>
@@ -337,7 +344,7 @@ export default useStyles(class EditSubjectList extends React.Component {
           <DialogTitle id="alert-dialog-title">{"Remove subject from list?"}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              Are you sure to remove the subject permanently?
+              {this.state.removeMsg}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

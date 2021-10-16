@@ -72,6 +72,7 @@ export default useStyles(class Home extends React.Component {
       standardPS: []
     }
     this.timerId = null;
+    this.checkedSubject = React.createRef();
   }
   
   componentDidMount() {
@@ -91,7 +92,7 @@ export default useStyles(class Home extends React.Component {
           Specs: response.data 
         });
       });
-    this.getYear();
+    // this.getYear();
   }
 
   handleNext = () => {
@@ -111,11 +112,13 @@ export default useStyles(class Home extends React.Component {
     // setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
   
+  // reset step back to 0
   handleReset = () => {
     this.setState({ activeStep: 0 })
     // setActiveStep(0);
   };
   
+  // handle intake and specialization input selection changes
   handleChange = (event) => {
     const name = event.target.name;
     this.setState({
@@ -126,6 +129,7 @@ export default useStyles(class Home extends React.Component {
     });
   };
 
+  // pop up error message and close after 5 seconds
   showError = () => {
     // document.getElementById("error-alert").innerText = message;
     document.getElementById("error-alert").style.display = "flex";
@@ -135,18 +139,20 @@ export default useStyles(class Home extends React.Component {
     }, 5000);
   }
   
-  getYear = () => {
-    let thisYear = (new Date()).getFullYear();
-    let years = [];
-    for(let i = thisYear-4; years.length <= 7; i++) {
-      years.push(i);
-    }
-    this.setState({yearOptions: years});
-  }
+  // getYear = () => {
+  //   let thisYear = (new Date()).getFullYear();
+  //   let years = [];
+  //   for(let i = thisYear-4; years.length <= 7; i++) {
+  //     years.push(i);
+  //   }
+  //   this.setState({yearOptions: years});
+  // }
 
   render(){
     const { classes } = this.props;
+    const transferred = this.checkedSubject.current; 
 
+    // export to csv
     var tablesToExcel = (function() {
       var uri = 'data:application/vnd.ms-excel;base64,'
       , tmplWorkbookXML = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
@@ -220,22 +226,15 @@ export default useStyles(class Home extends React.Component {
           ))}
         </Stepper>
         <div>
-          {this.state.activeStep === steps.length ? (
-            <div>
-              <Button onClick={this.handleReset} className={classes.button}>
-                Reset
-              </Button>
-            </div>
-          ) :
-          this.state.activeStep === 0 ? (
+          {this.state.activeStep === 0 ? (
             <div>
               <Grid container spacing={3}>
-               {(window.innerWidth > 480 ? 
+              {(window.innerWidth > 480 ? 
                   <Grid  item xs>
                     <Paper className={classes.paper}></Paper>
                   </Grid>
                   :<div></div>
-               )}
+              )}
                 <Grid item xs={this.state.intakeInputSize}>
                   <FormControl required className={classes.formControl}>
                     <InputLabel htmlFor="intake-native-simple">Intake</InputLabel>
@@ -313,7 +312,7 @@ export default useStyles(class Home extends React.Component {
                 : <div></div>
               )}
                 <Grid item xs={12}>
-                  <TransferList />
+                  <TransferList ref={this.checkedSubject}/>
                 </Grid>
               {(window.innerWidth > 480 ? 
                 <Grid item xs>
@@ -346,6 +345,7 @@ export default useStyles(class Home extends React.Component {
                   <PSTable
                     intake={this.state.data.intake}
                     spec={this.state.data.spec}
+                    trans={transferred.state.right}
                   />
                 </Grid>
                 <Grid item xs>
