@@ -86,9 +86,9 @@ export default useStyles(class Admin extends React.Component {
     };
 
     // DEBUG
-    // if(!this.state.token) {
-    //   return <Login setToken={setToken} parentCallback={this.callbackFunction} />
-    // }
+    if(!this.state.token) {
+      return <Login setToken={setToken} parentCallback={this.callbackFunction} />
+    }
 
     return (
       <div className={classes.container}>

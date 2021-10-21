@@ -86,16 +86,17 @@ const useStyles = withStyles((theme) => ({
     marginTop: theme.spacing(0.5),
   },
   speedDial: {
-    position: 'fixed',
-    '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
-      bottom: theme.spacing(5),
-      right: theme.spacing(5),
-    },
-    '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
-      top: theme.spacing(5),
-      left: theme.spacing(5),
-    },
-    zIndex: 10
+    position: "absolute",
+    // position: 'fixed',
+    // '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
+    //   bottom: theme.spacing(5),
+    //   right: theme.spacing(5),
+    // },
+    // '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
+    //   top: theme.spacing(5),
+    //   left: theme.spacing(5),
+    // },
+    // zIndex: 10
   },
 }));
 
@@ -112,12 +113,13 @@ export default useStyles(
         openSnackbar: false,  // snackbar visibility
         snackbarMsg: "",      // snackbar message
         snackbarSev: "error", // snackbar severity
-        openDeetePSDialog: false,    // open confirmation dialog
+        openDeletePSDialog: false,    // open confirmation dialog
         openSpeedDial: false, // open speed dial all actions
         toDelete: -99,        // index of subject to delete
         selectedIntake: "",   // initial selection intake
         selectedSpec: "",     // initial selection specialization
         standardPS: [],       // standard programme structure from server JSON file
+        standardIndex: "",
         // tri1PS: [],           // old
         // tri2PS: [],           // old
         // tri3PS: [],           // old
@@ -153,6 +155,8 @@ export default useStyles(
         newIntakeMonth: "",       // month of new intake to be created
         newIntakeYear: "",        // year of new intake to be created
         copyFromIntake: "",       // intake to be copy from
+        toDeleteIntake: "",
+        toDeleteSpec: ""
       };
     }
 
@@ -186,8 +190,8 @@ export default useStyles(
         { icon: <AddIcon />, name: 'Add', action: (e) => handleActionAddPS(e), disabled: this.state.selectionDisable },
         { icon: <FileCopyIcon />, name: 'Copy', action: (e) => handleActionCopyPS(e), disabled: this.state.selectionDisable },
         { icon: <EditIcon />, name: 'Edit', action: (e) => handleActionEditPS(e), disabled: (this.state.selectedIntake && this.state.selectedSpec) ? false : true },
-        { icon: <SaveIcon />, name: 'Save', action: (e) => handleSave(e), disabled: !this.state.selectionDisable },
-        { icon: <DeleteIcon />, name: 'Delete', action: (e) => handleActionDeletePS(e), disabled: (this.state.selectedIntake) ? false : true },
+        // { icon: <SaveIcon />, name: 'Save', action: (e) => handleSave(e), disabled: !this.state.selectionDisable },
+        { icon: <DeleteIcon />, name: 'Delete', action: (e) => handleActionDeletePS(e), disabled: this.state.selectionDisable },
       ];
 
       const handleCloseSnackbar = () => {
@@ -243,7 +247,7 @@ export default useStyles(
         event.preventDefault();
         this.setState({
           toDelete: index,
-          openDeetePSDialog: true,
+          openDeletePSDialog: true,
         });
       };
 
@@ -251,7 +255,7 @@ export default useStyles(
         event.preventDefault();
         this.setState({
           toDelete: null,
-          openDeetePSDialog: false,
+          openDeletePSDialog: false,
         });
       };
 
@@ -374,35 +378,50 @@ export default useStyles(
       };
 
       const confirmDeletePS = () => {
-        let toDeletePS = this.state.selectedIntake;
+        // let toDeletePS = this.state.selectedIntake;
         let temp = JSON.parse(JSON.stringify(this.state.standardPS));
-        for (let i = 0; i < this.state.standardPS.length; i++) {
-          const ps = this.state.standardPS[i];
-          if(ps.intake === toDeletePS) {
-            console.log(temp);
-            console.log(i);
-            temp.splice(i, 1);
-            console.log(temp);
+        if(!this.state.toDeleteSpec) {
+          for (let i = 0; i < this.state.standardPS.length; i++) {
+            const ps = this.state.standardPS[i];
+            if(ps.intake === this.state.toDeleteIntake) {
+              console.log(temp);
+              console.log(i);
+              temp.splice(i, 1);
+              console.log(temp);
+              break;
+            }
+          }
+        } else {
+          for (let i = 0; i < this.state.standardPS.length; i++) {
+            const ps = this.state.standardPS[i];
+            if(ps.intake === this.state.toDeleteIntake) {
+              console.log(temp);
+              console.log(i);
+              temp[i].PS[this.state.toDeleteSpec] = [];
+              console.log(temp);
+              break;
+            }
           }
         }
         this.setState({standardPS: temp});
-        axios
-          .post(API_PATH + "/standardPS", {
-            newPS: temp
-          })
-          .then((res) => {
-            this.setState({
-              snackbarMsg: this.state.selectedIntake + " has been deleted.",
-              snackbarSev: "success",
-              openSnackbar: true,
-              selectedIntake: "",
+          axios
+            .post(API_PATH + "/standardPS", {
+              newPS: temp
+            })
+            .then((res) => {
+              this.setState({
+                snackbarMsg: this.state.toDeleteIntake + ((this.state.toDeleteSpec) ? ( " " + this.state.toDeleteSpec) : "") + " has been deleted.",
+                snackbarSev: "success",
+                openSnackbar: true,
+                toDeleteSpec: "",
+                toDeleteIntake: ""
+              });
+              // refresh
+              // window.location.reload(false);~
+            })
+            .catch((err) => {
+              console.log(err);
             });
-            // refresh
-            // window.location.reload(false);~
-          })
-          .catch((err) => {
-            console.log(err);
-          });
         this.setState({openDeletePS: false});
       };
 
@@ -472,6 +491,7 @@ export default useStyles(
         console.log(toEditPS);
         this.setState({
           editingPS: toEditPS,
+          standardIndex: Number(index),
           selectionDisable: true
         })
         document.getElementById("psTable-container").style.display = "block";
@@ -588,7 +608,7 @@ export default useStyles(
             <Grid>
               <SpeedDial
                 ariaLabel="SpeedDial example"
-                // className={classes.speedDial}
+                className={classes.speedDial}
                 hidden={false}
                 icon={<SpeedDialIcon />}
                 onClose={handleCloseSpeedDial}
@@ -1075,11 +1095,24 @@ export default useStyles(
                 </TableBody>
               </Table>
             </TableContainer>
+            <Tooltip title="Save Changes" aria-label="save">
+              <Fab
+                className={classes.saveBtn}
+                color="primary"
+                aria-label="save"
+                disabled={(this.state.standardIndex) 
+                  ? (this.state.editingPS === this.state.standardPS[this.state.standardIndex].PS[this.state.selectedSpec])
+                      ? true : false : true}
+                onClick={handleSave}
+              >
+                <SaveIcon />
+              </Fab>
+            </Tooltip>
           </Paper>
 
           {/* Delete Subject From Programme Structure Confirmation Dialog */}
           <Dialog
-            open={this.state.openDeetePSDialog}
+            open={this.state.openDeletePSDialog}
             onClose={handleCloseDialog}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -1110,18 +1143,63 @@ export default useStyles(
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Remove " + this.state.selectedIntake + "?"}
+              Delete Programme Structure.
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                {"Are you sure to remove " + this.state.selectedIntake + "'s programme strucure?"}
+                Select the intake and specialization to be deleted. Specialization is optional.
               </DialogContentText>
+              <Select
+                style={{width: "40%", marginRight: "5%"}}
+                value={this.state.toDeleteIntake}
+                onChange={onChangeSelection}
+                name="toDeleteIntake"
+                displayEmpty
+                className={classes.selectEmpty}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <div style={{font: "inherit", color: "#aaa"}}>Intake</div>;
+                  }
+      
+                  return selected;
+                }}
+                inputProps={{ 'aria-label': 'Without label' }}
+              >
+                {this.state.standardPS.map((item, index) => {
+                  return (
+                    <MenuItem value={item.intake}>{item.intake}</MenuItem>
+                  );
+                })}
+              </Select>
+              <Select
+                  id="delete-spec"
+                  style={{width: "55%"}}
+                  value={this.state.toDeleteSpec}
+                  onChange={onChangeSelection}
+                  name="toDeleteSpec"
+                  displayEmpty
+                  className={classes.selectEmpty}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return <div style={{font: "inherit", color: "#aaa"}}>Specialization</div>;
+                    }
+        
+                    return selected;
+                  }}
+                  inputProps={{ 'aria-label': 'Without label' }}
+                >
+                  <MenuItem value="" style={{color: "#aaa"}}><em>None</em></MenuItem>
+                  <MenuItem value="Software Engineering">Software Engineering</MenuItem>
+                  <MenuItem value="Data Science">Data Science</MenuItem>
+                  <MenuItem value="Game Development">Game Development</MenuItem>
+                  <MenuItem value="Cybersecurity">Cybersecurity</MenuItem>
+                </Select>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseDeletePSDialog} color="primary" autoFocus>
                 Cancel
               </Button>
-              <Button onClick={confirmDeletePS} color="primary">
+              <Button onClick={confirmDeletePS} color="primary" disabled={(this.state.toDeleteIntake) ? false : true}>
                 Confirm
               </Button>
             </DialogActions>
@@ -1294,7 +1372,6 @@ export default useStyles(
               </Button>
             </DialogActions>
           </Dialog>
-
           <Snackbar
             open={this.state.openSnackbar}
             autoHideDuration={6000}
