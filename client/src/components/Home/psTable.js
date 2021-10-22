@@ -83,7 +83,6 @@ export default useStyles(
 
       return (
         <div className={classes.container}>
-          <button onClick={this.removeTransferredSubject}>Click</button>
           <h1>Year 1</h1>
           <table id="ps-table-y1" className={classes.table}>
             <tr>

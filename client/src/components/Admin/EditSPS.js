@@ -62,10 +62,10 @@ const useStyles = withStyles((theme) => ({
   tableBody: {
     overflowY: "scroll",
   },
-  btnGrpCont: {
-    textAlign: "center",
-    marginBottom: "20px",
-  },
+  // btnGrpCont: {
+  //   textAlign: "center",
+  //   marginBottom: "20px",
+  // },
   typoh1: {
     textAlign: "center",
   },
@@ -115,7 +115,7 @@ export default useStyles(
         snackbarSev: "error", // snackbar severity
         openDeletePSDialog: false,    // open confirmation dialog
         openSpeedDial: false, // open speed dial all actions
-        toDelete: -99,        // index of subject to delete
+        toDeleteSubject: -99,        // index of subject to delete
         selectedIntake: "",   // initial selection intake
         selectedSpec: "",     // initial selection specialization
         standardPS: [],       // standard programme structure from server JSON file
@@ -155,8 +155,8 @@ export default useStyles(
         newIntakeMonth: "",       // month of new intake to be created
         newIntakeYear: "",        // year of new intake to be created
         copyFromIntake: "",       // intake to be copy from
-        toDeleteIntake: "",
-        toDeleteSpec: ""
+        toDeleteIntake: "",       // programme structure of intake to be deleted
+        toDeleteSpec: ""          // programme structure of specification to be deleted
       };
     }
 
@@ -186,6 +186,7 @@ export default useStyles(
     render() {
       const { classes } = this.props;
 
+      // Speed dial tooltips
       const actions = [
         { icon: <AddIcon />, name: 'Add', action: (e) => handleActionAddPS(e), disabled: this.state.selectionDisable },
         { icon: <FileCopyIcon />, name: 'Copy', action: (e) => handleActionCopyPS(e), disabled: this.state.selectionDisable },
@@ -246,7 +247,7 @@ export default useStyles(
       const handleOpenDialog = (event, index) => {
         event.preventDefault();
         this.setState({
-          toDelete: index,
+          toDeleteSubject: index,
           openDeletePSDialog: true,
         });
       };
@@ -254,7 +255,7 @@ export default useStyles(
       const handleCloseDialog = (event) => {
         event.preventDefault();
         this.setState({
-          toDelete: null,
+          toDeleteSubject: null,
           openDeletePSDialog: false,
         });
       };
@@ -308,7 +309,7 @@ export default useStyles(
       // handle delete subject from programme structure
       const handleDelete = (e) => {
         let arrayCopy = this.state.editingPS;
-        arrayCopy.splice(this.state.toDelete, 1);
+        arrayCopy.splice(this.state.toDeleteSubject, 1);
         this.setState({
           editingPS: JSON.parse(JSON.stringify(arrayCopy)),
           snackbarMsg: "Subject removed.",

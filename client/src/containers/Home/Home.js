@@ -65,9 +65,9 @@ export default useStyles(class Home extends React.Component {
         spec: ''
       },
       intakeInputSize: 2,
-      yearInputSize: 1,
+      // yearInputSize: 1,
       specInputSize: 2,
-      yearOptions: [],
+      // yearOptions: [],
       Specs: [],
       standardPS: []
     }
@@ -304,7 +304,7 @@ export default useStyles(class Home extends React.Component {
                   : <div></div>
                 )}
               </Grid>
-              <Grid container spacing={3} >
+              <Grid container spacing={1} >
               {(window.innerWidth > 480 ? 
                 <Grid item xs>
                   <Paper className={classes.paper}></Paper>
@@ -345,7 +345,7 @@ export default useStyles(class Home extends React.Component {
                   <PSTable
                     intake={this.state.data.intake}
                     spec={this.state.data.spec}
-                    trans={transferred.state.right}
+                    trans={(transferred) ? transferred.state.right : null}
                   />
                 </Grid>
                 <Grid item xs>
@@ -362,7 +362,7 @@ export default useStyles(class Home extends React.Component {
                   onClick={(e) => {tablesToExcel(e, ['ps-table-y1','ps-table-y2','ps-table-y3'], ['Year1','Year2','Year3'], 'ProgrammeStructure.xls', 'Excel')}}
                   className={classes.button}
                 >
-                  Export to Excel
+                  Export to CSV
                 </Button>
               </div>
             </div>
