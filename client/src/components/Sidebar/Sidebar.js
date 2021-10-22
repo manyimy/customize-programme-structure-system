@@ -11,7 +11,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const styles = theme => ({
   drawerPaper: {
@@ -51,7 +51,7 @@ const Sidebar = props => {
       open={open}
     >
       <List>
-        <Link to="/">
+        <Link to="/" style={{ textDecoration: 'none' }}>
           <ListItem button>
             <ListItemIcon>
               <HomeIcon />
@@ -59,7 +59,7 @@ const Sidebar = props => {
             <ListItemText primary="Dashboard" />
           </ListItem>
         </Link>
-        <Link to="/admin">
+        <Link to="/admin" style={{ textDecoration: 'none' }}>
           <ListItem button>
             <ListItemIcon>
               <PermIdentityIcon />
@@ -67,7 +67,7 @@ const Sidebar = props => {
             <ListItemText primary="Admin" />
           </ListItem>
         </Link>
-        <Link to="/setting">
+        <Link to="/setting" style={{ textDecoration: 'none' }}>
           <ListItem button>
             <ListItemIcon>
               <SettingsIcon />
