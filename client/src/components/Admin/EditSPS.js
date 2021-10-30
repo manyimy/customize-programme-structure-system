@@ -343,7 +343,8 @@ export default useStyles(
               snackbarMsg: "Updated Successfully.",
               snackbarSev: "success",
               openSnackbar: true,
-              selectedTri: null,
+              selectedIntake: "",
+              selectedSpec: "",
             });
             // refresh
             // window.location.reload(false);
@@ -1142,9 +1143,10 @@ export default useStyles(
             onClose={handleCloseDeletePSDialog}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
+            maxWidth={"xs"}
           >
             <DialogTitle id="alert-dialog-title">
-              Delete Programme Structure.
+              Delete Programme Structure
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
@@ -1276,13 +1278,13 @@ export default useStyles(
           </Dialog>
 
           {/* Copy Programme Structure Details Dialog */}
-          <Dialog open={this.state.openCopyPS} onClose={handleCloseCopyPSDialog} aria-labelledby="form-dialog-title">
+          <Dialog open={this.state.openCopyPS} onClose={handleCloseCopyPSDialog} aria-labelledby="form-dialog-title" maxWidth={"xs"}>
             <DialogTitle id="form-dialog-title">Copy Programme Structure</DialogTitle>
             <DialogContent>
               <DialogContentText>
                 Select existing programme structure to copy from then select details for intake to copy to.
               </DialogContentText>
-              <Grid container spacing={3}>
+              <Grid container spacing={1}>
                 <Grid item xs={7}>
                   <Select
                     style={{width: "100%", marginRight: "20px"}}
