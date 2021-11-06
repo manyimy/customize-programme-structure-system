@@ -375,6 +375,8 @@ export default useStyles(
       const handleCloseDeletePSDialog = (event) => {
         event.preventDefault();
         this.setState({
+          toDeleteSpec: "",
+          toDeleteIntake: "",
           openDeletePS: false,
         });
       };
@@ -438,41 +440,60 @@ export default useStyles(
       const handleCloseAddPSDialog = (event) => {
         event.preventDefault();
         this.setState({
+          newIntakeMonth: "",
+          newIntakeYear: "",
           openAddPS: false,
         });
       };
 
       const confirmAddPS = (e) => {
         e.preventDefault();
-        let newIntakePS = {
-          "intake": this.state.newIntakeMonth + " " + this.state.newIntakeYear ,
-          "PS": {
-            "Software Engineering": [],
-            "Data Science": [],
-            "Game Development": [],
-            "Cybersecurity": [],
-          }
-        };
-        let currentPS = this.state.standardPS;
-        currentPS.push(newIntakePS);
-        this.setState({standardPS: currentPS});
-        axios
-          .post(API_PATH + "/standardPS", {
-            newPS: currentPS
-          })
-          .then((res) => {
-            this.setState({
-              snackbarMsg: "New Intake Added.",
-              snackbarSev: "success",
-              openSnackbar: true,
-              openAddPS: false,
-            });
-            // refresh
-            // window.location.reload(false);
-          })
-          .catch((err) => {
-            console.log(err);
+        let intakes = []
+        this.state.standardPS.map((item, index) => {
+          intakes.push(item.intake);
+        })
+        if(intakes.includes(this.state.newIntakeMonth + " " + this.state.newIntakeYear)) {
+          this.setState({
+            snackbarMsg: this.state.newIntakeMonth + " " + this.state.newIntakeYear + " existed.",
+            snackbarSev: "error",
+            openSnackbar: true,
+            newIntakeMonth: "",
+            newIntakeYear: "",
+            openAddPS: false,
           });
+        } else {
+          let newIntakePS = {
+            "intake": this.state.newIntakeMonth + " " + this.state.newIntakeYear,
+            "PS": {
+              "Software Engineering": [],
+              "Data Science": [],
+              "Game Development": [],
+              "Cybersecurity": [],
+            }
+          };
+          let currentPS = this.state.standardPS;
+          currentPS.push(newIntakePS);
+          this.setState({standardPS: currentPS});
+          axios
+            .post(API_PATH + "/standardPS", {
+              newPS: currentPS
+            })
+            .then((res) => {
+              this.setState({
+                snackbarMsg: "New Intake Added.",
+                snackbarSev: "success",
+                openSnackbar: true,
+                newIntakeMonth: "",
+                newIntakeYear: "",
+                openAddPS: false,
+              });
+              // refresh
+              // window.location.reload(false);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       };
 
       // Action: handle edit programme structure
@@ -511,43 +532,65 @@ export default useStyles(
       const handleCloseCopyPSDialog = (event) => {
         event.preventDefault();
         this.setState({
+          newIntakeMonth: "",
+          newIntakeYear: "",
+          copyFromIntake: "",
           openCopyPS: false,
         });
       };
 
       const confirmCopyPS = () => {
         let copyOfSelectedPS;
-        for (let i = 0; i < this.state.standardPS.length; i++) {
-          const element = this.state.standardPS[i];
-          if(element.intake === this.state.copyFromIntake) {
-            copyOfSelectedPS = {
-              "intake": this.state.newIntakeMonth + " " + this.state.newIntakeYear,
-              "PS": element.PS
-            };
-            let copyStandard = JSON.parse(JSON.stringify(this.state.standardPS));
-            console.log(copyStandard);
-            copyStandard.push(copyOfSelectedPS);
-            console.log(copyStandard);
-            this.setState({standardPS: copyStandard});
-            axios
-              .post(API_PATH + "/standardPS", {
-                newPS: copyStandard
-              })
-              .then((res) => {
-                this.setState({
-                  snackbarMsg: "Intake " + this.state.copyFromIntake + " Copied to " + this.state.newIntakeMonth + " " + this.state.newIntakeYear + ".",
-                  snackbarSev: "success",
-                  openSnackbar: true,
-                  openAddPS: false,
+        let intakes = []
+        this.state.standardPS.map((item, index) => {
+          intakes.push(item.intake);
+        })
+        if(intakes.includes(this.state.newIntakeMonth + " " + this.state.newIntakeYear)) {
+          this.setState({
+            snackbarMsg: this.state.newIntakeMonth + " " + this.state.newIntakeYear + " existed.",
+            snackbarSev: "error",
+            openSnackbar: true,
+            newIntakeMonth: "",
+            newIntakeYear: "",
+            copyFromIntake: "",
+            openAddPS: false,
+          });
+        } else {
+          for (let i = 0; i < this.state.standardPS.length; i++) {
+            const element = this.state.standardPS[i];
+            if(element.intake === this.state.copyFromIntake) {
+              copyOfSelectedPS = {
+                "intake": this.state.newIntakeMonth + " " + this.state.newIntakeYear,
+                "PS": element.PS
+              };
+              let copyStandard = JSON.parse(JSON.stringify(this.state.standardPS));
+              console.log(copyStandard);
+              copyStandard.push(copyOfSelectedPS);
+              console.log(copyStandard);
+              this.setState({standardPS: copyStandard});
+              axios
+                .post(API_PATH + "/standardPS", {
+                  newPS: copyStandard
+                })
+                .then((res) => {
+                  this.setState({
+                    snackbarMsg: "Intake " + this.state.copyFromIntake + " Copied to " + this.state.newIntakeMonth + " " + this.state.newIntakeYear + ".",
+                    snackbarSev: "success",
+                    openSnackbar: true,
+                    newIntakeMonth: "",
+                    newIntakeYear: "",
+                    copyFromIntake: "",
+                    openAddPS: false,
+                  });
+                  // refresh
+                  // window.location.reload(false);
+                })
+                .catch((err) => {
+                  console.log(err);
                 });
-                // refresh
-                // window.location.reload(false);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-            this.setState({openCopyPS: false});
-            break;
+              this.setState({openCopyPS: false});
+              break;
+            }
           }
         }
       };
@@ -1285,7 +1328,7 @@ export default useStyles(
                 Select existing programme structure to copy from then select details for intake to copy to.
               </DialogContentText>
               <Grid container spacing={1}>
-                <Grid item xs={7}>
+                <Grid item xs={6}>
                   <Select
                     style={{width: "100%", marginRight: "20px"}}
                     value={this.state.copyFromIntake}
@@ -1340,7 +1383,7 @@ export default useStyles(
                     <MenuItem value="December">December</MenuItem>
                   </Select>
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={3}>
                   <Select
                     style={{width: "100%"}}
                     value={this.state.newIntakeYear}
