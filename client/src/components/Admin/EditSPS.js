@@ -414,15 +414,16 @@ export default useStyles(
 
       const confirmDeletePS = () => {
         // let toDeletePS = this.state.selectedIntake;
+        this.setState({
+          selectedSpec: "",
+          selectedIntake: ""
+        });
         let temp = JSON.parse(JSON.stringify(this.state.standardPS));
         if(!this.state.toDeleteSpec) {
           for (let i = 0; i < this.state.standardPS.length; i++) {
             const ps = this.state.standardPS[i];
             if(ps.intake === this.state.toDeleteIntake) {
-              console.log(temp);
-              console.log(i);
               temp.splice(i, 1);
-              console.log(temp);
               break;
             }
           }
@@ -430,15 +431,14 @@ export default useStyles(
           for (let i = 0; i < this.state.standardPS.length; i++) {
             const ps = this.state.standardPS[i];
             if(ps.intake === this.state.toDeleteIntake) {
-              console.log(temp);
-              console.log(i);
               temp[i].PS[this.state.toDeleteSpec] = [];
-              console.log(temp);
               break;
             }
           }
         }
-        this.setState({standardPS: temp});
+        this.setState({
+          standardPS: JSON.parse(JSON.stringify(temp))
+        });
           axios
             .post(API_PATH + "/standardPS", {
               newPS: temp
@@ -1216,7 +1216,7 @@ export default useStyles(
                 className={classes.saveBtn}
                 color="primary"
                 aria-label="save"
-                disabled={(this.state.standardIndex) 
+                disabled={((this.state.standardIndex) && this.state.standardPS[this.state.standardIndex])
                   ? (this.state.editingPS === this.state.standardPS[this.state.standardIndex].PS[this.state.selectedSpec])
                       ? true : false : true}
                 onClick={handleSave}
