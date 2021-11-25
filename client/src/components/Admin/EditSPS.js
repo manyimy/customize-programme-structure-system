@@ -373,8 +373,8 @@ export default useStyles(
               snackbarMsg: "Updated Successfully.",
               snackbarSev: "success",
               openSnackbar: true,
-              selectedIntake: "",
-              selectedSpec: "",
+              // selectedIntake: "",
+              // selectedSpec: "",
               inputs: emptyInputs
             });
             // refresh
@@ -583,8 +583,8 @@ export default useStyles(
         ];
         this.setState({
           editingPS: [],
-          selectedIntake: "",
-          selectedSpec: "",
+          // selectedIntake: "",
+          // selectedSpec: "",
           inputs: emptyInputs,
           selectionDisable: false
         })
