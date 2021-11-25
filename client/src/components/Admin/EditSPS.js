@@ -40,7 +40,8 @@ import PrintIcon from '@material-ui/icons/Print';
 import ShareIcon from '@material-ui/icons/Share';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from '@material-ui/icons/Edit'
+import CloseIcon from '@material-ui/icons/Close';
 
 import axios from "axios";
 const API_PATH = process.env.REACT_APP_API_PATH;
@@ -190,7 +191,10 @@ export default useStyles(
       const actions = [
         { icon: <AddIcon />, name: 'Add', action: (e) => handleActionAddPS(e), disabled: this.state.selectionDisable },
         { icon: <FileCopyIcon />, name: 'Copy', action: (e) => handleActionCopyPS(e), disabled: this.state.selectionDisable },
-        { icon: <EditIcon />, name: 'Edit', action: (e) => handleActionEditPS(e), disabled: (this.state.selectedIntake && this.state.selectedSpec) ? false : true },
+        { icon: (!this.state.selectionDisable) ? <EditIcon /> : <CloseIcon />, name: (!this.state.selectionDisable) ? 'Edit' : 'Close', 
+                action: (e) => (!this.state.selectionDisable) ? handleActionEditPS(e) : handleActionCloseEditPS(e),
+                disabled: (this.state.selectedIntake && this.state.selectedSpec) ? false : true 
+        },
         // { icon: <SaveIcon />, name: 'Save', action: (e) => handleSave(e), disabled: !this.state.selectionDisable },
         { icon: <DeleteIcon />, name: 'Delete', action: (e) => handleActionDeletePS(e), disabled: this.state.selectionDisable },
       ];
@@ -334,6 +338,32 @@ export default useStyles(
           standardPS: JSON.parse(JSON.stringify(copyStandard)),
           selectionDisable: false
         });
+        let emptyInputs = [
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+        ];
         axios
           .post(API_PATH + "/standardPS", {
             newPS: copyStandard,
@@ -345,6 +375,7 @@ export default useStyles(
               openSnackbar: true,
               selectedIntake: "",
               selectedSpec: "",
+              inputs: emptyInputs
             });
             // refresh
             // window.location.reload(false);
@@ -519,6 +550,46 @@ export default useStyles(
         })
         document.getElementById("psTable-container").style.display = "block";
       };
+
+      // Action: close edit programme structure
+
+      const handleActionCloseEditPS = (e) => {
+        e.preventDefault();
+        let emptyInputs = [
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+          {
+            type: "",
+            code: "",
+            name: "",
+            ch: "",
+            subject: "",
+            defaultTri: "",
+          },
+        ];
+        this.setState({
+          editingPS: [],
+          selectedIntake: "",
+          selectedSpec: "",
+          inputs: emptyInputs,
+          selectionDisable: false
+        })
+        document.getElementById("psTable-container").style.display = "none";
+      }
 
       // Action: handle copy programme structure
 
