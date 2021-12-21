@@ -132,6 +132,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
           {
@@ -140,6 +141,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
           {
@@ -148,6 +150,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
         ],
@@ -220,6 +223,7 @@ export default useStyles(
             ...prevState.inputs.slice(year + 1),
           ],
         }));
+        console.log(value);
         if(name === "subject") {
           // console.log(value.substring());
           // console.log(this.state.subjectList[key].code);
@@ -228,9 +232,10 @@ export default useStyles(
               ...prevState.inputs.slice(0, year),
               {
                 ...prevState.inputs[year],
-                code: value.substring(0, value.indexOf(" - ")),
-                name: value.substring(value.indexOf(" - ") + 3, value.indexOf(" [") - 1),
-                ch: Number(value.substring(value.length - 2, value.length - 1)),
+                code: value.code,
+                name: value.name,
+                ch: Number(value.ch),
+                offer: value.offer
               },
               ...prevState.inputs.slice(year + 1),
             ],
@@ -268,7 +273,7 @@ export default useStyles(
       const handleAdd = (e, year) => {
         e.preventDefault();
         if (
-          !this.state.inputs[year].subject ||
+          !this.state.inputs[year].subject.name ||
           !this.state.inputs[year].defaultTri
         ) {
           this.setState({
@@ -345,6 +350,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
           {
@@ -353,6 +359,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
           {
@@ -361,6 +368,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
         ];
@@ -562,6 +570,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
           {
@@ -570,6 +579,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
           {
@@ -578,6 +588,7 @@ export default useStyles(
             name: "",
             ch: "",
             subject: "",
+            offer: [],
             defaultTri: "",
           },
         ];
@@ -786,7 +797,12 @@ export default useStyles(
                     <Grid item xs={6}>
                       <FormControl className={classes.formControl}>
                         <Select
-                          value={this.state.inputs[0].subject}
+                          value={
+                            (this.state.inputs[0].subject.code) 
+                              ? this.state.inputs[0].subject.code + " - " 
+                                + this.state.inputs[0].subject.name + "  [" 
+                                + this.state.inputs[0].subject.ch + "]" 
+                              : ""}
                           onChange={(e) => onChange(e, 0)}
                           name="subject"
                           displayEmpty
@@ -802,7 +818,7 @@ export default useStyles(
                         >
                           {this.state.subjectList.map((item, index) => {
                             return (
-                              <MenuItem value={item.code + " - " + item.name + "  [" + item.ch + "]"}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
+                              <MenuItem value={item}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
                             );
                           })}
                         </Select>
@@ -825,9 +841,16 @@ export default useStyles(
                           }}
                           inputProps={{ 'aria-label': 'Without label' }}
                         >
-                          <MenuItem value="1">1</MenuItem>
+                          {(this.state.inputs[0].offer)
+                            ? this.state.inputs[0].offer.map((item, index) => {
+                              return (
+                               <MenuItem value={item}>{item}</MenuItem>
+                              );
+                            }) 
+                            : <></>}
+                          {/* <MenuItem value="1">1</MenuItem>
                           <MenuItem value="2">2</MenuItem>
-                          <MenuItem value="3">3</MenuItem>
+                          <MenuItem value="3">3</MenuItem> */}
                         </Select>
                       </FormControl>
                     </Grid>
@@ -940,7 +963,12 @@ export default useStyles(
                     <Grid item xs={6}>
                       <FormControl className={classes.formControl}>
                         <Select
-                          value={this.state.inputs[1].subject}
+                          value={
+                            (this.state.inputs[1].subject.code) 
+                              ? this.state.inputs[1].subject.code + " - " 
+                                + this.state.inputs[1].subject.name + "  [" 
+                                + this.state.inputs[1].subject.ch + "]" 
+                              : ""}
                           onChange={(e) => onChange(e, 1)}
                           name="subject"
                           displayEmpty
@@ -956,7 +984,7 @@ export default useStyles(
                         >
                           {this.state.subjectList.map((item, index) => {
                             return (
-                              <MenuItem value={item.code + " - " + item.name + "  [" + item.ch + "]"}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
+                              <MenuItem value={item}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
                             );
                           })}
                         </Select>
@@ -979,9 +1007,16 @@ export default useStyles(
                           }}
                           inputProps={{ 'aria-label': 'Without label' }}
                         >
-                          <MenuItem value="1">1</MenuItem>
+                          {(this.state.inputs[1].offer) 
+                            ? this.state.inputs[1].offer.map((item, index) => {
+                              return (
+                               <MenuItem value={item}>{item}</MenuItem>
+                              );
+                            }) 
+                            : <></>}
+                          {/* <MenuItem value="1">1</MenuItem>
                           <MenuItem value="2">2</MenuItem>
-                          <MenuItem value="3">3</MenuItem>
+                          <MenuItem value="3">3</MenuItem> */}
                         </Select>
                       </FormControl>
                     </Grid>
@@ -1094,7 +1129,12 @@ export default useStyles(
                     <Grid item xs={6}>
                       <FormControl className={classes.formControl}>
                         <Select
-                          value={this.state.inputs[2].subject}
+                          value={
+                            (this.state.inputs[2].subject.code) 
+                              ? this.state.inputs[2].subject.code + " - " 
+                                + this.state.inputs[2].subject.name + "  [" 
+                                + this.state.inputs[2].subject.ch + "]" 
+                              : ""}
                           onChange={(e) => onChange(e, 2)}
                           name="subject"
                           displayEmpty
@@ -1110,7 +1150,7 @@ export default useStyles(
                         >
                           {this.state.subjectList.map((item, index) => {
                             return (
-                              <MenuItem value={item.code + " - " + item.name + "  [" + item.ch + "]"}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
+                              <MenuItem value={item}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
                             );
                           })}
                         </Select>
@@ -1133,9 +1173,16 @@ export default useStyles(
                           }}
                           inputProps={{ 'aria-label': 'Without label' }}
                         >
-                          <MenuItem value="1">1</MenuItem>
+                          {(this.state.inputs[2].offer) 
+                            ? this.state.inputs[2].offer.map((item, index) => {
+                              return (
+                               <MenuItem value={item}>{item}</MenuItem>
+                              );
+                            }) 
+                            : <></>}
+                          {/* <MenuItem value="1">1</MenuItem>
                           <MenuItem value="2">2</MenuItem>
-                          <MenuItem value="3">3</MenuItem>
+                          <MenuItem value="3">3</MenuItem> */}
                         </Select>
                       </FormControl>
                     </Grid>

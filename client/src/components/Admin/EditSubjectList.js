@@ -36,7 +36,7 @@ const useStyles = withStyles((theme) => ({
     marginTop: 30
   },
   listPaper:  {
-    width: "50vw",
+    width: "60vw",
     marginLeft: "auto",
     marginRight: "auto",
     ['@media (max-width:1023px)']: {
@@ -52,7 +52,7 @@ const useStyles = withStyles((theme) => ({
     overflowY: "scroll",
   },
   gridContainer: {
-    width: "50vw",
+    width: "60vw",
     marginLeft: "auto",
     marginRight: "auto",
     ['@media (max-width:1023px)']: {
@@ -76,13 +76,20 @@ const useStyles = withStyles((theme) => ({
     float: "right"
   },
   multiSelect: {
-    margin: theme.spacing(1),
-    maxWidth: "90%",
+    margin: theme.spacing(1,1,1,0),
+    minWidth: "100%",
+    maxWidth: "100%",
   },
   prereq: {
     '&::-webkit-scrollbar': {
       display: "none"
     }
+  },
+  inputSName: {
+    width: "100%"
+  },
+  inputSelection: {
+    marginRight: "0px"
   }
 }));
 
@@ -97,6 +104,7 @@ export default useStyles(class EditSubjectList extends React.Component {
       newCode: '',
       newSubject: '',
       newCH: '',
+      newOffer: [],
       newPreReq: [],
       errorCode: false,
       openDialog: false,
@@ -114,13 +122,6 @@ export default useStyles(class EditSubjectList extends React.Component {
       });
   }
 
-  onChange(event) {
-    const { name } = event.target;
-    this.setState({
-      [name]: (name === "newCH") ? Number(event.target.value) : event.target.value
-    });
-  }
-
   render(){
     const { classes } = this.props;
     const ITEM_HEIGHT = 48;
@@ -133,6 +134,13 @@ export default useStyles(class EditSubjectList extends React.Component {
         },
       },
     };
+
+    const onChange = (event) => {
+      const { name } = event.target;
+      this.setState({
+        [name]: (name === "newCH") ? Number(event.target.value) : event.target.value
+      });
+    }
 
     const handleCloseSnackbar = () => {
       this.setState({openAddPop: false});
@@ -221,8 +229,12 @@ export default useStyles(class EditSubjectList extends React.Component {
       this.setState({newPreReq: event.target.value});
     };
 
+    const handleChangeOffer = (event) => {
+      this.setState({newOffer: event.target.value});
+    };
+
     return (
-      <div>
+      <div className={classes.root}>
         <Paper className={classes.listPaper} elevation={2}>
           <List dense={true}>
             {this.state.subjects.map((value, index) => {
@@ -230,7 +242,8 @@ export default useStyles(class EditSubjectList extends React.Component {
 
               return (
                 <ListItem >
-                  <ListItemText id={labelId} style={{textAlign: "left", width: "70%", marginRight: "10px"}} primary={`${value.code} \t-\t ${value.name}`} />
+                  <ListItemText id={labelId} style={{textAlign: "left", width: "65%", marginRight: "10px"}} primary={`${value.code} \t-\t ${value.name}`} />
+                  <ListItemText style={{textAlign: "right", width: "5%", marginRight: "5px"}} primary={`${value.offer}`} />
                   <ListItemText style={{textAlign: "right", width: "10%"}} primary={<Typography className={classes.prereq} style={{overflow: "scroll"}}>{value.prereq.toString()}</Typography>} />
                   <ListItemText style={{textAlign: "right", marginRight: "5px"}} primary={`${value.ch} CH`} />
                   <IconButton onClick={(e) => {handleOpenDialog(e, index)}} style={{width: "min-content"}} edge="end" aria-label="delete">
@@ -241,7 +254,7 @@ export default useStyles(class EditSubjectList extends React.Component {
             })}
           </List>
         </Paper>
-        <Grid container spacing={2} className={classes.gridContainer}>
+        <Grid container spacing={1} className={classes.gridContainer}>
           <Grid item xs={2}>
             <TextField
               className={classes.codeInput}
@@ -251,7 +264,7 @@ export default useStyles(class EditSubjectList extends React.Component {
               placeholder="Code"
               inputProps={{ maxLength: 7 }}
               error= {this.state.errorCode}
-              onChange={this.onChange.bind(this)}
+              onChange={onChange.bind(this)}
               variant="outlined"
               helperText={ this.state.errorCode ? "Invalid format: ABC1234" : ""}
               value={this.state.newCode}
@@ -261,11 +274,11 @@ export default useStyles(class EditSubjectList extends React.Component {
             <TextField
               required
               margin="dense"
-              id="name"
+              className={classes.inputSName}
               name="newSubject"
               placeholder="Subject Name"
               variant="outlined"
-              onChange={this.onChange.bind(this)}
+              onChange={onChange.bind(this)}
               value={this.state.newSubject}
             />
           </Grid>
@@ -278,11 +291,41 @@ export default useStyles(class EditSubjectList extends React.Component {
               type="number"
               placeholder="Credit Hour"
               variant="outlined"
-              onChange={this.onChange.bind(this)}
+              onChange={onChange.bind(this)}
               value={this.state.newCH}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={2}>
+            <FormControl className={classes.multiSelect}>
+              <Select
+                multiple
+                displayEmpty
+                value={this.state.newOffer}
+                onChange={handleChangeOffer}
+                input={<OutlinedInput margin="dense"/>}
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return <div style={{font: "inherit", color: "#aaa"}}>Offer In</div>;
+                  }
+
+                  return selected.join(', ');
+                }}
+                MenuProps={MenuProps}
+                inputProps={{ 'aria-label': 'Without label'}}
+                // style={{padding: "10.5px 14px"}}
+              >
+                {/* <MenuItem disabled value="">
+                  <div style={{font: "inherit", color: "#aaa"}}>Offer In</div>
+                </MenuItem> */}
+                {[1,2,3].map((item) => (
+                  <MenuItem key={item} value={item}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={2}>
             <FormControl className={classes.multiSelect}>
               <Select
                 multiple
@@ -320,7 +363,8 @@ export default useStyles(class EditSubjectList extends React.Component {
               onClick={handleAdd} 
               color="primary"
               disabled={
-                (this.state.newCode && this.state.newSubject && this.state.newCH
+                (this.state.newCode && this.state.newSubject 
+                  && this.state.newCH && (this.state.newOffer.length != 0)
                   // && this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)
                   ) 
                   ? false : true

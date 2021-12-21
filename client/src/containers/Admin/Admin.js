@@ -10,7 +10,6 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 
 import EditSubjectList from '../../components/Admin/EditSubjectList';
-// import EditTriMonths from '../../components/Admin/EditTriMonths';
 import EditSPS from '../../components/Admin/EditSPS';
 
 const useStyles = withStyles((theme) => ({
@@ -86,9 +85,9 @@ export default useStyles(class Admin extends React.Component {
     };
 
     // DEBUG
-    if(!this.state.token) {
-      return <Login setToken={setToken} parentCallback={this.callbackFunction} />
-    }
+    // if(!this.state.token) {
+    //   return <Login setToken={setToken} parentCallback={this.callbackFunction} />
+    // }
 
     return (
       <div className={classes.container}>
@@ -100,14 +99,10 @@ export default useStyles(class Admin extends React.Component {
             textColor="primary"
             centered
           >
-            {/* <Tab label="Edit Trimesters Month" {...a11yProps(0)}/> */}
             <Tab label="Edit Subject List" {...a11yProps(0)}/>
             <Tab label="Edit Programme Structure" {...a11yProps(1)}/>
           </Tabs>
         </Paper>
-        {/* <TabPanel value={this.state.value} index={0}>
-          <EditTriMonths />
-        </TabPanel> */}
         <TabPanel value={this.state.activeTab} index={0}>
           <EditSubjectList />
         </TabPanel>
