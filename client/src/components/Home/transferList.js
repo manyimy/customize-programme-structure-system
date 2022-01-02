@@ -58,7 +58,7 @@ export default function TransferList(props) {
         setLeft(subject);
         // this.setState({left: subject});
       });
-  });
+  }, []);
 
   // componentDidMount(){
   //   axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")

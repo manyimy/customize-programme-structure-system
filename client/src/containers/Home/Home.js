@@ -68,7 +68,7 @@ export default function Home(props) {
       spec: ''
     }
   );
-  const timerId = null;
+  // const timerId = null;
   const checkedSubject = React.createRef();
   // constructor(props) {
   //   super(props);
@@ -158,7 +158,7 @@ export default function Home(props) {
   const showError = () => {
     // document.getElementById("error-alert").innerText = message;
     document.getElementById("error-alert").style.display = "flex";
-    timerId = setTimeout(() => {
+    const timerId = setTimeout(() => {
       document.getElementById("error-alert").style.display = "none";
       timerId = null;
     }, 5000);

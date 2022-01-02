@@ -87,9 +87,9 @@ export default function Admin(props) {
   };
 
   // DEBUG
-  if(!token) {
-    return <Login setToken={setToken} parentCallback={callbackFunction} />
-  }
+  // if(!token) {
+  //   return <Login setToken={setToken} parentCallback={callbackFunction} />
+  // }
 
   return (
     <div className={classes.container}>

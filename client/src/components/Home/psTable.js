@@ -44,7 +44,7 @@ export default function PSTable(props) {
       //   });
       });
     console.log(props.trans);
-  });
+  }, []);
 
   /** Function: 
    *  Generate Customized Programme Structure
