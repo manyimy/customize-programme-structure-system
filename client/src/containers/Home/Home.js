@@ -68,8 +68,8 @@ export default function Home(props) {
       spec: ''
     }
   );
+  const [right, setRight] = React.useState([]);
   // const timerId = null;
-  const checkedSubject = React.createRef();
   // constructor(props) {
   //   super(props);
   //   this.state = {
@@ -111,6 +111,10 @@ export default function Home(props) {
         // });
       });
     // this.getYear();
+  }, []);
+
+  const setRightCallback = React.useCallback((right) => {
+    setRight(right);
   }, []);
 
   const handleNext = () => {
@@ -163,9 +167,6 @@ export default function Home(props) {
       timerId = null;
     }, 5000);
   }
-
-  // const { classes } = this.props;
-  const transferred = checkedSubject.current; 
 
   // export to csv
   var tablesToExcel = (function() {
@@ -245,7 +246,7 @@ export default function Home(props) {
           <div>
             <Grid container spacing={3}>
             {(window.innerWidth > 480 ? 
-                <Grid  item xs>
+                <Grid item xs>
                   <Paper className={classes.paper}></Paper>
                 </Grid>
                 :<div></div>
@@ -327,7 +328,9 @@ export default function Home(props) {
               : <div></div>
             )}
               <Grid item xs={12}>
-                <TransferList ref={checkedSubject}/>
+                <TransferList
+                  rightCallback={setRightCallback}
+                />
               </Grid>
             {(window.innerWidth > 480 ? 
               <Grid item xs>
@@ -360,7 +363,7 @@ export default function Home(props) {
                 <PSTable
                   intake={data.intake}
                   spec={data.spec}
-                  trans={(transferred) ? transferred.state.right : null}
+                  trans={right}
                 />
               </Grid>
               <Grid item xs>

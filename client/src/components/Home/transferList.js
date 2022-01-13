@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TransferList(props) {
+export default function TransferList({rightCallback}) {
   const classes = useStyles();
 
   const [checked, setChecked] = React.useState([]);
@@ -105,20 +105,16 @@ export default function TransferList(props) {
 
   const handleToggleAll = (items) => () => {
     if (numberOfChecked(items) === items.length) {
-      // this.setState({checked: not(this.state.checked, items)})
       setChecked(not(checked, items));
     } else {
-      // this.setState({checked: union(this.state.checked, items)})
       setChecked(union(checked, items));
     }
   };
 
   const handleCheckedRight = () => {
-    // this.setState({right: this.state.right.concat(leftChecked).sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))})
-    // this.setState({left: not(this.state.left, leftChecked).sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))})
-    // this.setState({checked: not(this.state.checked, leftChecked)})
 
     setRight(right.concat(leftChecked));
+    rightCallback(right.concat(leftChecked));
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
   };
@@ -130,6 +126,7 @@ export default function TransferList(props) {
 
     setLeft(left.concat(rightChecked));
     setRight(not(right, rightChecked));
+    rightCallback(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
   };
 
