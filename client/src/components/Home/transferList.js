@@ -149,21 +149,23 @@ export default function TransferList({rightCallback}) {
       <Divider />
       <List className={classes.list} dense component="div" role="list">
         {items.map((value) => {
-          const labelId = `transfer-list-all-item-${value}-label`;
+          if (value.split(" ", 1)[0].length >= 7) {   // to filter out the general subject types like electives or mpu (eg. E2 Elective #2)
+            const labelId = `transfer-list-all-item-${value}-label`;
 
-          return (
-            <ListItem key={value} role="listitem" button onClick={handleToggle(value)}>
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.indexOf(value) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ 'aria-labelledby': labelId }}
-                />
-              </ListItemIcon>
-              <ListItemText id={labelId} primary={`${value}`} />
-            </ListItem>
-          );
+            return (
+              <ListItem key={value} role="listitem" button onClick={handleToggle(value)}>
+                <ListItemIcon>
+                  <Checkbox
+                    checked={checked.indexOf(value) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                    inputProps={{ 'aria-labelledby': labelId }}
+                  />
+                </ListItemIcon>
+                <ListItemText id={labelId} primary={`${value}`} />
+              </ListItem>
+            );
+          }
         })}
         <ListItem />
       </List>
