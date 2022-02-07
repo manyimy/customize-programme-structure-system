@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import Login from '../../components/Admin/Login';
 import Paper from '@material-ui/core/Paper';
@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import EditSubjectList from '../../components/Admin/EditSubjectList';
 import EditSPS from '../../components/Admin/EditSPS';
 
-const useStyles = withStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     alignItems: "center",
   },
@@ -64,52 +64,53 @@ function a11yProps(index) {
   };
 }
 
-export default useStyles(class Admin extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      token: getToken(),
-      activeTab: 0,
-    }
-  }
+export default function Admin(props) {
+  const classes = useStyles();
+  const [token, setToken] = React.useState(getToken());
+  const [activeTab, setActiveTab] = React.useState(0);
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     token: getToken(),
+  //     activeTab: 0,
+  //   }
+  // }
 
-  callbackFunction = (childData) => {
-    this.setState({token: childData})
+  const callbackFunction = (childData) => {
+    setToken(childData);
+    // this.setState({token: childData});
   }
   
-  render(){
-    const { classes } = this.props;
+  const handleChange = (event, newValue) => {
+    setActiveTab(newValue);
+    // this.setState({activeTab: newValue});
+  };
 
-    const handleChange = (event, newValue) => {
-      this.setState({activeTab: newValue});
-    };
+  // DEBUG
+  // if(!token) {
+  //   return <Login setToken={setToken} parentCallback={callbackFunction} />
+  // }
 
-    // DEBUG
-    // if(!this.state.token) {
-    //   return <Login setToken={setToken} parentCallback={this.callbackFunction} />
-    // }
-
-    return (
-      <div className={classes.container}>
-        <Paper className={classes.root}>
-          <Tabs
-            value={this.state.activeTab}
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            centered
-          >
-            <Tab label="Edit Subject List" {...a11yProps(0)}/>
-            <Tab label="Edit Programme Structure" {...a11yProps(1)}/>
-          </Tabs>
-        </Paper>
-        <TabPanel value={this.state.activeTab} index={0}>
-          <EditSubjectList />
-        </TabPanel>
-        <TabPanel value={this.state.activeTab} index={1}>
-          <EditSPS />
-        </TabPanel>
-      </div>
-    );
-  }
-});
+  return (
+    <div className={classes.container}>
+      <Paper className={classes.root}>
+        <Tabs
+          value={activeTab}
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          <Tab label="Edit Subject List" {...a11yProps(0)}/>
+          <Tab label="Edit Programme Structure" {...a11yProps(1)}/>
+        </Tabs>
+      </Paper>
+      <TabPanel value={activeTab} index={0}>
+        <EditSubjectList />
+      </TabPanel>
+      <TabPanel value={activeTab} index={1}>
+        <EditSPS />
+      </TabPanel>
+    </div>
+  );
+};

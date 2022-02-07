@@ -1,6 +1,6 @@
-import React from 'react';
-import clsx from 'clsx';
-import { withStyles } from '@material-ui/core/styles';
+import React, { useEffect } from 'react';
+// import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
@@ -30,7 +30,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const useStyles = withStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   btnSL: {
     width: "100%",
     marginTop: 30
@@ -85,7 +85,7 @@ const useStyles = withStyles((theme) => ({
       display: "none"
     }
   },
-  inputSName: {
+  inputFullWidth: {
     width: "100%"
   },
   inputSelection: {
@@ -93,196 +93,236 @@ const useStyles = withStyles((theme) => ({
   }
 }));
 
-export default useStyles(class EditSubjectList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      subjects: [],
-      openAddPop: false,
-      addPopMsg: '',
-      alertSev: 'error',
-      newCode: '',
-      newSubject: '',
-      newCH: '',
-      newOffer: [],
-      newPreReq: [],
-      errorCode: false,
-      openDialog: false,
-      deletingItem: null,
-      removeMsg: ''
-    }
-  }
+export default function EditSubjectList(props) {
+  const classes = useStyles();
 
-  componentDidMount() {
+  const [subjects, setSubjects] = React.useState([]);
+  const [openAddPop, setOpenAddPop] = React.useState(false);
+  const [addPopMsg, setAddPopMsg] = React.useState('');
+  const [alertSev, setAlertSev] = React.useState('error');
+  const [newCode, setNewCode] = React.useState('');
+  const [newSubject, setNewSubject] = React.useState('');
+  const [newCH, setNewCH] = React.useState('');
+  const [newOffer, setNewOffer] = React.useState([]);
+  const [newPreReq, setNewPreReq] = React.useState([]);
+  // const [errorCode, setErrorCode] = React.useState(false);
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [deletingItem, setDeletingItem] = React.useState(null);
+  const [removeMsg, setRemoveMsg] = React.useState('');
+
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     subjects: [],
+  //     openAddPop: false,
+  //     addPopMsg: '',
+  //     alertSev: 'error',
+  //     newCode: '',
+  //     newSubject: '',
+  //     newCH: '',
+  //     newOffer: [],
+  //     newPreReq: [],
+  //     errorCode: false,
+  //     openDialog: false,
+  //     deletingItem: null,
+  //     removeMsg: ''
+  //   }
+  // }
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 200;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4 + ITEM_PADDING_TOP,
+        // width: 400,
+      },
+    },
+  };
+
+  useEffect(() => {
     axios.get( API_PATH + "/subjectList.json")
       .then((response) => {
-        this.setState({
-          subjects: response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))
-        })
+        setSubjects(response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0)));
+        // this.setState({
+        //   subjects: response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))
+        // })
       });
-  }
+  }, []);
 
-  render(){
-    const { classes } = this.props;
-    const ITEM_HEIGHT = 48;
-    const ITEM_PADDING_TOP = 200;
-    const MenuProps = {
-      PaperProps: {
-        style: {
-          maxHeight: ITEM_HEIGHT * 4 + ITEM_PADDING_TOP,
-          // width: 400,
-        },
-      },
-    };
+  // const onChange = (event) => {
+  //   const { name } = event.target;
+  //   this.setState({
+  //     [name]: (name === "newCH") ? Number(event.target.value) : event.target.value
+  //   });
+  // }
 
-    const onChange = (event) => {
-      const { name } = event.target;
-      this.setState({
-        [name]: (name === "newCH") ? Number(event.target.value) : event.target.value
+  const handleCloseSnackbar = () => {
+    setOpenAddPop(false);
+    // this.setState({openAddPop: false});
+  };
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    var list = subjects;
+    list.splice(deletingItem, 1);
+    // setSubjects(list);
+    // this.setState({
+    //   subjects: list
+    // });
+    axios.post(API_PATH + '/subjectList', {
+      subjects: list
+    }).then((res) => {
+      setAddPopMsg('Subject list updated successfully.');
+      setAlertSev('success');
+      setOpenAddPop(true);
+      // this.setState({
+      //   addPopMsg: 'Subject list updated successfully.',
+      //   alertSev: 'success',
+      //   openAddPop: true,
+      //   openList: false
+      // });
+    }).catch((err) => {
+      console.log(err);
+    });
+
+    handleCloseDialog(e);
+  };
+
+  const handleAdd = (event) => {
+    event.preventDefault();
+    
+    var list = subjects;
+    if(list.filter(e => e.code === newCode || e.name === newSubject).length > 0) {
+      setAddPopMsg('Subject name or code has already existed.');
+      setAlertSev('error');
+      setOpenAddPop(true);
+      // this.setState({
+      //   addPopMsg: 'Subject name or code has already existed.', 
+      //   alertSev: 'error',
+      //   openAddPop: true
+      // });
+    } else {
+      list.push({
+        code: newCode.trim(),
+        name: newSubject.trim(),
+        ch: newCH,
+        offer: newOffer,
+        prereq: newPreReq
       });
-    }
-
-    const handleCloseSnackbar = () => {
-      this.setState({openAddPop: false});
-    };
-
-    const handleDelete = (e) => {
-      e.preventDefault();
-      var list = this.state.subjects;
-      list.splice(this.state.deletingItem, 1);
-      this.setState({
-        subjects: list
-      });
+      setSubjects(list);
+      setNewCode('');
+      setNewSubject('');
+      setNewCH('');
+      setNewPreReq([]);
+      // this.setState({
+      //   subjects: list,
+      //   newCode: '',
+      //   newSubject: '',
+      //   newCH: '',
+      //   newPreReq: []
+      // });
       axios.post(API_PATH + '/subjectList', {
         subjects: list
       }).then((res) => {
-        this.setState({
-          addPopMsg: 'Subject list updated successfully.',
-          alertSev: 'success',
-          openAddPop: true,
-          openList: false
-        });
+        setAddPopMsg('Subject list updated successfully.');
+        setAlertSev('success');
+        setOpenAddPop(true);
+        // this.setState({
+        //   addPopMsg: 'Subject list updated successfully.',
+        //   alertSev: 'success',
+        //   openAddPop: true,
+        //   openList: false
+        // });
       }).catch((err) => {
         console.log(err);
       });
-
-      handleCloseDialog(e);
-    };
-
-    const handleAdd = (event) => {
-      event.preventDefault();
-      
-      var list = this.state.subjects;
-      if(list.filter(e => e.code === this.state.newCode || e.name === this.state.newSubject).length > 0) {
-        this.setState({
-          addPopMsg: 'Subject name or code has already existed.', 
-          alertSev: 'error',
-          openAddPop: true
-        });
-      } else {
-        list.push({
-          code: this.state.newCode.trim(),
-          name: this.state.newSubject.trim(),
-          ch: this.state.newCH,
-          prereq: this.state.newPreReq
-        });
-        this.setState({
-          subjects: list,
-          newCode: '',
-          newSubject: '',
-          newCH: '',
-          newPreReq: []
-        });
-        axios.post(API_PATH + '/subjectList', {
-          subjects: list
-        }).then((res) => {
-          this.setState({
-            addPopMsg: 'Subject list updated successfully.',
-            alertSev: 'success',
-            openAddPop: true,
-            openList: false
-          });
-        }).catch((err) => {
-          console.log(err);
-        });
-      }
-    };
-
-    const handleOpenDialog = (event, index) => {
-      event.preventDefault();
-      this.setState({
-        deletingItem: index,
-        removeMsg: "Are you sure to remove " + this.state.subjects[index].code + " " + this.state.subjects[index].name + " permanently?",
-        openDialog: true
-      });
     }
+  };
 
-    const handleCloseDialog = (event) => {
-      event.preventDefault();
-      this.setState({
-        deletingItem: null,
-        openDialog: false
-      });
-    }
+  const handleOpenDialog = (event, index) => {
+    event.preventDefault();
+    setDeletingItem(index);
+    setRemoveMsg("Are you sure to remove " + subjects[index].code + " " + subjects[index].name + " permanently?");
+    setOpenDialog(true);
+    // this.setState({
+    //   deletingItem: index,
+    //   removeMsg: "Are you sure to remove " + this.state.subjects[index].code + " " + this.state.subjects[index].name + " permanently?",
+    //   openDialog: true
+    // });
+  }
 
-    const handleChangePreReq = (event) => {
-      this.setState({newPreReq: event.target.value});
-    };
+  const handleCloseDialog = (event) => {
+    event.preventDefault();
+    setDeletingItem(null);
+    setOpenDialog(false);
+    // this.setState({
+    //   deletingItem: null,
+    //   openDialog: false
+    // });
+  }
 
-    const handleChangeOffer = (event) => {
-      this.setState({newOffer: event.target.value});
-    };
+  // const handleChangePreReq = (event) => {
+  //   setNewPreReq(event.target.value);
+  //   // this.setState({newPreReq: event.target.value});
+  // };
 
-    return (
-      <div className={classes.root}>
-        <Paper className={classes.listPaper} elevation={2}>
-          <List dense={true}>
-            {this.state.subjects.map((value, index) => {
-              const labelId = `checkbox-list-label-${value.code}`;
+  const handleChangeOffer = (event) => {
+    setNewOffer(event.target.value);
+    // this.setState({newOffer: event.target.value});
+  };
 
-              return (
-                <ListItem >
-                  <ListItemText id={labelId} style={{textAlign: "left", width: "65%", marginRight: "10px"}} primary={`${value.code} \t-\t ${value.name}`} />
-                  <ListItemText style={{textAlign: "right", width: "5%", marginRight: "5px"}} primary={`${value.offer}`} />
-                  <ListItemText style={{textAlign: "right", width: "10%"}} primary={<Typography className={classes.prereq} style={{overflow: "scroll"}}>{value.prereq.toString()}</Typography>} />
-                  <ListItemText style={{textAlign: "right", marginRight: "5px"}} primary={`${value.ch} CH`} />
-                  <IconButton onClick={(e) => {handleOpenDialog(e, index)}} style={{width: "min-content"}} edge="end" aria-label="delete">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Paper>
-        <Grid container spacing={1} className={classes.gridContainer}>
-          <Grid item xs={2}>
-            <TextField
-              className={classes.codeInput}
-              margin="dense"
-              id="code"
-              name="newCode"
-              placeholder="Code"
-              inputProps={{ maxLength: 7 }}
-              error= {this.state.errorCode}
-              onChange={onChange.bind(this)}
-              variant="outlined"
-              helperText={ this.state.errorCode ? "Invalid format: ABC1234" : ""}
-              value={this.state.newCode}
-            />            
-          </Grid>
-          <Grid item xs={3}>
-            <TextField
-              required
-              margin="dense"
-              className={classes.inputSName}
-              name="newSubject"
-              placeholder="Subject Name"
-              variant="outlined"
-              onChange={onChange.bind(this)}
-              value={this.state.newSubject}
-            />
-          </Grid>
-          <Grid item xs={2}>
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.listPaper} elevation={2}>
+        <List dense={true}>
+          {subjects.map((value, index) => {
+            const labelId = `checkbox-list-label-${value.code}`;
+
+            return (
+              <ListItem >
+                <ListItemText id={labelId} style={{textAlign: "left", width: "65%", marginRight: "10px"}} primary={`${value.code} \t-\t ${value.name}`} />
+                <ListItemText style={{textAlign: "right", width: "5%", marginRight: "5px"}} primary={`${value.offer}`} />
+                <ListItemText style={{textAlign: "right", width: "10%"}} primary={<Typography className={classes.prereq} style={{overflow: "scroll"}}>{value.prereq.toString()}</Typography>} />
+                <ListItemText style={{textAlign: "right", marginRight: "5px"}} primary={`${value.ch} CH`} />
+                <IconButton onClick={(e) => {handleOpenDialog(e, index)}} style={{width: "min-content"}} edge="end" aria-label="delete">
+                  <DeleteIcon />
+                </IconButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Paper>
+      <Grid container spacing={1} className={classes.gridContainer}>
+        <Grid item xs={2}>
+          <TextField
+            className={classes.codeInput}
+            margin="dense"
+            id="code"
+            name="newCode"
+            placeholder="Code"
+            inputProps={{ maxLength: 7 }}
+            // error= {errorCode}
+            onChange={(e) => {setNewCode(e.target.value)}}
+            variant="outlined"
+            // helperText={ errorCode ? "Invalid format: ABC1234" : ""}
+            value={newCode}
+          />            
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            required
+            margin="dense"
+            className={classes.inputFullWidth}
+            name="newSubject"
+            placeholder="Subject Name"
+            variant="outlined"
+            onChange={(e) => {setNewSubject(e.target.value)}}
+            value={newSubject}
+          />
+        </Grid>
+        <Grid item xs={2}>
+          <FormControl className={classes.inputFullWidth}>
             <TextField
               required
               margin="dense"
@@ -291,116 +331,115 @@ export default useStyles(class EditSubjectList extends React.Component {
               type="number"
               placeholder="Credit Hour"
               variant="outlined"
-              onChange={onChange.bind(this)}
-              value={this.state.newCH}
+              onChange={(e) => {setNewCH(Number(e.target.value))}}
+              value={newCH}
+              inputProps={{ 'min': 1, 'max': 8 }}
             />
-          </Grid>
-          <Grid item xs={2}>
-            <FormControl className={classes.multiSelect}>
-              <Select
-                multiple
-                displayEmpty
-                value={this.state.newOffer}
-                onChange={handleChangeOffer}
-                input={<OutlinedInput margin="dense"/>}
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <div style={{font: "inherit", color: "#aaa"}}>Offer In</div>;
-                  }
-
-                  return selected.join(', ');
-                }}
-                MenuProps={MenuProps}
-                inputProps={{ 'aria-label': 'Without label'}}
-                // style={{padding: "10.5px 14px"}}
-              >
-                {/* <MenuItem disabled value="">
-                  <div style={{font: "inherit", color: "#aaa"}}>Offer In</div>
-                </MenuItem> */}
-                {[1,2,3].map((item) => (
-                  <MenuItem key={item} value={item}>
-                    {item}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={2}>
-            <FormControl className={classes.multiSelect}>
-              <Select
-                multiple
-                displayEmpty
-                value={this.state.newPreReq}
-                onChange={handleChangePreReq}
-                input={<OutlinedInput margin="dense"/>}
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <div style={{font: "inherit", color: "#aaa"}}>Prerequisites</div>;
-                  }
-
-                  return selected.join(', ');
-                }}
-                MenuProps={MenuProps}
-                inputProps={{ 'aria-label': 'Without label'}}
-                // style={{padding: "10.5px 14px"}}
-              >
-                <MenuItem disabled value="">
-                  <div style={{font: "inherit", color: "#aaa"}}>Prerequisites</div>
-                </MenuItem>
-                {this.state.subjects.map((subject) => (
-                  <MenuItem key={subject.code} value={subject.code}>
-                    {subject.code + ' - ' + subject.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid className={classes.addBtnGrid} item xs={1}>
-            <Button
-              className={classes.addBtn}
-              id="add-subject-button"
-              variant="contained"
-              onClick={handleAdd} 
-              color="primary"
-              disabled={
-                (this.state.newCode && this.state.newSubject 
-                  && this.state.newCH && (this.state.newOffer.length != 0)
-                  // && this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)
-                  ) 
-                  ? false : true
-              }
-            >
-              Add
-            </Button>
-          </Grid>
+          </FormControl>
         </Grid>
-        <Snackbar open={this.state.openAddPop} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity={this.state.alertSev}>
-            {this.state.addPopMsg}
-          </Alert>
-        </Snackbar>
-        <Dialog
-          open={this.state.openDialog}
-          onClose={handleCloseDialog}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Remove subject from list?"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {this.state.removeMsg}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary" autoFocus>
-              Cancel
-            </Button>
-            <Button onClick={handleDelete} color="primary">
-              Confirm
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    );
-  }
-});
+        <Grid item xs={2}>
+          <FormControl className={classes.multiSelect}>
+            <Select
+              multiple
+              displayEmpty
+              value={newOffer}
+              onChange={(e) => {setNewOffer(e.target.value)}}
+              input={<OutlinedInput margin="dense"/>}
+              renderValue={(selected) => {
+                if (selected.length === 0) {
+                  return <div style={{font: "inherit", color: "#aaa"}}>Offers In</div>;
+                }
+
+                return selected.join(', ');
+              }}
+              MenuProps={MenuProps}
+              inputProps={{ 'aria-label': 'Without label'}}
+            >
+              <MenuItem disabled value="">
+                <div style={{font: "inherit", color: "#aaa"}}>Offers In</div>
+              </MenuItem>
+              {[1,2,3].map((item) => (
+                <MenuItem key={item} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={2}>
+          <FormControl className={classes.multiSelect}>
+            <Select
+              multiple
+              displayEmpty
+              value={newPreReq}
+              onChange={(e) => {setNewPreReq(e.target.value)}}
+              input={<OutlinedInput margin="dense"/>}
+              renderValue={(selected) => {
+                if (selected.length === 0) {
+                  return <div style={{font: "inherit", color: "#aaa"}}>Prerequisites</div>;
+                }
+
+                return selected.join(', ');
+              }}
+              MenuProps={MenuProps}
+              inputProps={{ 'aria-label': 'Without label'}}
+            >
+              <MenuItem disabled value="">
+                <div style={{font: "inherit", color: "#aaa"}}>Prerequisites</div>
+              </MenuItem>
+              {subjects.map((subject) => (
+                <MenuItem key={subject.code} value={subject.code}>
+                  {subject.code + ' - ' + subject.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid className={classes.addBtnGrid} item xs={1}>
+          <Button
+            className={classes.addBtn}
+            id="add-subject-button"
+            variant="contained"
+            onClick={handleAdd} 
+            color="primary"
+            disabled={
+              (newCode && newSubject 
+                && newCH && (newOffer.length != 0)
+                // && this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)
+                ) 
+                ? false : true
+            }
+          >
+            Add
+          </Button>
+        </Grid>
+      </Grid>
+      <Snackbar open={openAddPop} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={alertSev}>
+          {addPopMsg}
+        </Alert>
+      </Snackbar>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Remove subject from list?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {removeMsg}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary" autoFocus>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}
