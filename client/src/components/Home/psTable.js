@@ -57,7 +57,7 @@ export default function PSTable(props) {
    *  Generate Customized Programme Structure
    */
   const generateCPS = (subList, standard) => {
-    let afterPS = [];       // programme structure after removal (temp store)
+    let afterPS = [];       // programme structure after removal or processing 
     for (let i = 0; i < standard.length; i++) {    // loop all intake in standard programme structure
       const element = standard[i];
       if (element.intake === props.intake) {    // if current intake is the selected intake
@@ -97,7 +97,15 @@ export default function PSTable(props) {
          */ 
         var priorityList = new Map(); 
         afterPS.forEach(subj => {
-          priorityList.set(subj.code, 0);
+          console.log(subj);
+
+          /**
+           * 1190 to Year 1 Trimester 1 subjects
+           * 1290 to Year 1 Trimester 2 subjects
+           * 1390 to Year 1 Trimester 3 subjects
+           * 2190 to Year 2 Trimester 1 subjects
+           */
+          priorityList.set(subj.code, subj.defaultYear*1000 + subj.defaultTri*100 + 90);
           // priorityList.set(subj.code, priorityList.get(subj.code)+1) // this is how you increment the prioriy value
           // priorityList.push(subject);
         });
@@ -108,28 +116,37 @@ export default function PSTable(props) {
           console.log(subj);
           if(priorityList.has(subj.code)) { 
             console.log("has " + subj.code);
+
+            // if the subject is offered once a year: -40  (xx90 -> xx50)
+            if(subj.offer.length === 2) {
+              priorityList.set(subj.code, priorityList.get(subj.code)-10); 
+            }
             subj.prereq.forEach(prereq => {
               if(priorityList.has(prereq)) {
-                priorityList.set(prereq, priorityList.get(prereq)+1);
+                priorityList.set(prereq, priorityList.get(prereq)-10);
               }
             });
           }
         });
+        console.log(priorityList);
 
-        let sortedList = new Map([...priorityList.entries()].sort((a, b) => b[1] - a[1]));  // sort into non-increasing order
+        let sortedList = new Map([...priorityList.entries()].sort((a, b) => a[1] - b[1]));  // sort into non-decreasing order
         
         priorityList = new Map(sortedList);
         console.log(priorityList);
         
         // Step 2: Initialize visited and unvisited set
-        var visited, unvisited = [];
+        var visited = [];
+        var unvisited = [];
 
         // Step 3: loop each trimester to replace and rearrange subjects
         //    - push existed subject of the trimester into visited list
         //    - check if credit hour of the trimester is enough/full
         //    - if not, take the highest priority subject offered to replace
-
-
+        console.log(afterPS);
+        afterPS.forEach(element => {
+          
+        });
         // console.log(afterPS);
         break;
       }

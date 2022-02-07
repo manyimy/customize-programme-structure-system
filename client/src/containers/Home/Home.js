@@ -69,27 +69,7 @@ export default function Home(props) {
     }
   );
   const [right, setRight] = React.useState([]);
-  // const timerId = null;
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     activeStep: 0,
-  //     data: {
-  //       intake: '',
-  //       year: (new Date()).getFullYear(),
-  //       spec: ''
-  //     },
-  //     intakeInputSize: 2,
-  //     // yearInputSize: 1,
-  //     specInputSize: 2,
-  //     // yearOptions: [],
-  //     Specs: [],
-  //     standardPS: []
-  //   }
-  //   this.timerId = null;
-  //   this.checkedSubject = React.createRef();
-  // }
-  
+
   useEffect(() => {
     if(window.innerWidth <= 480) {
       setIntakeInputSize(5);
@@ -98,17 +78,11 @@ export default function Home(props) {
     axios.get(process.env.REACT_APP_API_PATH + "/standardPS.json")
       .then((response) => {
         setStandardPS(response.data);
-        // this.setState({
-        //   standardPS: response.data 
-        // });
       });
     
     axios.get(process.env.REACT_APP_API_PATH + "/specs.json")
       .then((response) => {
         setSpecs(response.data);
-        // this.setState({ 
-        //   Specs: response.data 
-        // });
       });
     // this.getYear();
   }, []);
@@ -121,7 +95,6 @@ export default function Home(props) {
     if(data.intake && data.year && data.spec) {
       let prevActiveStep = activeStep;
       setActiveStep(prevActiveStep + 1);
-      // this.setState({ activeStep: prevActiveStep + 1 });
     } else {
       showError();
     }
@@ -132,14 +105,11 @@ export default function Home(props) {
   const handleBack = () => {
     let prevActiveStep = activeStep;
     setActiveStep(prevActiveStep - 1);
-    // this.setState({ activeStep: prevActiveStep - 1 })
-    // setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
   
   // reset step back to 0
   const handleReset = () => {
     setActiveStep(0);
-    // this.setState({ activeStep: 0 })
   };
   
   // handle intake and specialization input selection changes
@@ -150,12 +120,6 @@ export default function Home(props) {
       [name]: event.target.value
     };
     setData(updateData);
-    // this.setState({
-    //   data: {
-    //     ...data,
-    //     [name]: event.target.value
-    //   }
-    // });
   };
 
   // pop up error message and close after 5 seconds
