@@ -51,9 +51,10 @@ export default function TransferList({rightCallback}) {
     axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")
       .then((response) => {
         let subject = [];
-        response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))
-          .map((value, index) => {
-            return subject.push(value.code + " " + value.name);
+        Array.from(new Map(response.data).entries())
+          .map((entry) => {
+            const [key, value] = entry;
+            return subject.push(key + " " + value.name);
           })
         setLeft(subject);
         // this.setState({left: subject});
@@ -113,10 +114,10 @@ export default function TransferList({rightCallback}) {
 
   const handleCheckedRight = () => {
 
-    setRight(right.concat(leftChecked));
-    rightCallback(right.concat(leftChecked));
-    setLeft(not(left, leftChecked));
-    setChecked(not(checked, leftChecked));
+    setRight(right.concat(leftChecked).sort());
+    rightCallback(right.concat(leftChecked).sort());
+    setLeft(not(left, leftChecked).sort());
+    setChecked(not(checked, leftChecked).sort());
   };
 
   const handleCheckedLeft = () => {
@@ -124,10 +125,10 @@ export default function TransferList({rightCallback}) {
     // this.setState({right: not(this.state.right, rightChecked).sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))})
     // this.setState({checked: not(this.state.checked, rightChecked)})
 
-    setLeft(left.concat(rightChecked));
-    setRight(not(right, rightChecked));
-    rightCallback(not(right, rightChecked));
-    setChecked(not(checked, rightChecked));
+    setLeft(left.concat(rightChecked).sort());
+    setRight(not(right, rightChecked).sort());
+    rightCallback(not(right, rightChecked).sort());
+    setChecked(not(checked, rightChecked).sort());
   };
 
   const customList = (title, items) => (
@@ -149,7 +150,7 @@ export default function TransferList({rightCallback}) {
       <Divider />
       <List className={classes.list} dense component="div" role="list">
         {items.map((value) => {
-          if (value.split(" ", 1)[0].length >= 7) {   // to filter out the general subject types like electives or mpu (eg. E2 Elective #2)
+          // if (value.split(" ", 1)[0].length >= 7) {   // to filter out the general subject types like electives or mpu (eg. E2 Elective #2)
             const labelId = `transfer-list-all-item-${value}-label`;
 
             return (
@@ -165,7 +166,7 @@ export default function TransferList({rightCallback}) {
                 <ListItemText id={labelId} primary={`${value}`} />
               </ListItem>
             );
-          }
+          // }
         })}
         <ListItem />
       </List>

@@ -96,7 +96,7 @@ const useStyles = makeStyles((theme) => ({
 export default function EditSubjectList(props) {
   const classes = useStyles();
 
-  const [subjects, setSubjects] = React.useState([]);
+  const [subjects, setSubjects] = React.useState(new Map());
   const [openAddPop, setOpenAddPop] = React.useState(false);
   const [addPopMsg, setAddPopMsg] = React.useState('');
   const [alertSev, setAlertSev] = React.useState('error');
@@ -143,7 +143,7 @@ export default function EditSubjectList(props) {
   useEffect(() => {
     axios.get( API_PATH + "/subjectList.json")
       .then((response) => {
-        setSubjects(response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0)));
+        setSubjects(new Map(response.data));
         // this.setState({
         //   subjects: response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))
         // })
@@ -165,7 +165,7 @@ export default function EditSubjectList(props) {
   const handleDelete = (e) => {
     e.preventDefault();
     var list = subjects;
-    list.splice(deletingItem, 1);
+    list.delete(deletingItem);
     // setSubjects(list);
     // this.setState({
     //   subjects: list
@@ -193,7 +193,8 @@ export default function EditSubjectList(props) {
     event.preventDefault();
     
     var list = subjects;
-    if(list.filter(e => e.code === newCode || e.name === newSubject).length > 0) {
+    // if(list.filter(e => e.code === newCode || e.name === newSubject).length > 0) {
+    if(list.has(newCode)) {
       setAddPopMsg('Subject name or code has already existed.');
       setAlertSev('error');
       setOpenAddPop(true);
@@ -203,8 +204,7 @@ export default function EditSubjectList(props) {
       //   openAddPop: true
       // });
     } else {
-      list.push({
-        code: newCode.trim(),
+      list.set(newCode.trim(), {
         name: newSubject.trim(),
         ch: newCH,
         offer: newOffer,
@@ -214,6 +214,7 @@ export default function EditSubjectList(props) {
       setNewCode('');
       setNewSubject('');
       setNewCH('');
+      setNewOffer([]);
       setNewPreReq([]);
       // this.setState({
       //   subjects: list,
@@ -240,10 +241,10 @@ export default function EditSubjectList(props) {
     }
   };
 
-  const handleOpenDialog = (event, index) => {
+  const handleOpenDialog = (event, key) => {
     event.preventDefault();
-    setDeletingItem(index);
-    setRemoveMsg("Are you sure to remove " + subjects[index].code + " " + subjects[index].name + " permanently?");
+    setDeletingItem(key);
+    setRemoveMsg("Are you sure to remove " + key + " " + subjects.get(key).name + " permanently?");
     setOpenDialog(true);
     // this.setState({
     //   deletingItem: index,
@@ -267,25 +268,26 @@ export default function EditSubjectList(props) {
   //   // this.setState({newPreReq: event.target.value});
   // };
 
-  const handleChangeOffer = (event) => {
-    setNewOffer(event.target.value);
-    // this.setState({newOffer: event.target.value});
-  };
+  // const handleChangeOffer = (event) => {
+  //   setNewOffer(event.target.value.sort());
+  //   // this.setState({newOffer: event.target.value});
+  // };
 
   return (
     <div className={classes.root}>
       <Paper className={classes.listPaper} elevation={2}>
         <List dense={true}>
-          {subjects.map((value, index) => {
-            const labelId = `checkbox-list-label-${value.code}`;
+          {Array.from(subjects.entries()).map((entry) => {
+            const [key, value] = entry;
+            const labelId = `checkbox-list-label-${key}`;
 
             return (
               <ListItem >
-                <ListItemText id={labelId} style={{textAlign: "left", width: "65%", marginRight: "10px"}} primary={`${value.code} \t-\t ${value.name}`} />
+                <ListItemText id={labelId} style={{textAlign: "left", width: "65%", marginRight: "10px"}} primary={`${key} \t-\t ${value.name}`} />
                 <ListItemText style={{textAlign: "right", width: "5%", marginRight: "5px"}} primary={`${value.offer}`} />
                 <ListItemText style={{textAlign: "right", width: "10%"}} primary={<Typography className={classes.prereq} style={{overflow: "scroll"}}>{value.prereq.toString()}</Typography>} />
                 <ListItemText style={{textAlign: "right", marginRight: "5px"}} primary={`${value.ch} CH`} />
-                <IconButton onClick={(e) => {handleOpenDialog(e, index)}} style={{width: "min-content"}} edge="end" aria-label="delete">
+                <IconButton onClick={(e) => {handleOpenDialog(e, key)}} style={{width: "min-content"}} edge="end" aria-label="delete">
                   <DeleteIcon />
                 </IconButton>
               </ListItem>
@@ -343,7 +345,7 @@ export default function EditSubjectList(props) {
               multiple
               displayEmpty
               value={newOffer}
-              onChange={(e) => {setNewOffer(e.target.value)}}
+              onChange={(e) => {setNewOffer(e.target.value.sort())}}
               input={<OutlinedInput margin="dense"/>}
               renderValue={(selected) => {
                 if (selected.length === 0) {
@@ -387,11 +389,13 @@ export default function EditSubjectList(props) {
               <MenuItem disabled value="">
                 <div style={{font: "inherit", color: "#aaa"}}>Prerequisites</div>
               </MenuItem>
-              {subjects.map((subject) => (
-                <MenuItem key={subject.code} value={subject.code}>
-                  {subject.code + ' - ' + subject.name}
+              {Array.from(subjects.entries()).map((entry) => {
+                const [key, value] = entry;
+                return (
+                <MenuItem key={key} value={key}>
+                  {key + ' - ' + value.name}
                 </MenuItem>
-              ))}
+              );})}
             </Select>
           </FormControl>
         </Grid>
