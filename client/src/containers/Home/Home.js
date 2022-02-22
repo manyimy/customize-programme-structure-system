@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -56,19 +56,20 @@ const steps = getSteps();
 
 export default function Home(props) {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [intakeInputSize, setIntakeInputSize] = React.useState(2);
-  const [specInputSize, setSpecInputSize] = React.useState(2);
-  const [Specs, setSpecs] = React.useState([]);
-  const [standardPS, setStandardPS] = React.useState([]);
-  const [data, setData] = React.useState(
+  const [activeStep, setActiveStep] = useState(0);
+  const [intakeInputSize, setIntakeInputSize] = useState(2);
+  const [specInputSize, setSpecInputSize] = useState(2);
+  const [Specs, setSpecs] = useState([]);
+  const [standardPS, setStandardPS] = useState([]);
+  const [data, setData] = useState(
     {
       intake: '',
       year: (new Date()).getFullYear(),
       spec: ''
     }
   );
-  const [right, setRight] = React.useState([]);
+  const [timerId, setTimerId] = useState(null);
+  const [right, setRight] = useState([]);
 
   useEffect(() => {
     if(window.innerWidth <= 480) {
@@ -87,7 +88,7 @@ export default function Home(props) {
     // this.getYear();
   }, []);
 
-  const setRightCallback = React.useCallback((right) => {
+  const setRightCallback = useCallback((right) => {
     setRight(right);
   }, []);
 
@@ -104,6 +105,7 @@ export default function Home(props) {
   
   const handleBack = () => {
     let prevActiveStep = activeStep;
+    setRight([]);
     setActiveStep(prevActiveStep - 1);
   };
   
@@ -128,7 +130,7 @@ export default function Home(props) {
     document.getElementById("error-alert").style.display = "flex";
     const timerId = setTimeout(() => {
       document.getElementById("error-alert").style.display = "none";
-      timerId = null;
+      setTimerId(null);
     }, 5000);
   }
 
