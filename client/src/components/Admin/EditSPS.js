@@ -95,7 +95,7 @@ export default function EditSPS(props) {
   const classes = useStyles();
 
   const [years, setYears] = React.useState([]);
-  const [subjectList, setSubjectList] = React.useState([]);
+  const [subjectList, setSubjectList] = React.useState(new Map());
   const [selectionDisable, setSelectionDisable] = React.useState(false);        // disable initial selection of intake and spec
   const [openSnackbar, setOpenSnackbar] = React.useState(false);                // snackbar visibility
   const [snackbarMsg, setSnackbarMsg] = React.useState("");                     // snackbar message
@@ -107,7 +107,7 @@ export default function EditSPS(props) {
   const [selectedIntake, setSelectedIntake] = React.useState("");               // initial selection intake
   const [selectedSpec, setSelectedSpec] = React.useState("");                   // initial selection specialization
   const [standardPS, setStandardPS] = React.useState([]);                       // standard programme structure from server JSON file
-  const [editingPS, setEditingPS] = React.useState([]);                         // current editting programme structure (old)
+  const [editingPS, setEditingPS] = React.useState(new Map());                         // current editting programme structure (old)
   const [standardIndex, setStandardIndex] = React.useState("");
   const [openAddPS, setOpenAddPS] = React.useState(false);
   const [openCopyPS, setOpenCopyPS] = React.useState(false); 
@@ -145,8 +145,8 @@ export default function EditSPS(props) {
 
   useEffect(() => {
     axios.get(API_PATH + "/subjectList.json").then((response) => {
-      setSubjectList(response.data);
-      console.log(response.data);
+      setSubjectList(new Map(response.data));
+      console.log(new Map(response.data));
     });
     
     axios.get(API_PATH + "/standardPS.json").then((response) => {
@@ -186,12 +186,13 @@ export default function EditSPS(props) {
     console.log(value);
     if(name === "subject") {
       let updateInputs = [...inputs];
+      const [key, val] = value; 
       updateInputs[inputIndex] = {
         ...updateInputs[inputIndex],
-        code: value.code,
-        name: value.name,
-        ch: Number(value.ch),
-        offer: value.offer
+        code: key,
+        name: val.name,
+        ch: Number(val.ch),
+        offer: val.offer
       };
       
       setInputs(updateInputs);
@@ -208,9 +209,9 @@ export default function EditSPS(props) {
   };
 
   // Confirmation dialog for delete subject from programme structure
-  const handleOpenDialog = (event, index) => {
+  const handleOpenDialog = (event, subjectCode) => {
     event.preventDefault();
-    setToDeleteSubject(index);
+    setToDeleteSubject(subjectCode);
     setOpenDeletePSDialog(true);
   };
 
@@ -231,11 +232,9 @@ export default function EditSPS(props) {
       setSnackbarSev("error");
       setOpenSnackbar(true);
     } else {
-      let updatePS = JSON.parse(JSON.stringify(editingPS));
+      let updatePS = new Map(editingPS);
       console.log(updatePS);
-      updatePS.push({
-        key: (updatePS.length === 0) ? 1 : updatePS[updatePS.length - 1].key + 1,
-        code: inputs[year].code,
+      updatePS.set(inputs[year].code, {
         name: inputs[year].name,
         ch: Number(inputs[year].ch),
         type: inputs[year].type,
@@ -255,15 +254,15 @@ export default function EditSPS(props) {
         defaultTri: ""
       }
       setInputs(updateInputs);
-      setEditingPS(JSON.parse(JSON.stringify(updatePS)));
+      setEditingPS(new Map(updatePS));
     }
   };
 
   // handle delete subject from programme structure
   const handleDelete = (e) => {
-    let arrayCopy = JSON.parse(JSON.stringify(editingPS));
-    arrayCopy.splice(toDeleteSubject, 1);
-    setEditingPS(arrayCopy);
+    let mapCopy = new Map(editingPS);
+    mapCopy.delete(toDeleteSubject);
+    setEditingPS(mapCopy);
     setSnackbarMsg("Subject removed.");
     setSnackbarSev("success");
     setOpenSnackbar(true);
@@ -274,10 +273,11 @@ export default function EditSPS(props) {
   const handleSave = (e) => {
     e.preventDefault();
     let copyStandard = JSON.parse(JSON.stringify(standardPS));
+    console.log(copyStandard);
     for (let i = 0; i < standardPS.length; i++) {
       const element = standardPS[i];
       if(selectedIntake === element.intake) {
-        copyStandard[i].PS[selectedSpec] = editingPS;
+        copyStandard[i].PS[selectedSpec] = [...editingPS];
         break;
       }
     }
@@ -465,10 +465,10 @@ export default function EditSPS(props) {
     }
     console.log(standardPS[index]);
     console.log(editingPS);
-    console.log(standardPS[index].PS[selectedSpec]);
+    console.log(new Map(standardPS[index].PS[selectedSpec]));
     // let toEditPS = standardPS[index].PS[selectedSpec];
     // console.log(toEditPS);
-    setEditingPS(JSON.parse(JSON.stringify(standardPS[index].PS[selectedSpec])));
+    setEditingPS(new Map(standardPS[index].PS[selectedSpec]));
     setStandardIndex(Number(index));
     setSelectionDisable(true);
     document.getElementById("psTable-container").style.display = "block";
@@ -503,7 +503,7 @@ export default function EditSPS(props) {
         defaultTri: "",
       },
     ];
-    setEditingPS(JSON.parse(JSON.stringify([])));
+    setEditingPS(new Map());
     setInputs(emptyInputs);
     setSelectionDisable(false);
     document.getElementById("psTable-container").style.display = "none";
@@ -573,6 +573,22 @@ export default function EditSPS(props) {
       }
     }
   };
+
+  function compareMaps(map1, map2) {
+    var testVal;
+    if (map1.size !== map2.size) {
+        return false;
+    }
+    for (var [key, val] of map1) {
+        testVal = map2.get(key);
+        // in cases of an undefined value, make sure the key
+        // actually exists on the object so there are no false positives
+        if (JSON.stringify(testVal) !== JSON.stringify(val) || (testVal === undefined && !map2.has(key))) {
+            return false;
+        }
+    }
+    return true;
+  }
 
   return (
     <div>
@@ -714,9 +730,10 @@ export default function EditSPS(props) {
                           }}
                           inputProps={{ 'aria-label': 'Without label' }}
                         >
-                          {subjectList.map((item, index) => {
+                          {Array.from(subjectList.entries()).map((entry) => {
+                            const [key, value] = entry;
                             return (
-                              <MenuItem value={item}>{item.code + " - " + item.name + "  [" + item.ch + "]"}</MenuItem>
+                              <MenuItem key={key} value={entry}>{key + " - " + value.name + "  [" + value.ch + "]"}</MenuItem>
                             );
                           })}
                         </Select>
@@ -792,22 +809,24 @@ export default function EditSPS(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody className={classes.tableBody}>
-                  {editingPS.map((item, index) => {
-                    if (item.defaultYear === yearIndex+1) {
+                  {Array.from(editingPS.entries()).map((entry) => {
+                    const [key, value] = entry;
+
+                    if (value.defaultYear === yearIndex + 1) {
                       return (
-                        <TableRow key={item.key}>
+                        <TableRow key={key}>
                           <TableCell align="center" component="th" scope="row">
-                            {item.type}
+                            {value.type}
                           </TableCell>
-                          <TableCell align="center">{item.code}</TableCell>
-                          <TableCell>{item.name}</TableCell>
-                          <TableCell align="center">{item.ch}</TableCell>
+                          <TableCell align="center">{key}</TableCell>
+                          <TableCell>{value.name}</TableCell>
+                          <TableCell align="center">{value.ch}</TableCell>
                           <TableCell align="center">
-                            {item.defaultTri}
+                            {value.defaultTri}
                           </TableCell>
                           <TableCell align="right">
                             <IconButton
-                              onClick={(e) => handleOpenDialog(e, index)}
+                              onClick={(e) => handleOpenDialog(e, key)}
                             >
                               <DeleteIcon fontSize="small" />
                             </IconButton>
@@ -831,8 +850,8 @@ export default function EditSPS(props) {
             color="primary"
             aria-label="save"
             disabled={((standardIndex) && standardPS[standardIndex])
-              ? (JSON.stringify(editingPS) === JSON.stringify(standardPS[standardIndex].PS[selectedSpec]))
-                ? true : false : true}
+              ? compareMaps(editingPS, new Map(standardPS[standardIndex].PS[selectedSpec]))
+               : true}
             onClick={handleSave}
           >
             <SaveIcon />

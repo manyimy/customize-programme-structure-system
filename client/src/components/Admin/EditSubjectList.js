@@ -303,7 +303,7 @@ export default function EditSubjectList(props) {
             id="code"
             name="newCode"
             placeholder="Code"
-            inputProps={{ maxLength: 7 }}
+            inputProps={{ maxLength: 8 }}
             // error= {errorCode}
             onChange={(e) => {setNewCode(e.target.value)}}
             variant="outlined"

@@ -287,6 +287,24 @@
     "offer": [1, 2],
     "prereq": []
   }],
+  ["TPT2201", {
+    "name": "Industrial Training",
+    "ch": 6,
+    "offer": [3],
+    "prereq": []
+  }],
+  ["TPT3101a", {
+    "name": "Final Year Project 1",
+    "ch": 4,
+    "offer": [1, 2],
+    "prereq": ["TIS1101", "TSE2101", "TCP2201", "TPT3101b"]
+  }],
+  ["TPT3101b", {
+    "name": "Final Year Project 2",
+    "ch": 4,
+    "offer": [1, 2],
+    "prereq": ["TIS1101", "TSE2101", "TCP2201"]
+  }],
   ["U2", { "name": "MPU U2", "ch": 3, "offer": [1, 2, 3], "prereq": [] }],
   ["U3", { "name": "MPU U3", "ch": 3, "offer": [1, 2, 3], "prereq": [] }],
   ["U4", { "name": "MPU U4", "ch": 2, "offer": [1, 2, 3], "prereq": [] }],
