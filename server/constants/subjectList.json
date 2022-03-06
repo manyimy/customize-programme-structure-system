@@ -296,13 +296,13 @@
   ["TPT3101a", {
     "name": "Final Year Project 1",
     "ch": 4,
-    "offer": [1, 2],
+    "offer": [1],
     "prereq": ["TIS1101", "TSE2101", "TCP2201"]
   }],
   ["TPT3101b", {
     "name": "Final Year Project 2",
     "ch": 4,
-    "offer": [1, 2],
+    "offer": [2],
     "prereq": ["TIS1101", "TSE2101", "TCP2201", "TPT3101a"]
   }],
   ["U2", { "name": "MPU U2", "ch": 3, "offer": [1, 2, 3], "prereq": [] }],
