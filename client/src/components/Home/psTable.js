@@ -75,19 +75,21 @@ export default function PSTable(props) {
        * Remove credit transferrec subjects
        */
       if (element.intake === props.intake) {    // if current intake is the selected intake
-        // console.log(element.PS[props.spec]);  
+        console.log(element.PS[props.spec]);  
         // console.log(props.trans);
 
-        // for each subjects of the selected specialization and intake
+        // if no subject is transferred, return the standard programme structure
+        if (props.trans.length === 0) {
+          return new Map(element.PS[props.spec]);
+        }
+
+        // loop subjects in the selected specialization and intake
         let index = 0;
         for (const [code, val] of element.PS[props.spec]) {
           console.log(code);
           console.log(val);
-          // console.log(subject.code + " " + subject.name);
-          // console.log(props.trans.includes(subject.code + " " + subject.name));
 
-          // if transferred subjects does not include the current subject, 
-          // push into the afterTransferPS array
+          // if current subject is not transferred, push into the afterTransferPS array
           if (!props.trans.includes(code + " " + val.name)) {
             afterTransferPS.set(code, val);
             ch2d[val.defaultYear-1][val.defaultTri-1] += val.ch;
@@ -135,7 +137,7 @@ export default function PSTable(props) {
           if(priorityList.has(key)) { 
             // console.log("has " + subj.code);
 
-            // if the subject is offered once a thisYear: -40  (xx90 -> xx50)
+            // if the subject is offered once a year: -40  (xx90 -> xx50)
             if(value.offer.length === 2) {
               priorityList.set(key, priorityList.get(key)-10); 
             }
@@ -171,17 +173,16 @@ export default function PSTable(props) {
           for (let thisTri = 1; thisTri <= 3; thisTri++) {
 
             // remove existed subjects of current trimester from toBePlacedSubjects list
-            Array.from(afterTransferPS.entries()).forEach(entry => {
-              const [code, val] = entry;
+            for (const [code, val] of afterTransferPS) {
               if(val.defaultYear <= thisYear && val.defaultTri <= thisTri && toBePlacedSubjects.includes(code)){
                 toBePlacedSubjects.splice(toBePlacedSubjects.indexOf(code), 1);
               }
-            });
+            }
 
             console.log(toBePlacedSubjects);
 
             let maxCHOfTri = (thisTri===3) ? 10 : 20;
-            var candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri);
+            var candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS);
             console.log("candidateSubject");
             console.log(candidateSubject);
             while(ch2d[thisYear-1][thisTri-1] <= maxCHOfTri && candidateSubject) {
@@ -211,7 +212,7 @@ export default function PSTable(props) {
               //     break;
               //   }
               // }
-              candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri);
+              candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS);
               console.log("candidateSubject");
               console.log(candidateSubject);
             }
@@ -222,22 +223,36 @@ export default function PSTable(props) {
       }
     }
     console.log(afterTransferPS);
-    return afterTransferPS;
+    return sortPSMap(afterTransferPS);
   }
 
   // check if any subject can be replaced
-  const anyReplaceble = (thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri) => {
+  const anyReplaceble = (thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS) => {
     console.log(toBePlacedSubjects);
     for (let index = 0; index < Array.from(priorityList.keys()).length; index++) {
       const prioritySubjectCode = Array.from(priorityList.keys())[index];
       if(subList.get(prioritySubjectCode) && toBePlacedSubjects.includes(prioritySubjectCode) && subList.get(prioritySubjectCode).offer.includes(thisTri) && 
-          ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri) {
+          ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri && meetPrerequisite(prioritySubjectCode, thisYear, thisTri, afterTransferPS, subList, ch2d)) {
           // && !toBePlacedSubjects.some( ai => subList.get(prioritySubjectCode).prereq.includes(ai) )) {    // check if prerequisite has been taken
         console.log(prioritySubjectCode);
         return prioritySubjectCode;
       }
     }
     return null;
+  }
+
+  const sortPSMap = (toSortPS) => {
+    let sortedPS = new Map();
+    for (let y = 1; y <= 3; y++) {
+      for (let t = 1; t <= 3; t++) {
+        for (let [code, val] of toSortPS) {
+          if(val.defaultYear===y && val.defaultTri===t) {
+            sortedPS.set(code, val);
+          }
+        }
+      } 
+    }
+    return sortedPS;
   }
 
   /**
@@ -247,25 +262,27 @@ export default function PSTable(props) {
    *  - industrial training: 60 credit hours
    */
   const meetPrerequisite = (toCheckSubject, thisYear, thisTri, afterTransferPS, subList, ch2d) => {
-    let isMeet = false;
-    if(toCheckSubject === "TPT2201") {    // if is industrial training 
+    let isMeet = true;
+    if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training 
       let sumCH = 0;
+      const minCHRequire = (toCheckSubject === "TPT2201") ? 60 : 50;  // 60 for internship, 50 for fyp
       for (let year = 0; year < thisYear; year++) {
         for (let tri = 0; tri < thisTri; tri++) {
           sumCH += ch2d[year][tri];
         }
       }
-      return (sumCH < 60) ? false : true;
+      isMeet = (sumCH < minCHRequire) ? false : true;   // if total taken credit hour 
     }
-    afterTransferPS.forEach(subject => {
-      if(subList.get(toCheckSubject).prereq.includes(subject.code) && subject.defaultTri < thisTri && subject.defaultYear < thisYear) {
-
-      }
-      
-    });
+    // check if prerequisite is all taken in previous trimester 
+    if(isMeet) {
+      subList.get(toCheckSubject).prereq.forEach((prereqSubjCode) => {
+        if(afterTransferPS.get(prereqSubjCode) && (afterTransferPS.get(prereqSubjCode).defaultYear > thisYear || 
+            (afterTransferPS.get(prereqSubjCode).defaultYear === thisYear && afterTransferPS.get(prereqSubjCode).defaultTri >= thisTri))){
+          isMeet = false;
+        }
+      });
+    }
     return isMeet;
-
-
     // create a map from the credit transferred subjects 
     // for every subject s in afterTransferPS
     //   if s does not have any prerequisite
