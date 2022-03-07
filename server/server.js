@@ -83,6 +83,10 @@ app.post('/standardPS', (req, res) => {
   });
 });
 
-app.listen(4000, () => {
-  console.log("Listing on port 4000");
+app.get('/hi', (req, res) => {
+  res.send("Hello World")
+});
+
+app.listen(process.env.PORT || 5000, () => {
+  console.log("Listing on port 5000");
 });
