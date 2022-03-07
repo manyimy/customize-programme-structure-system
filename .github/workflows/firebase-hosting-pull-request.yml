@@ -17,3 +17,4 @@ jobs:
             ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CUSTOMIZE_PROGRAMME_STRU_E9FC3
             }}
           projectId: customize-programme-stru-e9fc3
+          entryPoint: "./client"

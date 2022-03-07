@@ -20,3 +20,4 @@ jobs:
             }}
           channelId: live
           projectId: customize-programme-stru-e9fc3
+          entryPoint: "./client"
