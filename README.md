@@ -9,10 +9,10 @@
 
 ## Installation
 
-- Clone a repo using `git clone https://github.com/syedabuthahirm/react-materialui-boilerplate.git`
+- Clone a repo using `git clone https://github.com/manyimy/customize-programme-structure-system.git`
 - Navigate to client folder `cd client`
 - Install node modules using `npm install` or `yarn install`
-- Naviagte to server folder `cd server`
+- Navigate to server folder `cd server`
 - Install node modules using `npm install` or `yarn install`
 - Start a client app `cd client && npm run start`
 - Start a server app `cd server && npm run start`
