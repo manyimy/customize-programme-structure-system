@@ -181,7 +181,7 @@ export default function PSTable(props) {
 
             console.log(toBePlacedSubjects);
 
-            let maxCHOfTri = (thisTri===3) ? 10 : 20;
+            let maxCHOfTri = (thisTri===3) ? props.shortLimit : props.longLimit;
             var candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS);
             console.log("candidateSubject");
             console.log(candidateSubject);

@@ -14,6 +14,8 @@ import { getSteps, ColorlibConnector, ColorlibStepIcon } from './quontoComponent
 import TransferList from '../../components/Home/transferList';
 import PSTable from '../../components/Home/psTable';
 import Alert from '@material-ui/lab/Alert';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
 
 import axios from 'axios';
 
@@ -51,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
 const steps = getSteps();
 
 export default function Home(props) {
@@ -70,6 +71,28 @@ export default function Home(props) {
   );
   const [timerId, setTimerId] = useState(null);
   const [right, setRight] = useState([]);
+  const [longTriCHLimit, setLongTriCHLimit] = useState(20);
+  const [shortTriCHLimit, setShortTriCHLimit] = useState(10);
+  const marksLong = [
+    {
+      value: 12,
+      label: '12 CH',
+    },
+    {
+      value: 20,
+      label: '20 CH',
+    },
+  ];
+  const marksShort = [
+    {
+      value: 6,
+      label: '6 CH',
+    },
+    {
+      value: 10,
+      label: '10 CH',
+    },
+  ];
 
   useEffect(() => {
     if(window.innerWidth <= 480) {
@@ -238,27 +261,6 @@ export default function Home(props) {
                   <FormHelperText>Required</FormHelperText>
                 </FormControl>
               </Grid>
-              {/* <Grid item xs={intakeInputSize}>
-                <FormControl required className={classes.formControl}>
-                  <InputLabel htmlFor="intake-native-simple">Year</InputLabel>
-                  <Select
-                    native
-                    value={data.year}
-                    onChange={this.handleChange}
-                    inputProps={{
-                      name: 'year',
-                      id: 'year-native-simple',
-                    }}
-                    required
-                  >
-                    <option aria-label="None" value="" />
-                    {yearOptions.map((item, index) => {
-                      return <option key={item}>{item}</option>
-                    })}
-                  </Select>
-                  <FormHelperText>Required</FormHelperText>
-                </FormControl>
-              </Grid> */}
               <Grid item xs={specInputSize}>
                 <FormControl required className={classes.formControl}>
                   <InputLabel htmlFor="spec-native-simple">Specialization</InputLabel>
@@ -285,6 +287,44 @@ export default function Home(props) {
                 </Grid>
                 : <div></div>
               )}
+            </Grid>
+            <Grid container spacing={8}>
+              <Grid item xs></Grid>
+              <Grid item xs={3}>
+                <Typography id="discrete-slider-long" gutterBottom>
+                  Long Trimester
+                </Typography>
+                <Slider
+                  value={longTriCHLimit}
+                  id="long-slider"
+                  // getAriaValueText={valuetext}
+                  aria-labelledby="discrete-slider-custom"
+                  step={1}
+                  min={12}
+                  max={20}
+                  valueLabelDisplay="auto"
+                  marks={marksLong}
+                  onChange={(e, newValue) => {setLongTriCHLimit(newValue);}}
+                />
+              </Grid>
+              <Grid item xs={3}>
+                <Typography id="discrete-slider-short" gutterBottom>
+                  Short Trimester
+                </Typography>
+                <Slider
+                  value={shortTriCHLimit}
+                  id="short-slider"
+                  // getAriaValueText={valuetext}
+                  aria-labelledby="discrete-slider-custom"
+                  step={1}
+                  min={6}
+                  max={10}
+                  valueLabelDisplay="auto"
+                  marks={marksShort}
+                  onChange={(e, newValue) => {setShortTriCHLimit(newValue);}}
+                />
+              </Grid>
+              <Grid item xs></Grid>
             </Grid>
             <Grid container spacing={1} >
             {(window.innerWidth > 480 ? 
@@ -330,6 +370,8 @@ export default function Home(props) {
                   intake={data.intake}
                   spec={data.spec}
                   trans={right}
+                  shortLimit={shortTriCHLimit}
+                  longLimit={longTriCHLimit}
                 />
               </Grid>
               <Grid item xs>
