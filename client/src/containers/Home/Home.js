@@ -108,7 +108,6 @@ export default function Home(props) {
       .then((response) => {
         setSpecs(response.data);
       });
-    // this.getYear();
   }, []);
 
   const setRightCallback = useCallback((right) => {
@@ -122,8 +121,6 @@ export default function Home(props) {
     } else {
       showError();
     }
-    
-    // setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
   
   const handleBack = () => {

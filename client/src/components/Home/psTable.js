@@ -20,6 +20,7 @@ export default function PSTable(props) {
 
   // const [intakeNum, setIntakeNum] = useState(null);
   const [selectedPS, setSelectedPS] = useState(new Map());
+  const [transferredCH, setTransferredCH] = useState(0);
   const [standardPS, setStandardPS] = useState([]);
   const [subjectList, setSubjectList] = useState();
   // const [ch2D, setCh2D] = useState([]);
@@ -34,10 +35,18 @@ export default function PSTable(props) {
   // }
 
   useEffect(() => {
+    // format transferred subject list into subject code only
+    for (let i = 0; i < props.trans.length; i++) {
+      props.trans[i] = props.trans[i].substr(0, props.trans[i].indexOf(' '));
+    }
+    console.log(props.trans);
+
+    // fetch subjectList and standardPS from server
     axios
       .get(API_PATH + "/subjectList.json")
       .then((res) => {
-        setSubjectList(new Map(res.data));
+        let subList = new Map(res.data)
+        setSubjectList(subList);
 
         axios
           .get(API_PATH + "/standardPS.json")
@@ -63,7 +72,7 @@ export default function PSTable(props) {
    */
   const generateCPS = (subList, standard) => {
     let afterTransferPS = new Map();       // programme structure after removal of credit transferred subjects
-    let ch2d = []; 
+    let ch2d = [];
     ch2d.push([0,0,0],[0,0,0],[0,0,0]);
     console.log(ch2d);
     let creditHour = MAX_CH;
@@ -90,7 +99,7 @@ export default function PSTable(props) {
           console.log(val);
 
           // if current subject is not transferred, push into the afterTransferPS array
-          if (!props.trans.includes(code + " " + val.name)) {
+          if (!props.trans.includes(code)) {
             afterTransferPS.set(code, val);
             ch2d[val.defaultYear-1][val.defaultTri-1] += val.ch;
             index++;
@@ -125,7 +134,9 @@ export default function PSTable(props) {
            * 1390 to Year 1 Trimester 3 subjects
            * 2190 to Year 2 Trimester 1 subjects
            */
-          priorityList.set(code, subj.defaultYear*1000 + subj.defaultTri*100 + 90);
+          let yearPriority = (subj.defaultTri === 3) ? subj.defaultYear*1000 + 1000 : subj.defaultYear*1000;
+          // yearPriority = (code.includes("TPT3101")) ? yearPriority-1000 : yearPriority;
+          priorityList.set(code, yearPriority + subj.defaultTri*100 + 90);
         }
 
         console.log(afterTransferPS);
@@ -148,7 +159,6 @@ export default function PSTable(props) {
             });
           }
         }
-        console.log(priorityList);
 
         let sortedList = new Map([...priorityList.entries()].sort((a, b) => a[1] - b[1]));  // sort into non-decreasing order
         
@@ -167,8 +177,6 @@ export default function PSTable(props) {
         //    - remove existed subject of the current trimester from toBePlacedSubjects list
         //    - check if credit hour of the trimester is enough/full
         //    - if not, take the highest priority subject offered to replace
-        console.log(afterTransferPS);
-
         for (let thisYear = 1; thisYear <= 3; thisYear++) {
           for (let thisTri = 1; thisTri <= 3; thisTri++) {
 
@@ -199,19 +207,6 @@ export default function PSTable(props) {
                   break;
                 }
               }
-              // for (let num = 0; num < afterTransferPS.length; num++) {
-              //   const toReplace = afterTransferPS[num];
-              //   if(toReplace.code === candidateSubject) {
-              //     console.log("replaced " + afterTransferPS[num].code);
-              //     console.log(afterTransferPS[num]);
-              //     ch2d[afterTransferPS[num].defaultYear-1][afterTransferPS[num].defaultTri-1] -= afterTransferPS[num].ch;
-              //     afterTransferPS[num].defaultTri = thisTri;
-              //     afterTransferPS[num].defaultYear = thisYear;
-              //     ch2d[thisYear-1][thisTri-1] += afterTransferPS[num].ch;
-              //     toBePlacedSubjects.splice(toBePlacedSubjects.indexOf(candidateSubject), 1);
-              //     break;
-              //   }
-              // }
               candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS);
               console.log("candidateSubject");
               console.log(candidateSubject);
@@ -241,6 +236,7 @@ export default function PSTable(props) {
     return null;
   }
 
+  // Function: Sort programme structure map in year and trimester order
   const sortPSMap = (toSortPS) => {
     let sortedPS = new Map();
     for (let y = 1; y <= 3; y++) {
@@ -255,6 +251,15 @@ export default function PSTable(props) {
     return sortedPS;
   }
 
+  // calculate total credit transferred credit hours
+  const sumTransferredCH = (subList) => {
+    let totalCHTransferred = 0;
+    props.trans.forEach(transSubject => {
+      totalCHTransferred += subList.get(transSubject).ch;
+    });
+    return totalCHTransferred;
+  }
+
   /**
    * Check if the subject meets the prerequisite requirements
    * special requirements:
@@ -263,7 +268,9 @@ export default function PSTable(props) {
    */
   const meetPrerequisite = (toCheckSubject, thisYear, thisTri, afterTransferPS, subList, ch2d) => {
     let isMeet = true;
+    console.log(transferredCH);
     if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training 
+      console.log("CHECKING prereq of " + toCheckSubject);
       let sumCH = 0;
       const minCHRequire = (toCheckSubject === "TPT2201") ? 60 : 50;  // 60 for internship, 50 for fyp
       for (let year = 0; year < thisYear; year++) {
@@ -271,11 +278,13 @@ export default function PSTable(props) {
           sumCH += ch2d[year][tri];
         }
       }
-      isMeet = (sumCH < minCHRequire) ? false : true;   // if total taken credit hour 
+      
+      isMeet = (sumCH+sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
     }
     // check if prerequisite is all taken in previous trimester 
     if(isMeet) {
       subList.get(toCheckSubject).prereq.forEach((prereqSubjCode) => {
+        console.log(props.trans.includes(prereqSubjCode));
         if(afterTransferPS.get(prereqSubjCode) && (afterTransferPS.get(prereqSubjCode).defaultYear > thisYear || 
             (afterTransferPS.get(prereqSubjCode).defaultYear === thisYear && afterTransferPS.get(prereqSubjCode).defaultTri >= thisTri))){
           isMeet = false;
@@ -283,17 +292,6 @@ export default function PSTable(props) {
       });
     }
     return isMeet;
-    // create a map from the credit transferred subjects 
-    // for every subject s in afterTransferPS
-    //   if s does not have any prerequisite
-    //     add s to map
-    //   else 
-    //     if map has prerequisite s.p
-    //       add s to map
-    //     else
-    //       return false
-    // return true 
-
   }
 
   return (
