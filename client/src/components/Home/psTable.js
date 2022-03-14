@@ -292,12 +292,25 @@ export default function PSTable(props) {
     // check if prerequisite is all taken in previous trimester 
     if(isMeet) {
       subList.get(toCheckSubject).prereq.forEach((prereqSubjCode) => {
-        console.log(props.trans.includes(prereqSubjCode));
+        // if prerequisite subject is yet to be taken (its trimester or year are greater)
         if(afterTransferPS.get(prereqSubjCode) && (afterTransferPS.get(prereqSubjCode).defaultYear > thisYear || 
             (afterTransferPS.get(prereqSubjCode).defaultYear === thisYear && afterTransferPS.get(prereqSubjCode).defaultTri >= thisTri))){
           isMeet = false;
         }
       });
+    }
+
+    // if fyp 1 is available, straight check if fyp2 is replacable
+    if(isMeet && toCheckSubject === "TPT3101a") {
+      let tempPS = new Map(afterTransferPS);
+      let tempCh2d = JSON.parse(JSON.stringify(ch2d));
+      let fyp1Detail = tempPS.get("TPT3101a");
+      tempCh2d[fyp1Detail.defaultYear-1][fyp1Detail.defaultTri-1] -= fyp1Detail.ch;
+      fyp1Detail.defaultYear = thisYear;
+      fyp1Detail.defaultTri = thisTri;
+      tempPS.set("TPT3101a", fyp1Detail);
+      tempCh2d[thisYear-1][thisTri-1] += fyp1Detail.ch;
+      return meetPrerequisite("TPT3101b", thisYear, thisTri+1, tempPS, subList, tempCh2d);
     }
     return isMeet;
   }
