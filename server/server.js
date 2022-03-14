@@ -16,19 +16,6 @@ app.use('/login', (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'constants')));
 
-
-// app.get('/*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
-
-// app.get('/*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
-
-// app.get("/", (req, res, next) => {
-//   res.send("Civil management");
-// });
-
 app.post('/trimesters', (req, res) => {
   filePath = __dirname + '/constants/trimesters.json';
   console.log(req.body.newData);
@@ -47,20 +34,6 @@ app.post('/subjectList', (req, res) => {
   console.log(req.body.subjects);
 
   fs.writeFile(filePath, JSON.stringify(req.body.subjects), function(err) {
-    if(err) {
-        return console.log(err);
-    }
-    console.log("The file was saved!");
-    res.status(200).send("The file was saved!");
-  });
-});
-
-app.post('/updatePS', (req, res) => {
-  const { tri } = req.body;
-  filePath = __dirname + '/constants/tri' + tri + 'PS.json';
-  console.log(req.body.ps);
-
-  fs.writeFile(filePath, JSON.stringify(req.body.ps), function(err) {
     if(err) {
         return console.log(err);
     }
