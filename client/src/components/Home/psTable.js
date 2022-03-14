@@ -20,7 +20,6 @@ export default function PSTable(props) {
 
   // const [intakeNum, setIntakeNum] = useState(null);
   const [selectedPS, setSelectedPS] = useState(new Map());
-  const [transferredCH, setTransferredCH] = useState(0);
   const [standardPS, setStandardPS] = useState([]);
   const [subjectList, setSubjectList] = useState();
   // const [ch2D, setCh2D] = useState([]);
@@ -180,12 +179,15 @@ export default function PSTable(props) {
         for (let thisYear = 1; thisYear <= 3; thisYear++) {
           for (let thisTri = 1; thisTri <= 3; thisTri++) {
 
-            // remove existed subjects of current trimester from toBePlacedSubjects list
+            // remove existed subjects of current trimester from toBePlacedSubjects and priority list
             for (const [code, val] of afterTransferPS) {
               if(val.defaultYear <= thisYear && val.defaultTri <= thisTri && toBePlacedSubjects.includes(code)){
                 toBePlacedSubjects.splice(toBePlacedSubjects.indexOf(code), 1);
+                priorityList.delete(code);
               }
             }
+            console.log("Priority list :");
+            console.log(priorityList);
 
             if(afterTransferPS.get('TPT2201').defaultYear === thisYear && afterTransferPS.get('TPT2201').defaultTri === thisTri) {
               continue;
@@ -199,18 +201,18 @@ export default function PSTable(props) {
             console.log(candidateSubject);
             while(ch2d[thisYear-1][thisTri-1] <= maxCHOfTri && candidateSubject) {
 
-              for (let [code, val] of afterTransferPS) {
-                if(code === candidateSubject) {
-                  console.log("replaced " + code);
-                  console.log(val);
-                  ch2d[val.defaultYear-1][val.defaultTri-1] -= val.ch;
-                  val.defaultTri = thisTri;
-                  val.defaultYear = thisYear;
-                  ch2d[thisYear-1][thisTri-1] += val.ch;
-                  toBePlacedSubjects.splice(toBePlacedSubjects.indexOf(candidateSubject), 1);
-                  break;
-                }
-              }
+              console.log("Year: " + thisYear + ", Tri: " + thisTri);
+              console.log("replaced " + candidateSubject);
+              let subjDetail = afterTransferPS.get(candidateSubject);
+              console.log(subjDetail);
+              ch2d[subjDetail.defaultYear-1][subjDetail.defaultTri-1] -= subjDetail.ch;
+              subjDetail.defaultTri = thisTri;
+              subjDetail.defaultYear = thisYear;
+              console.log(subjDetail);
+              afterTransferPS.set(candidateSubject, subjDetail);
+              ch2d[thisYear-1][thisTri-1] += subjDetail.ch;
+              toBePlacedSubjects.splice(toBePlacedSubjects.indexOf(candidateSubject), 1);
+
               candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS);
               console.log("candidateSubject");
               console.log(candidateSubject);
@@ -272,7 +274,6 @@ export default function PSTable(props) {
    */
   const meetPrerequisite = (toCheckSubject, thisYear, thisTri, afterTransferPS, subList, ch2d) => {
     let isMeet = true;
-    console.log(transferredCH);
     if(toCheckSubject === "TPT2201" && ch2d[thisYear-1][thisTri-1] != 0) {     // if the trimester already has subject, then industrial training is not allowed
       return false;
     }
