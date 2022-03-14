@@ -89,7 +89,7 @@ export default function PSTable(props) {
 
         // if no subject is transferred, return the standard programme structure
         if (props.trans.length === 0) {
-          return new Map(element.PS[props.spec]);
+          return sortPSMap(new Map(element.PS[props.spec]));
         }
 
         // loop subjects in the selected specialization and intake
@@ -187,6 +187,10 @@ export default function PSTable(props) {
               }
             }
 
+            if(afterTransferPS.get('TPT2201').defaultYear === thisYear && afterTransferPS.get('TPT2201').defaultTri === thisTri) {
+              continue;
+            }
+
             console.log(toBePlacedSubjects);
 
             let maxCHOfTri = (thisTri===3) ? props.shortLimit : props.longLimit;
@@ -269,7 +273,10 @@ export default function PSTable(props) {
   const meetPrerequisite = (toCheckSubject, thisYear, thisTri, afterTransferPS, subList, ch2d) => {
     let isMeet = true;
     console.log(transferredCH);
-    if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training 
+    if(toCheckSubject === "TPT2201" && ch2d[thisYear-1][thisTri-1] != 0) {     // if the trimester already has subject, then industrial training is not allowed
+      return false;
+    }
+    if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training or fyp
       console.log("CHECKING prereq of " + toCheckSubject);
       let sumCH = 0;
       const minCHRequire = (toCheckSubject === "TPT2201") ? 60 : 50;  // 60 for internship, 50 for fyp
