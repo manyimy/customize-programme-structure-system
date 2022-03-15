@@ -134,7 +134,7 @@ export default function PSTable(props) {
            * 2190 to Year 2 Trimester 1 subjects
            */
           let yearPriority = (subj.defaultTri === 3) ? subj.defaultYear*1000 + 1000 : subj.defaultYear*1000;
-          // yearPriority = (code.includes("TPT3101")) ? yearPriority-1000 : yearPriority;
+          yearPriority = (code.includes("TPT3101")) ? yearPriority-2000 : yearPriority;
           priorityList.set(code, yearPriority + subj.defaultTri*100 + 90);
         }
 
@@ -201,10 +201,7 @@ export default function PSTable(props) {
             console.log(candidateSubject);
             while(ch2d[thisYear-1][thisTri-1] <= maxCHOfTri && candidateSubject) {
 
-              console.log("Year: " + thisYear + ", Tri: " + thisTri);
-              console.log("replaced " + candidateSubject);
               let subjDetail = afterTransferPS.get(candidateSubject);
-              console.log(subjDetail);
               ch2d[subjDetail.defaultYear-1][subjDetail.defaultTri-1] -= subjDetail.ch;
               subjDetail.defaultTri = thisTri;
               subjDetail.defaultYear = thisYear;
