@@ -80,16 +80,16 @@ export default function PSTable(props) {
       const element = standard[i];
 
       /** 
-       * Remove credit transferrec subjects
+       * Remove credit transferred subjects
        */
       if (element.intake === props.intake) {    // if current intake is the selected intake
         console.log(element.PS[props.spec]);  
         // console.log(props.trans);
 
         // if no subject is transferred, return the standard programme structure
-        if (props.trans.length === 0) {
-          return sortPSMap(new Map(element.PS[props.spec]));
-        }
+        // if (props.trans.length === 0) {
+        //   return sortPSMap(new Map(element.PS[props.spec]));
+        // }
 
         // loop subjects in the selected specialization and intake
         let index = 0;
@@ -183,7 +183,7 @@ export default function PSTable(props) {
             for (const [code, val] of afterTransferPS) {
               if(val.defaultYear <= thisYear && val.defaultTri <= thisTri && toBePlacedSubjects.includes(code)){
                 toBePlacedSubjects.splice(toBePlacedSubjects.indexOf(code), 1);
-                priorityList.delete(code);
+                // priorityList.delete(code);
               }
             }
             console.log("Priority list :");
@@ -276,15 +276,15 @@ export default function PSTable(props) {
     }
     if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training or fyp
       console.log("CHECKING prereq of " + toCheckSubject);
-      let sumCH = 0;
+      // let sumCH = 0;
       const minCHRequire = (toCheckSubject === "TPT2201") ? 60 : 50;  // 60 for internship, 50 for fyp
-      for (let year = 0; year < thisYear; year++) {
-        for (let tri = 0; tri < thisTri; tri++) {
-          sumCH += ch2d[year][tri];
-        }
-      }
-      
-      isMeet = (sumCH+sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
+      // for (let year = 0; year < thisYear; year++) {
+      //   for (let tri = 0; tri < thisTri; tri++) {
+      //     sumCH += ch2d[year][tri];
+      //   }
+      // }
+      console.log(isMeet);
+      isMeet = (checkCHwoMPU(afterTransferPS, thisYear, thisTri) + sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
     }
     // check if prerequisite is all taken in previous trimester 
     if(isMeet) {
@@ -293,6 +293,7 @@ export default function PSTable(props) {
         if(afterTransferPS.get(prereqSubjCode) && (afterTransferPS.get(prereqSubjCode).defaultYear > thisYear || 
             (afterTransferPS.get(prereqSubjCode).defaultYear === thisYear && afterTransferPS.get(prereqSubjCode).defaultTri >= thisTri))){
           isMeet = false;
+          console.log(prereqSubjCode + ": " + isMeet);
         }
       });
     }
@@ -310,6 +311,19 @@ export default function PSTable(props) {
       return meetPrerequisite("TPT3101b", thisYear, thisTri+1, tempPS, subList, tempCh2d);
     }
     return isMeet;
+  }
+
+  const checkCHwoMPU = (afterTransferPS, thisYear, thisTri) => {
+    let totalCH = 0;
+    for (const [code, detail] of afterTransferPS) {
+      // console.log(detail);
+      if((detail.defaultYear < thisYear || (detail.defaultYear === thisYear && detail.defaultTri < thisTri)) && !detail.name.includes("MPU")) {
+        totalCH += detail.ch;
+      }
+    }
+    console.log("thisYear: " + thisYear + "thisTri: " + thisTri);
+    console.log("totalCH : " + totalCH);
+    return totalCH;
   }
 
   return (
