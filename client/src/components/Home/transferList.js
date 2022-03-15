@@ -54,7 +54,7 @@ export default function TransferList({rightCallback}) {
         Array.from(new Map(response.data).entries())
           .map((entry) => {
             const [key, value] = entry;
-            return subject.push(key + " " + value.name);
+            return subject.push(key + " " + value.name + " - " + value.ch + "CH");
           })
         setLeft(subject);
         // this.setState({left: subject});
