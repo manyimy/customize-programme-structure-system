@@ -131,6 +131,16 @@ export default function TransferList({rightCallback}) {
     setChecked(not(checked, rightChecked).sort());
   };
 
+  const calcTotalCH = () => {
+    let total = 0;
+    right.forEach(element => {
+      console.log(element.substr(element.trim().length-2, 1));
+      total += Number(element.substr(element.trim().length-3, 1));
+    });
+    console.log(total);
+    return total;
+  }
+
   const customList = (title, items) => (
     <Card>
       <CardHeader
@@ -145,7 +155,7 @@ export default function TransferList({rightCallback}) {
           />
         }
         title={title}
-        subheader={`${numberOfChecked(items)}/${items.length} selected`}
+        subheader={(title === "Subject List") ? `${numberOfChecked(items)}/${items.length} selected` : `${items.length} subject ${calcTotalCH()} CH transferred`}
       />
       <Divider />
       <List className={classes.list} dense component="div" role="list">
