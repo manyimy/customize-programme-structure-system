@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import "./psTable.css";
+// import "./psTable.css";
 import axios from "axios";
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Typography from "@material-ui/core/Typography";
+import Box from '@material-ui/core/Box';
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 require("dotenv").config();
 const API_PATH = process.env.REACT_APP_API_PATH;
@@ -11,10 +24,35 @@ const useStyles = makeStyles((theme) => ({
   container: {
     alignItem: "center",
   },
-  table: {
-    maxWidth: "50vw"
+  psTable: {
+    maxWidth: "50vw",
+    textAlign: "center",
+  },
+  sumTable: {
+    minWidth: 700,
+  },
+  tableCont: {
+    width: "60vw",
+    minWidth: "50vw",
+    maxWidth: "80vw",
+    margin: "20px 10px 50px"
+  },
+  psTableHead: {
+    backgroundColor: "#C5CAE9",
+  },
+  tableCaption: {
+    textAlign: "right",
   }
 }));
+
+const useRowStyles = makeStyles({
+  root: {
+    '& > *': {
+      borderBottom: 'unset',
+    },
+  },
+});
+
 export default function PSTable(props) {
   const classes = useStyles();
 
@@ -36,9 +74,9 @@ export default function PSTable(props) {
   useEffect(() => {
     // format transferred subject list into subject code only
     for (let i = 0; i < props.trans.length; i++) {
-      props.trans[i] = props.trans[i].substr(0, props.trans[i].indexOf(' '));
+      props.transCode[i] = props.trans[i].substr(0, props.trans[i].indexOf(' '));
     }
-    console.log(props.trans);
+    console.log(props.transCode);
 
     // fetch subjectList and standardPS from server
     axios
@@ -98,7 +136,7 @@ export default function PSTable(props) {
           console.log(val);
 
           // if current subject is not transferred, push into the afterTransferPS array
-          if (!props.trans.includes(code)) {
+          if (!props.transCode.includes(code)) {
             afterTransferPS.set(code, val);
             ch2d[val.defaultYear-1][val.defaultTri-1] += val.ch;
             index++;
@@ -227,10 +265,11 @@ export default function PSTable(props) {
   // check if any subject can be replaced
   const anyReplaceble = (thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS) => {
     console.log(toBePlacedSubjects);
+    console.log(ch2d[thisYear-1][thisTri-1]);
     for (let index = 0; index < Array.from(priorityList.keys()).length; index++) {
       const prioritySubjectCode = Array.from(priorityList.keys())[index];
       if(subList.get(prioritySubjectCode) && toBePlacedSubjects.includes(prioritySubjectCode) && subList.get(prioritySubjectCode).offer.includes(thisTri) && 
-          ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri && meetPrerequisite(prioritySubjectCode, thisYear, thisTri, afterTransferPS, subList, ch2d)) {
+          ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri && meetPrerequisite(prioritySubjectCode, thisYear, thisTri, afterTransferPS, subList, ch2d, maxCHOfTri)) {
           // && !toBePlacedSubjects.some( ai => subList.get(prioritySubjectCode).prereq.includes(ai) )) {    // check if prerequisite has been taken
         console.log(prioritySubjectCode);
         return prioritySubjectCode;
@@ -255,10 +294,10 @@ export default function PSTable(props) {
   }
 
   // calculate total credit transferred credit hours
-  const sumTransferredCH = (subList) => {
+  const sumTransferredCH = () => {
     let totalCHTransferred = 0;
     props.trans.forEach(transSubject => {
-      totalCHTransferred += subList.get(transSubject).ch;
+      totalCHTransferred += Number(transSubject.substr(transSubject.trim().length-3, 1))
     });
     return totalCHTransferred;
   }
@@ -269,7 +308,7 @@ export default function PSTable(props) {
    *  - fyp: 50 credit hours
    *  - industrial training: 60 credit hours
    */
-  const meetPrerequisite = (toCheckSubject, thisYear, thisTri, afterTransferPS, subList, ch2d) => {
+  const meetPrerequisite = (toCheckSubject, thisYear, thisTri, afterTransferPS, subList, ch2d, maxCHOfTri) => {
     let isMeet = true;
     if(toCheckSubject === "TPT2201" && ch2d[thisYear-1][thisTri-1] != 0) {     // if the trimester already has subject, then industrial training is not allowed
       return false;
@@ -308,7 +347,7 @@ export default function PSTable(props) {
       fyp1Detail.defaultTri = thisTri;
       tempPS.set("TPT3101a", fyp1Detail);
       tempCh2d[thisYear-1][thisTri-1] += fyp1Detail.ch;
-      return meetPrerequisite("TPT3101b", thisYear, thisTri+1, tempPS, subList, tempCh2d);
+      return meetPrerequisite("TPT3101b", thisYear, thisTri+1, tempPS, subList, tempCh2d, maxCHOfTri);
     }
     return isMeet;
   }
@@ -326,38 +365,224 @@ export default function PSTable(props) {
     return totalCH;
   }
 
+  function yearTotalCH(year, tri=null) {
+    let sum = 0;
+    for (const [code, value] of selectedPS) {
+      if(tri) {
+        if(value.defaultYear === year && value.defaultTri === tri) {
+          sum += value.ch;
+        }
+      }
+      else if(value.defaultYear === year) {
+        sum += value.ch;
+      }
+    }
+    return sum;
+  }
+
+  function yearTotalSubject(year, tri=null) {
+    let num = 0;
+    for (const [code, value] of selectedPS) {
+      if(tri) {
+        if(value.defaultYear === year && value.defaultTri === tri) {
+          num++;
+        }
+      }
+      else if(value.defaultYear === year) {
+        num++;
+      }
+    }
+    return num;
+  }
+  
+  function Row(props) {
+    const { year } = props;
+    const [open, setOpen] = React.useState(false);
+    const classes = useRowStyles();
+  
+    return (
+      <React.Fragment>
+        <TableRow className={classes.root}>
+          <TableCell width={10}>
+            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell align="center" component="th" scope="year">
+            {year}
+          </TableCell>
+          <TableCell align="center">{yearTotalSubject(year)}</TableCell>
+          <TableCell align="center">{yearTotalCH(year)}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Summary
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Trimester</TableCell>
+                      <TableCell>Subject</TableCell>
+                      <TableCell align="right">Credit Hour</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {[1,2,3].map((tri) => (
+                      <TableRow key={tri}>
+                        <TableCell component="th" scope="tri">
+                          {tri}
+                        </TableCell>
+                        <TableCell>{yearTotalSubject(year, tri)}</TableCell>
+                        <TableCell align="right">{yearTotalCH(year, tri)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  }
+
+  function RowTransSubj(props) {
+    const { trans } = props;
+    const [open, setOpen] = React.useState(false);
+    const classes = useRowStyles();
+  
+    return (
+      <React.Fragment>
+        <TableRow>
+          <TableCell rowSpan={5} colSpan={2} />
+          <TableCell>
+            Total Credit Transferred Subject
+            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell align="right">{props.trans.length}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={3}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Typography variant="h6" gutterBottom component="div">
+                  List of Subject Transferred
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Code</TableCell>
+                      <TableCell>Name</TableCell>
+                      <TableCell align="right">Credit Hour</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {props.trans.map((subj) => (
+                      <TableRow key={subj}>
+                        <TableCell component="th" scope="tri">
+                          {subj.substring(0, subj.indexOf(' '))}
+                        </TableCell>
+                        <TableCell>{subj.substring(subj.indexOf(' '), subj.indexOf(' - '))}</TableCell>
+                        <TableCell align="right">{subj.substr(subj.length-3, 1)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  }
+
   return (
     <div className={classes.container}>
+      <TableContainer className={classes.tableCont} component={Paper}>
+        <Table className={classes.sumTable} size="small" aria-label="spanning table">
+          <TableHead>
+            <TableRow>
+              <TableCell rowSpan={2} size="small"></TableCell>
+              <TableCell align="center" rowSpan={2}>
+                Year
+              </TableCell>
+              <TableCell align="center" colSpan={2}>Amount</TableCell>
+            </TableRow>
+            <TableRow>
+              {/* <TableCell></TableCell> */}
+              <TableCell width={"33%"} align="center">Subject</TableCell>
+              <TableCell width={"33%"} align="center">Credit Hour</TableCell>
+              {/* <TableCell align="center">Sum</TableCell> */}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {[1,2,3].map((year) => (
+              <Row key={year} year={year} />
+            ))}
+
+            {/* <TableRow>
+              <TableCell rowSpan={4} colSpan={2} />
+              <TableCell>Total Credit Transferred Subject</TableCell>
+              <TableCell align="right">{props.trans.length}</TableCell>
+            </TableRow> */}
+            <RowTransSubj key="transSubj" trans={props.trans}/>
+            <TableRow>
+              <TableCell>Total Credit Transferred Hour</TableCell>
+              <TableCell align="right">{sumTransferredCH(subjectList)}</TableCell>
+              {/* <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell> */}
+            </TableRow>
+            <TableRow>
+              <TableCell>Total Subject</TableCell>
+              <TableCell align="right">{yearTotalSubject(1)+yearTotalSubject(2)+yearTotalSubject(3)}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Total Credit Hour</TableCell>
+              <TableCell align="right">{yearTotalCH(1)+yearTotalCH(2)+yearTotalCH(3)}</TableCell>
+              {/* <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell> */}
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
       {[1,2,3].map((yearNum) => {
         return (
-          <>
-          <h1>Year {yearNum}</h1>
-          <table id={"ps-table-y"+yearNum} className={classes.table}>
-            <tr>
-              <th style={{padding: "6px 30px", width: "10%"}}>Category</th>
-              <th style={{padding: "6px 30px", width: "20%"}}>Subject Code</th>
-              <th style={{padding: "6px 30px", width: "55%"}}>Subject Name</th>
-              <th style={{padding: "6px 30px", width: "5%"}}>CH</th>
-              <th style={{padding: "6px 30px", width: "10%"}}>Trimester</th>
-            </tr>
-            {Array.from(selectedPS.entries()).map((entry) => {
-              const [code, val] = entry;
-              if (val.defaultYear === yearNum) {
-                return (
-                  <tr>
-                    <td>{val.type}</td>
-                    <td>{code}</td>
-                    <td>{val.name}</td>
-                    <td>{val.ch}</td>
-                    <td>{val.defaultTri}</td>
-                  </tr>
-                );
-              } else {
-                return <></>;
-              }
-            })}
-          </table>
-          </>
+          <React.Fragment>
+            <Typography variant="h3" component="h4">Year {yearNum}</Typography>
+            <Table size="small" id={"ps-table-y"+yearNum} className={classes.psTable}>
+              <caption><div className={classes.tableCaption}>Total Subject: {yearTotalSubject(yearNum)}<br/>Total Credit Hour: {yearTotalCH(yearNum)}</div></caption>
+              <TableHead className={classes.psTableHead}>
+                <TableRow>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "10%"}}>Category</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "20%"}}>Subject Code</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "55%"}}>Subject Name</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "5%"}}>CH</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "10%"}}>Trimester</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Array.from(selectedPS.entries()).map((entry) => {
+                  const [code, val] = entry;
+                  if (val.defaultYear === yearNum) {
+                    return (
+                      <TableRow>
+                        <TableCell align="center">{val.type}</TableCell>
+                        <TableCell align="center">{code}</TableCell>
+                        <TableCell align="center">{val.name}</TableCell>
+                        <TableCell align="center">{val.ch}</TableCell>
+                        <TableCell align="center">{val.defaultTri}</TableCell>
+                      </TableRow>
+                    );
+                  } else {
+                    return <></>;
+                  }
+                })}
+              </TableBody>
+            </Table>
+          </React.Fragment>
         );
       })}
     </div>
