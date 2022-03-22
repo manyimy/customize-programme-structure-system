@@ -16,6 +16,8 @@ import PSTable from '../../components/Home/psTable';
 import Alert from '@material-ui/lab/Alert';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import axios from 'axios';
 
@@ -50,6 +52,10 @@ const useStyles = makeStyles((theme) => ({
   },
   pstable: {
     textAlign: "-webkit-center"
+  },
+  helpIcon: {
+    margin: "5px 10px",
+    color: "darkgrey",
   }
 }));
 
@@ -290,6 +296,9 @@ export default function Home(props) {
               <Grid item xs={3}>
                 <Typography id="discrete-slider-long" gutterBottom>
                   Long Trimester
+                  <Tooltip title="Preferred maximum credit hour for long trimester." placement="right-start" arrow>
+                    <HelpOutlineIcon fontSize='small' className={classes.helpIcon} />
+                  </Tooltip>
                 </Typography>
                 <Slider
                   value={longTriCHLimit}
@@ -307,6 +316,9 @@ export default function Home(props) {
               <Grid item xs={3}>
                 <Typography id="discrete-slider-short" gutterBottom>
                   Short Trimester
+                  <Tooltip title="Preferred maximum credit hour for short trimester." placement="right-start" arrow>
+                    <HelpOutlineIcon fontSize='small' className={classes.helpIcon} />
+                  </Tooltip>
                 </Typography>
                 <Slider
                   value={shortTriCHLimit}
@@ -319,7 +331,17 @@ export default function Home(props) {
                   valueLabelDisplay="auto"
                   marks={marksShort}
                   onChange={(e, newValue) => {setShortTriCHLimit(newValue);}}
+                  // disabled
                 />
+              </Grid>
+              <Grid item xs></Grid>
+            </Grid>
+            <Grid container spacing={1}>
+              <Grid item xs></Grid>
+              <Grid item xs={6}>
+                <Typography variant="caption" display="block" align="right" gutterBottom>
+                  Maximum credit hour per trimester may not be accurate. It may vary according to standard programme structure. 
+                </Typography>
               </Grid>
               <Grid item xs></Grid>
             </Grid>
@@ -367,6 +389,7 @@ export default function Home(props) {
                   intake={data.intake}
                   spec={data.spec}
                   trans={right}
+                  transCode={[]}
                   shortLimit={shortTriCHLimit}
                   longLimit={longTriCHLimit}
                 />
