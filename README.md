@@ -16,6 +16,3 @@
 - Install node modules using `npm install` or `yarn install`
 - Start a client app `cd client && npm run start`
 - Start a server app `cd server && npm run dev`
-
-## Website
-https://customize-programme-stru-e9fc3.web.app/
