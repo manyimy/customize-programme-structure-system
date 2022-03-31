@@ -101,15 +101,15 @@ export default function PSTable(props) {
     console.log(props.trans);
   }, []);
 
-  /** Function: 
-   *    Generate Customized Programme Structure 
-   *  Parameters: 
-   *    Array[Object] sublist - subjectList from the server
-   *    Array[Object] standard - the complete standard programme structure
+  /**
+   * Generate Customized Programme Structure 
+   * @param  {Map} subList map list of subjects
+   * @param  {Map} standard standard programme structure
+   * @returns {Map} generated programme structure
    */
   const generateCPS = (subList, standard) => {
     let afterTransferPS = new Map();       // programme structure after removal of credit transferred subjects
-    let ch2d = [];
+    let ch2d = [];                         // credit hour array
     ch2d.push([0,0,0],[0,0,0],[0,0,0]);
     console.log(ch2d);
     let creditHour = MAX_CH;
@@ -262,15 +262,28 @@ export default function PSTable(props) {
     return sortPSMap(afterTransferPS);
   }
 
-  // check if any subject can be replaced
+  // 
+  /**
+   * Check if any subject can be replaced
+   * @param  {number} thisYear current year
+   * @param  {number} thisTri current trimester
+   * @param  {Map} priorityList 
+   * @param  {number} toBePlacedSubjects 
+   * @param  {Map} subList map list of all subjects
+   * @param  {Array} ch2d 2D array of all trimesters' credit hour
+   * @param  {number} maxCHOfTri maximum credit hour of the trimester
+   * @param  {Map} afterTransferPS programme structure after credit transfer
+   * @returns {(string|null)} candidate subject code or null
+   */
   const anyReplaceble = (thisYear, thisTri, priorityList, toBePlacedSubjects, subList, ch2d, maxCHOfTri, afterTransferPS) => {
     console.log(toBePlacedSubjects);
     console.log(ch2d[thisYear-1][thisTri-1]);
     for (let index = 0; index < Array.from(priorityList.keys()).length; index++) {
       const prioritySubjectCode = Array.from(priorityList.keys())[index];
-      if(subList.get(prioritySubjectCode) && toBePlacedSubjects.includes(prioritySubjectCode) && subList.get(prioritySubjectCode).offer.includes(thisTri) && 
-          ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri && meetPrerequisite(prioritySubjectCode, thisYear, thisTri, afterTransferPS, subList, ch2d, maxCHOfTri)) {
-          // && !toBePlacedSubjects.some( ai => subList.get(prioritySubjectCode).prereq.includes(ai) )) {    // check if prerequisite has been taken
+      if( subList.get(prioritySubjectCode) && toBePlacedSubjects.includes(prioritySubjectCode) && 
+          subList.get(prioritySubjectCode).offer.includes(thisTri) && 
+          ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri && 
+          meetPrerequisite(prioritySubjectCode, thisYear, thisTri, afterTransferPS, subList, ch2d, maxCHOfTri)) {
         console.log(prioritySubjectCode);
         return prioritySubjectCode;
       }
@@ -278,7 +291,11 @@ export default function PSTable(props) {
     return null;
   }
 
-  // Function: Sort programme structure map in year and trimester order
+  /**
+   * Sort programme structure map in year and trimester order
+   * @param  {Map} toSortPS
+   * @returns {Map} sorted programme structure
+   */
   const sortPSMap = (toSortPS) => {
     let sortedPS = new Map();
     for (let y = 1; y <= 3; y++) {
@@ -315,13 +332,7 @@ export default function PSTable(props) {
     }
     if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training or fyp
       console.log("CHECKING prereq of " + toCheckSubject);
-      // let sumCH = 0;
       const minCHRequire = (toCheckSubject === "TPT2201") ? 60 : 50;  // 60 for internship, 50 for fyp
-      // for (let year = 0; year < thisYear; year++) {
-      //   for (let tri = 0; tri < thisTri; tri++) {
-      //     sumCH += ch2d[year][tri];
-      //   }
-      // }
       console.log(isMeet);
       isMeet = (checkCHwoMPU(afterTransferPS, thisYear, thisTri) + sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
     }

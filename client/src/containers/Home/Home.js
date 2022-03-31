@@ -339,8 +339,8 @@ export default function Home(props) {
             <Grid container spacing={1}>
               <Grid item xs></Grid>
               <Grid item xs={6}>
-                <Typography variant="caption" display="block" align="right" gutterBottom>
-                  Maximum credit hour per trimester may not be accurate. It may vary according to standard programme structure. 
+                <Typography variant="caption" display="block" align="right" style={{color: "grey"}} gutterBottom>
+                  Preferred maximum credit hour per trimester may not be accurate. It may vary according to standard programme structure. 
                 </Typography>
               </Grid>
               <Grid item xs></Grid>
