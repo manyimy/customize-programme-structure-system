@@ -24,6 +24,8 @@ import axios from 'axios';
 // import Trimesters from '../../constants/trimesters.json';
 // import Specs from '../../constants/specs.json';
 
+const ALL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -257,7 +259,13 @@ export default function Home(props) {
                     required
                   >
                     <option aria-label="None" value="" />
-                    {standardPS.map((item, index) => {
+                    {standardPS.sort(function(a, b) {
+                      if(Number(a.intake.substring(a.intake.indexOf(' '))) !== Number(b.intake.substring(b.intake.indexOf(' ')))){
+                        return Number(a.intake.substring(a.intake.indexOf(' '))) - Number(b.intake.substring(b.intake.indexOf(' ')));
+                      }else{
+                        return ALL_MONTHS.indexOf(a.intake.substring(0, a.intake.indexOf(' '))) - ALL_MONTHS.indexOf(b.intake.substring(0, b.intake.indexOf(' ')));
+                      };
+                    }).map((item, index) => {
                       return <option key={item.intake}>{item.intake}</option>
                     })}
                   </Select>

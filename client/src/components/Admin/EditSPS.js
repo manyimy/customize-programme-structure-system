@@ -45,6 +45,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import axios from "axios";
 const API_PATH = process.env.REACT_APP_API_PATH;
+const ALL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -156,7 +157,7 @@ export default function EditSPS(props) {
 
     let thisYear = (new Date()).getFullYear();
     let years = [];
-    for(let i = thisYear-2; years.length <= 5; i++) {
+    for(let i = thisYear-3; years.length <= 5; i++) {
       years.push(i);
     }
     setYears(years);
@@ -407,7 +408,13 @@ export default function EditSPS(props) {
   const confirmAddPS = (e) => {
     e.preventDefault();
     let intakes = []
-    standardPS.map((item, index) => {
+    standardPS.sort(function(a, b) {
+      if(Number(a.intake.substring(a.intake.indexOf(' '))) !== Number(b.intake.substring(b.intake.indexOf(' ')))){
+        return Number(a.intake.substring(a.intake.indexOf(' '))) - Number(b.intake.substring(b.intake.indexOf(' ')));
+      }else{
+        return ALL_MONTHS.indexOf(a.intake.substring(0, a.intake.indexOf(' '))) - ALL_MONTHS.indexOf(b.intake.substring(0, b.intake.indexOf(' ')));
+      };
+    }).map((item, index) => {
       intakes.push(item.intake);
     })
     if(intakes.includes(newIntakeMonth + " " + newIntakeYear)) {
@@ -526,7 +533,13 @@ export default function EditSPS(props) {
   const confirmCopyPS = () => {
     let copyOfSelectedPS;
     let intakes = []
-    standardPS.map((item, index) => {
+    standardPS.sort(function(a, b) {
+      if(Number(a.intake.substring(a.intake.indexOf(' '))) !== Number(b.intake.substring(b.intake.indexOf(' ')))){
+        return Number(a.intake.substring(a.intake.indexOf(' '))) - Number(b.intake.substring(b.intake.indexOf(' ')));
+      }else{
+        return ALL_MONTHS.indexOf(a.intake.substring(0, a.intake.indexOf(' '))) - ALL_MONTHS.indexOf(b.intake.substring(0, b.intake.indexOf(' ')));
+      };
+    }).map((item, index) => {
       intakes.push(item.intake);
     })
     if(intakes.includes(newIntakeMonth + " " + newIntakeYear)) {
@@ -610,7 +623,13 @@ export default function EditSPS(props) {
               }}
               inputProps={{ 'aria-label': 'Without label' }}
             >
-              {standardPS.map((item, index) => {
+              {standardPS.sort(function(a, b) {
+                if(Number(a.intake.substring(a.intake.indexOf(' '))) !== Number(b.intake.substring(b.intake.indexOf(' ')))){
+                  return Number(a.intake.substring(a.intake.indexOf(' '))) - Number(b.intake.substring(b.intake.indexOf(' ')));
+                }else{
+                  return ALL_MONTHS.indexOf(a.intake.substring(0, a.intake.indexOf(' '))) - ALL_MONTHS.indexOf(b.intake.substring(0, b.intake.indexOf(' ')));
+                };
+              }).map((item, index) => {
                 return (
                   <MenuItem value={item.intake}>{item.intake}</MenuItem>
                 );
@@ -914,7 +933,13 @@ export default function EditSPS(props) {
             }}
             inputProps={{ 'aria-label': 'Without label' }}
           >
-            {standardPS.map((item, index) => {
+            {standardPS.sort(function(a, b) {
+              if(Number(a.intake.substring(a.intake.indexOf(' '))) !== Number(b.intake.substring(b.intake.indexOf(' ')))){
+                return Number(a.intake.substring(a.intake.indexOf(' '))) - Number(b.intake.substring(b.intake.indexOf(' ')));
+              }else{
+                return ALL_MONTHS.indexOf(a.intake.substring(0, a.intake.indexOf(' '))) - ALL_MONTHS.indexOf(b.intake.substring(0, b.intake.indexOf(' ')));
+              };
+            }).map((item, index) => {
               return (
                 <MenuItem value={item.intake}>{item.intake}</MenuItem>
               );
@@ -975,7 +1000,10 @@ export default function EditSPS(props) {
             }}
             inputProps={{ 'aria-label': 'Without label' }}
           >
-            <MenuItem value="January">January</MenuItem>
+            {ALL_MONTHS.map((item) => {
+              return <MenuItem value={item}>{item}</MenuItem>
+            })}
+            {/* <MenuItem value="January">January</MenuItem>
             <MenuItem value="February">February</MenuItem>
             <MenuItem value="March">March</MenuItem>
             <MenuItem value="April">April</MenuItem>
@@ -986,7 +1014,7 @@ export default function EditSPS(props) {
             <MenuItem value="September">September</MenuItem>
             <MenuItem value="October">October</MenuItem>
             <MenuItem value="November">November</MenuItem>
-            <MenuItem value="December">December</MenuItem>
+            <MenuItem value="December">December</MenuItem> */}
           </Select>
           <Select
             style={{width: "130px"}}
@@ -1044,7 +1072,13 @@ export default function EditSPS(props) {
                 }}
                 inputProps={{ 'aria-label': 'Without label' }}
               >
-                {standardPS.map((item, index) => {
+                {standardPS.sort(function(a, b) {
+                  if(Number(a.intake.substring(a.intake.indexOf(' '))) !== Number(b.intake.substring(b.intake.indexOf(' ')))){
+                    return Number(a.intake.substring(a.intake.indexOf(' '))) - Number(b.intake.substring(b.intake.indexOf(' ')));
+                  }else{
+                    return ALL_MONTHS.indexOf(a.intake.substring(0, a.intake.indexOf(' '))) - ALL_MONTHS.indexOf(b.intake.substring(0, b.intake.indexOf(' ')));
+                  };
+                }).map((item, index) => {
                   return (
                     <MenuItem value={item.intake}>{item.intake}</MenuItem>
                   );
@@ -1067,7 +1101,10 @@ export default function EditSPS(props) {
                 }}
                 inputProps={{ 'aria-label': 'Without label' }}
               >
-                <MenuItem value="January">January</MenuItem>
+                {ALL_MONTHS.map((item) => {
+                  return <MenuItem value={item}>{item}</MenuItem>
+                })}
+                {/* <MenuItem value="January">January</MenuItem>
                 <MenuItem value="February">February</MenuItem>
                 <MenuItem value="March">March</MenuItem>
                 <MenuItem value="April">April</MenuItem>
@@ -1078,7 +1115,7 @@ export default function EditSPS(props) {
                 <MenuItem value="September">September</MenuItem>
                 <MenuItem value="October">October</MenuItem>
                 <MenuItem value="November">November</MenuItem>
-                <MenuItem value="December">December</MenuItem>
+                <MenuItem value="December">December</MenuItem> */}
               </Select>
             </Grid>
             <Grid item xs={3}>
