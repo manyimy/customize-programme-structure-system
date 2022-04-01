@@ -72,7 +72,7 @@ class Login extends React.Component {
     const handleSubmit = async e => {
       e.preventDefault();
       var { username, password } = this.state;
-      if(username === "admin" && password === "admin123") {
+      if(username === "admin" && password === "admin123") {     // modify here to change the admin username and password
         const token = await loginUser({
           username,
           password

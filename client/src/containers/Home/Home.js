@@ -81,8 +81,8 @@ export default function Home(props) {
   const [shortTriCHLimit, setShortTriCHLimit] = useState(10);
   const marksLong = [
     {
-      value: 12,
-      label: '12 CH',
+      value: 16,
+      label: '16 CH',
     },
     {
       value: 20,
@@ -90,10 +90,10 @@ export default function Home(props) {
     },
   ];
   const marksShort = [
-    {
-      value: 6,
-      label: '6 CH',
-    },
+    // {
+    //   value: 6,
+    //   label: '6 CH',
+    // },
     {
       value: 10,
       label: '10 CH',
@@ -306,7 +306,7 @@ export default function Home(props) {
                   // getAriaValueText={valuetext}
                   aria-labelledby="discrete-slider-custom"
                   step={1}
-                  min={12}
+                  min={16}
                   max={20}
                   valueLabelDisplay="auto"
                   marks={marksLong}
@@ -326,12 +326,12 @@ export default function Home(props) {
                   // getAriaValueText={valuetext}
                   aria-labelledby="discrete-slider-custom"
                   step={1}
-                  min={6}
+                  // min={6}
                   max={10}
                   valueLabelDisplay="auto"
                   marks={marksShort}
                   onChange={(e, newValue) => {setShortTriCHLimit(newValue);}}
-                  // disabled
+                  disabled
                 />
               </Grid>
               <Grid item xs></Grid>
