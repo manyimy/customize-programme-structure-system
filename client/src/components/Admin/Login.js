@@ -50,7 +50,8 @@ async function loginUser(credentials) {
   return fetch(process.env.REACT_APP_API_PATH + '/login', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     },
     body: JSON.stringify(credentials)
   })
