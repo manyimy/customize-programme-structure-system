@@ -156,7 +156,7 @@ export default function EditSPS(props) {
 
     let thisYear = (new Date()).getFullYear();
     let years = [];
-    for(let i = thisYear-1; years.length <= 5; i++) {
+    for(let i = thisYear-2; years.length <= 5; i++) {
       years.push(i);
     }
     setYears(years);
