@@ -567,11 +567,11 @@ export default function PSTable(props) {
               <caption><div className={classes.tableCaption}>Total Subject: {yearTotalSubject(yearNum)}<br/>Total Credit Hour: {yearTotalCH(yearNum)}</div></caption>
               <TableHead className={classes.psTableHead}>
                 <TableRow>
-                  <TableCell align="center" style={{padding: "6px 30px", width: "10%"}}>Category</TableCell>
-                  <TableCell align="center" style={{padding: "6px 30px", width: "20%"}}>Subject Code</TableCell>
-                  <TableCell align="center" style={{padding: "6px 30px", width: "55%"}}>Subject Name</TableCell>
-                  <TableCell align="center" style={{padding: "6px 30px", width: "5%"}}>CH</TableCell>
-                  <TableCell align="center" style={{padding: "6px 30px", width: "10%"}}>Trimester</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "10%"}} dataStyle="Title">Category</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "20%"}} dataStyle="Title">Subject Code</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "55%"}} dataStyle="Title">Subject Name</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "5%"}} dataStyle="Title">CH</TableCell>
+                  <TableCell align="center" style={{padding: "6px 30px", width: "10%"}} dataStyle="Title">Trimester</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -580,11 +580,11 @@ export default function PSTable(props) {
                   if (val.defaultYear === yearNum) {
                     return (
                       <TableRow>
-                        <TableCell align="center">{val.type}</TableCell>
-                        <TableCell align="center">{code}</TableCell>
-                        <TableCell align="center">{val.name}</TableCell>
-                        <TableCell align="center">{val.ch}</TableCell>
-                        <TableCell align="center">{val.defaultTri}</TableCell>
+                        <TableCell align="center" datatype="String" dataStyle="Content">{val.type}</TableCell>
+                        <TableCell align="center" datatype="string" dataStyle="Content">{code}</TableCell>
+                        <TableCell align="center" datatype="String" dataStyle="Content">{val.name}</TableCell>
+                        <TableCell align="center" datatype="Number" dataStyle="Content">{val.ch}</TableCell>
+                        <TableCell align="center" datatype="Number" dataStyle="Content">{val.defaultTri}</TableCell>
                       </TableRow>
                     );
                   } else {

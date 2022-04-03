@@ -166,13 +166,14 @@ export default function Home(props) {
   var tablesToExcel = (function() {
     var uri = 'data:application/vnd.ms-excel;base64,'
     , tmplWorkbookXML = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
-      + '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Author>Axel Richter</Author><Created>{created}</Created></DocumentProperties>'
-      + '<Styles>'
-      + '<Style ss:ID="Currency"><NumberFormat ss:Format="Currency"></NumberFormat></Style>'
-      + '<Style ss:ID="Date"><NumberFormat ss:Format="Medium Date"></NumberFormat></Style>'
-      + '</Styles>' 
+    + '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Author>Axel Richter</Author><Created>{created}</Created></DocumentProperties>'
+    + '<Styles>'
+    + '<Style ss:ID="Content"><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>'
+    + '<Style ss:ID="Title"><Alignment ss:Horizontal="Center" ss:Vertical="Center"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders><Font ss:Bold="1"/><Interior ss:Color="#d1d0c5" ss:Pattern="Solid"/></Style>'
+    // + '<Style ss:ID="Date"><NumberFormat ss:Format="Medium Date"></NumberFormat></Style>'
+    + '</Styles>' 
       + '{worksheets}</Workbook>'
-    , tmplWorksheetXML = '<Worksheet ss:Name="{nameWS}"><Table>{rows}</Table></Worksheet>'
+    , tmplWorksheetXML = '<Worksheet ss:Name="{nameWS}"><Table>{columns}{rows}</Table></Worksheet>'
     , tmplCellXML = '<Cell{attributeStyleID}{attributeFormula}><Data ss:Type="{nameType}">{data}</Data></Cell>'
     , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
     , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
@@ -181,22 +182,26 @@ export default function Home(props) {
       var ctx = "";
       var workbookXML = "";
       var worksheetsXML = "";
+      var colsXML = "";
       var rowsXML = "";
-
+      
+      
       for (var i = 0; i < tables.length; i++) {
+        let maxWidth = [0,0,0,0,0];
         console.log(tables[i].nodeType);
         console.log(document.getElementById(tables[i]));
         if (!tables[i].nodeType) tables[i] = document.getElementById(tables[i]);
         for (var j = 0; j < tables[i].rows.length; j++) {
           rowsXML += '<Row>'
           for (var k = 0; k < tables[i].rows[j].cells.length; k++) {
-            var dataType = tables[i].rows[j].cells[k].getAttribute("data-type");
-            var dataStyle = tables[i].rows[j].cells[k].getAttribute("data-style");
-            var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
+            var dataType = tables[i].rows[j].cells[k].getAttribute("dataType");
+            var dataStyle = tables[i].rows[j].cells[k].getAttribute("dataStyle");
+            var dataValue = tables[i].rows[j].cells[k].getAttribute("dataValue");
             dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerHTML;
-            var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
+            maxWidth[k] = (dataValue.length > maxWidth[k]) ? dataValue.length : maxWidth[k];
+            var dataFormula = tables[i].rows[j].cells[k].getAttribute("dataFormula");
             dataFormula = (dataFormula)?dataFormula:(appname==='Calc' && dataType==='DateTime')?dataValue:null;
-            ctx = {  attributeStyleID: (dataStyle==='Currency' || dataStyle==='Date')?' ss:StyleID="'+dataStyle+'"':''
+            ctx = {  attributeStyleID: (dataStyle==='Title' || dataStyle==='Content')?' ss:StyleID="'+dataStyle+'"':''
                     , nameType: (dataType==='Number' || dataType==='DateTime' || dataType==='Boolean' || dataType==='Error')?dataType:'String'
                     , data: (dataFormula)?'':dataValue
                     , attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
@@ -205,9 +210,14 @@ export default function Home(props) {
           }
           rowsXML += '</Row>'
         }
-        ctx = {rows: rowsXML, nameWS: wsnames[i] || 'Sheet' + i};
+        for (var p = 0; p < maxWidth.length; p++) {
+          colsXML += '<Column ss:Index="'+(p+1)+'" ss:AutoFitWidth="1" ss:Width="'+(maxWidth[p]*5+10)+'"/>'
+        }
+        console.log(colsXML);
+        ctx = {columns: colsXML, rows: rowsXML, nameWS: wsnames[i] || 'Sheet' + i};
         worksheetsXML += format(tmplWorksheetXML, ctx);
         rowsXML = "";
+        colsXML = "";
       }
 
       ctx = {created: (new Date()).getTime(), worksheets: worksheetsXML};
