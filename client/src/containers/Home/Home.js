@@ -426,7 +426,7 @@ export default function Home(props) {
                 onClick={(e) => {tablesToExcel(e, ['ps-table-y1','ps-table-y2','ps-table-y3'], ['Year1','Year2','Year3'], 'ProgrammeStructure.xls', 'Excel')}}
                 className={classes.button}
               >
-                Export to CSV
+                Export to Excel
               </Button>
             </div>
           </div>
