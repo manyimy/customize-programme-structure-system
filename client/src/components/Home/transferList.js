@@ -13,6 +13,8 @@ import Divider from '@material-ui/core/Divider';
 // import subjects from '../../constants/subjectList.json'
 import axios from 'axios';
 
+const ELECTIVE_LINK = "https://docs.google.com/spreadsheets/d/1MwtIxxwAKNwRmpsKMLed_0zS8sOP6hFm/edit?usp=sharing&ouid=107627496352738110283&rtpof=true&sd=true";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     margin: 'auto',
@@ -29,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(0.5, 0),
   },
+  elecLink: {
+    textAlign: "right",
+    alignSelf: "end",
+  }
 }));
 
 export default function TransferList({rightCallback}) {
@@ -134,10 +140,8 @@ export default function TransferList({rightCallback}) {
   const calcTotalCH = () => {
     let total = 0;
     right.forEach(element => {
-      console.log(element.substr(element.trim().length-2, 1));
       total += Number(element.substr(element.trim().length-3, 1));
     });
-    console.log(total);
     return total;
   }
 
@@ -184,12 +188,16 @@ export default function TransferList({rightCallback}) {
   );
 
   return (
+    
     <Grid
       container
       spacing={2}
       style={{justifyContent: 'center', placeItems: 'center'}}
       className={classes.root}
     >
+      <Grid item xs className={classes.elecLink}>
+        <a href={ELECTIVE_LINK} target="_blank">View Elective Subjects</a>
+      </Grid>
       <Grid item>{customList('Subject List', left)}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">
@@ -216,6 +224,7 @@ export default function TransferList({rightCallback}) {
         </Grid>
       </Grid>
       <Grid item>{customList('Credit Transferred Subjects', right)}</Grid>
+      <Grid item xs></Grid>
     </Grid>
   );
 }
