@@ -148,12 +148,15 @@ export default function EditSPS(props) {
     axios.get(API_PATH + "/subjectList.json").then((response) => {
       setSubjectList(new Map(response.data));
       console.log(new Map(response.data));
+    }).catch(err => {
+      console.log(err);
     });
     
     axios.get(API_PATH + "/standardPS.json").then((response) => {
-      console.log(response.data);
       setStandardPS(response.data);
-    });
+    }).catch(err => {
+      console.log(err);
+    });;
 
     let thisYear = (new Date()).getFullYear();
     let years = [];
@@ -184,7 +187,6 @@ export default function EditSPS(props) {
   const onChange = (e, inputIndex) => {
     let { name, value } = e.target;
     
-    console.log(value);
     if(name === "subject") {
       let updateInputs = [...inputs];
       const [key, val] = value; 
@@ -206,7 +208,6 @@ export default function EditSPS(props) {
       
       setInputs(updateInputs);
     }
-    console.log(inputs);
   };
 
   // Confirmation dialog for delete subject from programme structure
@@ -234,7 +235,6 @@ export default function EditSPS(props) {
       setOpenSnackbar(true);
     } else {
       let updatePS = new Map(editingPS);
-      console.log(updatePS);
       updatePS.set(inputs[year].code, {
         name: inputs[year].name,
         ch: Number(inputs[year].ch),
@@ -243,8 +243,6 @@ export default function EditSPS(props) {
         defaultYear: year + 1,
       });
 
-      console.log(year);
-      console.log(inputs);
       let updateInputs = [...inputs];
       updateInputs[year] = {
         ...updateInputs[year],
@@ -274,7 +272,6 @@ export default function EditSPS(props) {
   const handleSave = (e) => {
     e.preventDefault();
     let copyStandard = JSON.parse(JSON.stringify(standardPS));
-    console.log(copyStandard);
     for (let i = 0; i < standardPS.length; i++) {
       const element = standardPS[i];
       if(selectedIntake === element.intake) {
@@ -466,15 +463,9 @@ export default function EditSPS(props) {
       const element = standardPS[i];
       if(element.intake === selectedIntake) {
         index = i;
-        console.log("found " + i);
         break;
       }
     }
-    console.log(standardPS[index]);
-    console.log(editingPS);
-    console.log(new Map(standardPS[index].PS[selectedSpec]));
-    // let toEditPS = standardPS[index].PS[selectedSpec];
-    // console.log(toEditPS);
     setEditingPS(new Map(standardPS[index].PS[selectedSpec]));
     setStandardIndex(Number(index));
     setSelectionDisable(true);
@@ -558,9 +549,7 @@ export default function EditSPS(props) {
             "PS": element.PS
           };
           let copyStandard = JSON.parse(JSON.stringify(standardPS));
-          // console.log(copyStandard);
           copyStandard.push(copyOfSelectedPS);
-          // console.log(copyStandard);
           setStandardPS(copyStandard);
           axios
             .post(API_PATH + "/standardPS", {

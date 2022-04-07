@@ -171,7 +171,7 @@ export default function EditSubjectList(props) {
     //   subjects: list
     // });
     axios.post(API_PATH + '/subjectList', {
-      subjects: list
+      subjects: JSON.parse(JSON.stringify(Array.from(list.entries())))
     }).then((res) => {
       setAddPopMsg('Subject list updated successfully.');
       setAlertSev('success');
@@ -224,7 +224,7 @@ export default function EditSubjectList(props) {
       //   newPreReq: []
       // });
       axios.post(API_PATH + '/subjectList', {
-        subjects: list
+        subjects: JSON.parse(JSON.stringify(Array.from(list.entries())))
       }).then((res) => {
         setAddPopMsg('Subject list updated successfully.');
         setAlertSev('success');
