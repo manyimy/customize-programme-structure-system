@@ -188,8 +188,6 @@ export default function Home(props) {
       
       for (var i = 0; i < tables.length; i++) {
         let maxWidth = [0,0,0,0,0];
-        console.log(tables[i].nodeType);
-        console.log(document.getElementById(tables[i]));
         if (!tables[i].nodeType) tables[i] = document.getElementById(tables[i]);
         for (var j = 0; j < tables[i].rows.length; j++) {
           rowsXML += '<Row>'
@@ -213,7 +211,6 @@ export default function Home(props) {
         for (var p = 0; p < maxWidth.length; p++) {
           colsXML += '<Column ss:Index="'+(p+1)+'" ss:AutoFitWidth="1" ss:Width="'+(maxWidth[p]*5+10)+'"/>'
         }
-        console.log(colsXML);
         ctx = {columns: colsXML, rows: rowsXML, nameWS: wsnames[i] || 'Sheet' + i};
         worksheetsXML += format(tmplWorksheetXML, ctx);
         rowsXML = "";
