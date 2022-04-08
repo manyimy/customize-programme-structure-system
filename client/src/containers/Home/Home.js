@@ -53,7 +53,13 @@ const useStyles = makeStyles((theme) => ({
     display: "none"
   },
   pstable: {
-    textAlign: "-webkit-center"
+    display: "grid",
+    // textAlign: "center",
+    textAlign: "-webkit-center",
+    "@supports ( -moz-appearance:none )": {
+      /* Add firefox CSS code here */
+      textAlign: "-moz-center",
+    }
   },
   helpIcon: {
     margin: "5px 10px",

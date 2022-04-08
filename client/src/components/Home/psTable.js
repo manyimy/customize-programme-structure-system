@@ -22,7 +22,7 @@ const MAX_CH = 122;
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    alignItem: "center",
+    alignItems: "center",
   },
   psTable: {
     maxWidth: "50vw",
@@ -375,7 +375,7 @@ export default function PSTable(props) {
   
     return (
       <React.Fragment>
-        <TableRow className={classes.root}>
+        <TableRow>
           <TableCell width={10}>
             <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
