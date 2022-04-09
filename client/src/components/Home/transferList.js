@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 // import subjects from '../../constants/subjectList.json'
 import axios from 'axios';
+import Home from '../../containers/Home/Home';
 
 const ELECTIVE_LINK = "https://docs.google.com/spreadsheets/d/1MwtIxxwAKNwRmpsKMLed_0zS8sOP6hFm/edit?usp=sharing&ouid=107627496352738110283&rtpof=true&sd=true";
 
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function TransferList({rightCallback}) {
+export default function TransferList({rightCallback}, props) {
   const classes = useStyles();
 
   const [checked, setChecked] = React.useState([]);
@@ -63,6 +64,8 @@ export default function TransferList({rightCallback}) {
             return subject.push(key + " " + value.name + " - " + value.ch + "CH");
           })
         setLeft(subject);
+        console.log(props.trans);
+        setRight(props.trans ? props.trans : [])
         // this.setState({left: subject});
       });
   }, []);

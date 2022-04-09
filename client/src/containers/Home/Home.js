@@ -133,7 +133,7 @@ export default function Home(props) {
   
   const handleBack = () => {
     let prevActiveStep = activeStep;
-    setRight([]);
+    // setRight([]);
     setActiveStep(prevActiveStep - 1);
   };
   
@@ -370,6 +370,7 @@ export default function Home(props) {
               <Grid item xs={12}>
                 <TransferList
                   rightCallback={setRightCallback}
+                  trans={right}
                 />
               </Grid>
             {(window.innerWidth > 480 ? 
