@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-// import "./psTable.css";
 import axios from "axios";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -125,13 +124,11 @@ export default function PSTable(props) {
         // }
 
         // loop subjects in the selected specialization and intake
-        let index = 0;
         for (const [code, val] of element.PS[props.spec]) {
           // if current subject is not transferred, push into the afterTransferPS array
           if (!props.transCode.includes(code)) {
             afterTransferPS.set(code, val);
             ch2d[val.defaultYear-1][val.defaultTri-1] += val.ch;
-            index++;
           } else {
             creditHour -= val.ch;
           }

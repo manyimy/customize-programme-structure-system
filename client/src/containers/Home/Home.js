@@ -139,7 +139,7 @@ export default function Home(props) {
   
   const handleBack = () => {
     let prevActiveStep = activeStep;
-    // setRight([]);
+    setRight([]);
     setActiveStep(prevActiveStep - 1);
   };
   
