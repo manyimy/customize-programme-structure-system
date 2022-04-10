@@ -10,7 +10,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import { ButtonGroup } from "@material-ui/core";
+import { ButtonGroup, Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import TextField from "@material-ui/core/TextField";
@@ -90,6 +90,12 @@ const useStyles = makeStyles((theme) => ({
   speedDial: {
     position: "absolute"
   },
+  seqCont: {
+    padding: "40px 0",
+  },
+  seqSelect: {
+    margin: "0 0 0 20px",
+  },
 }));
 
 export default function EditSPS(props) {
@@ -116,7 +122,8 @@ export default function EditSPS(props) {
   const [newIntakeYear, setNewIntakeYear] = React.useState("");       // year of new intake to be created
   const [copyFromIntake, setCopyFromIntake] = React.useState("");     // intake to be copy from
   const [toDeleteIntake, setToDeleteIntake] = React.useState("");     // programme structure of intake to be deleted
-  const [toDeleteSpec, setToDeleteSpec] = React.useState("");         // programme structure of specification to be deleted
+  const [toDeleteSpec, setToDeleteSpec] = React.useState(""); 
+  const [triSeq, setTriSeq] = React.useState([]);         // trimester sequence
   const [inputs, setInputs] = React.useState([
     {
       type: "",
@@ -275,6 +282,7 @@ export default function EditSPS(props) {
     for (let i = 0; i < standardPS.length; i++) {
       const element = standardPS[i];
       if(selectedIntake === element.intake) {
+        copyStandard[i].trimesterSeq = triSeq;
         copyStandard[i].PS[selectedSpec] = [...editingPS];
         break;
       }
@@ -467,6 +475,7 @@ export default function EditSPS(props) {
       }
     }
     setEditingPS(new Map(standardPS[index].PS[selectedSpec]));
+    setTriSeq(standardPS[index].trimesterSeq);
     setStandardIndex(Number(index));
     setSelectionDisable(true);
     document.getElementById("psTable-container").style.display = "block";
@@ -502,6 +511,7 @@ export default function EditSPS(props) {
       },
     ];
     setEditingPS(new Map());
+    setTriSeq([]);
     setInputs(emptyInputs);
     setSelectionDisable(false);
     document.getElementById("psTable-container").style.display = "none";
@@ -679,9 +689,36 @@ export default function EditSPS(props) {
         style={{ display: "none" }}
       >
         <TableContainer className={classes.table}>
+          <Grid container spacing={3}>
+            <Grid item xs>
+                <span className={classes.seqCont}>
+                  <h3>Trimester Sequence:
+                  <Select
+                    value={triSeq}
+                    onChange={(e) => setTriSeq(e.target.value)}
+                    displayEmpty
+                    className={classes.seqSelect}
+                    renderValue={(selected) => {
+                      if (!selected) {
+                        return <div style={{font: "inherit", color: "#aaa"}}>Category</div>;
+                      }
+          
+                      return selected.toString();
+                    }}
+                    inputProps={{ 'aria-label': 'Without label' }}
+                  >
+                    <MenuItem value={[1, 2, 3]}>1, 2, 3</MenuItem>
+                    <MenuItem value={[2, 3, 1]}>2, 3, 1</MenuItem>
+                    <MenuItem value={[3, 1, 2]}>3, 1, 2</MenuItem>
+                  </Select>
+                  </h3>
+                </span>
+            </Grid>
+            <Grid item xs />
+          </Grid>
           {[0,1,2].map((yearIndex) => {
             return (
-              <>
+              <React.Fragment>
               <h1 className={classes.typoh1}>Year {yearIndex + 1}</h1>
               <Table
                 className={classes.table}
@@ -770,7 +807,7 @@ export default function EditSPS(props) {
                                 <MenuItem value={item}>{item}</MenuItem>
                               );
                             }) 
-                            : <></>}
+                            : <React.Fragment></React.Fragment>}
                         </Select>
                       </FormControl>
                     </Grid>
@@ -842,12 +879,12 @@ export default function EditSPS(props) {
                         </TableRow>
                       );
                     } else {
-                      return <></>;
+                      return <React.Fragment></React.Fragment>;
                     }
                   })}
                 </TableBody>
               </Table>
-              </>
+              </React.Fragment>
             );
           })}
           
@@ -858,7 +895,8 @@ export default function EditSPS(props) {
             color="primary"
             aria-label="save"
             disabled={((standardIndex) && standardPS[standardIndex])
-              ? compareMaps(editingPS, new Map(standardPS[standardIndex].PS[selectedSpec]))
+              ? (compareMaps(editingPS, new Map(standardPS[standardIndex].PS[selectedSpec])) && 
+                 JSON.stringify(standardPS[standardIndex].trimesterSeq)===JSON.stringify(triSeq))
                : true}
             onClick={handleSave}
           >

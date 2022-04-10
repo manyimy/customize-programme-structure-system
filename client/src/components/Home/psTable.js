@@ -57,7 +57,7 @@ export default function PSTable(props) {
 
   // const [intakeNum, setIntakeNum] = useState(null);
   const [selectedPS, setSelectedPS] = useState(new Map());
-  const [standardPS, setStandardPS] = useState([]);
+  const [triSeq, setTriSeq] = useState([]);
   const [subjectList, setSubjectList] = useState();
   // const [ch2D, setCh2D] = useState([]);
 
@@ -86,9 +86,14 @@ export default function PSTable(props) {
         axios
           .get(API_PATH + "/standardPS.json")
           .then((response) => {
-            let generatedPS = generateCPS(new Map(res.data), response.data);          
-            
-            setStandardPS(response.data);
+            let generatedPS;
+            for (let i = 0; i < response.data.length; i++) {
+              const element = response.data[i];
+              if (element.intake === props.intake) {
+                generatedPS = generateCPS(new Map(res.data), element);
+                setTriSeq(element.trimesterSeq);
+              }
+            }
             setSelectedPS(generatedPS);
           }).catch((err) => {
             console.log(err);
@@ -104,122 +109,103 @@ export default function PSTable(props) {
    * @param  {Map} standard standard programme structure
    * @returns {Map} generated programme structure
    */
-  const generateCPS = (subList, standard) => {
+  const generateCPS = (subList, intake) => {
     let afterTransferPS = new Map();       // programme structure after removal of credit transferred subjects
     let ch2d = [];                         // credit hour array
-    ch2d.push([0,0,0],[0,0,0],[0,0,0]);
-    let creditHour = MAX_CH;
-    
-    for (let i = 0; i < standard.length; i++) {    // loop all intake in standard programme structure
-      const element = standard[i];
+    ch2d.push([0,0,0],[0,0,0],[0,0,0]);    // stored in the order of [trimester 1, trimester 2, trimester 3] regardless of intake and trimester sequence
+    let triSeq = intake.trimesterSeq;
 
-      /** 
-       * Remove credit transferred subjects
-       */
-      if (element.intake === props.intake) {    // if current intake is the selected intake
-
-        // if no subject is transferred, return the standard programme structure
-        // if (props.trans.length === 0) {
-        //   return sortPSMap(new Map(element.PS[props.spec]));
-        // }
-
-        // loop subjects in the selected specialization and intake
-        for (const [code, val] of element.PS[props.spec]) {
-          // if current subject is not transferred, push into the afterTransferPS array
-          if (!props.transCode.includes(code)) {
-            afterTransferPS.set(code, val);
-            ch2d[val.defaultYear-1][val.defaultTri-1] += val.ch;
-          } else {
-            creditHour -= val.ch;
-          }
-        }
-
-        /**
-         * Logic: 1. get priority of subjects from programme structure after removed,
-         *        2. arrange it from high to low in an object array 
-         *        3. take subject from the array when the trimester's credit hour is not enough
-         */
-
-        /**
-         * Step 1: Get priority of all subjects from the PS after removed
-         * 
-         * - Initialize priorityList with all subjects in afterTransferPS, and set the priority to 0
-         * - Check if each subject in subjectList exists in the afterTransferPS/priorityList
-         * - if yes, check its prerequisites
-         * - if prerequisite subject also exists in priorityList/afterTransferPS, increment the priority value
-         * - Arrange the priorityList according to the value in non-increasing order
-         *  
-         */ 
-        var priorityList = new Map(); 
-        for (const [code, subj] of afterTransferPS) {
-          /**
-           * 1190 to Year 1 Trimester 1 subjects
-           * 1290 to Year 1 Trimester 2 subjects
-           * 1390 to Year 1 Trimester 3 subjects
-           * 2190 to Year 2 Trimester 1 subjects
-           */
-          let priority = subj.defaultYear*1000 + subj.defaultTri*100 + 90;
-          if(subj.defaultTri === 3) {priority += 1000}
-          if(code.includes("TPT3101")) {priority -= 2000;}
-          priorityList.set(code, priority + subj.defaultTri*100 + 90);
-        }
-      
-        for (const [key, value] of subList) {
-          if(priorityList.has(key)) { 
-            // if the subject is offered once a year: -40  (xx90 -> xx50)
-            if(value.offer.length === 2) {
-              priorityList.set(key, priorityList.get(key)-10); 
-            }
-            value.prereq.forEach(prereq => {
-              if(priorityList.has(prereq)) {
-                priorityList.set(prereq, priorityList.get(prereq)-10);
-              }
-            });
-          }
-        }
-
-        let sortedList = new Map([...priorityList.entries()].sort((a, b) => a[1] - b[1]));  // sort into non-decreasing order
-        
-        priorityList = new Map(sortedList);
-
-        // Step 2: loop until all subjects are placed
-        //    - remove existed subject of the current trimester from toBePlacedSubjects list
-        //    - check if credit hour of the trimester is enough/full
-        //    - if not, take the highest priority subject offered to replace
-        for (let thisYear = 1; thisYear <= 3; thisYear++) {
-          for (let thisTri = 1; thisTri <= 3; thisTri++) {
-
-            // remove existed subjects of current trimester from toBePlacedSubjects and priority list
-            for (const [code, val] of afterTransferPS) {
-              if(val.defaultYear <= thisYear && val.defaultTri <= thisTri && priorityList.has(code)){
-                priorityList.delete(code);
-              }
-            }
-            
-            if(afterTransferPS.get('TPT2201').defaultYear === thisYear && afterTransferPS.get('TPT2201').defaultTri === thisTri) {
-              continue;
-            }
-
-            let maxCHOfTri = (thisTri===3) ? props.shortLimit : props.longLimit;
-            var candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS);
-            while(ch2d[thisYear-1][thisTri-1] < maxCHOfTri && candidateSubject) {
-
-              let subjDetail = afterTransferPS.get(candidateSubject);
-              ch2d[subjDetail.defaultYear-1][subjDetail.defaultTri-1] -= subjDetail.ch;
-              subjDetail.defaultTri = thisTri;
-              subjDetail.defaultYear = thisYear;
-              afterTransferPS.set(candidateSubject, subjDetail);
-              ch2d[thisYear-1][thisTri-1] += subjDetail.ch;
-              priorityList.delete(candidateSubject);
-
-              candidateSubject = anyReplaceble(thisYear, thisTri, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS);
-            }
-          }
-        }
-        break;
+    // loop subjects in the selected specialization and intake
+    for (const [code, val] of intake.PS[props.spec]) {
+      // if current subject is not transferred, push into the afterTransferPS array
+      if (!props.transCode.includes(code)) {
+        afterTransferPS.set(code, val);
+        ch2d[val.defaultYear-1][val.defaultTri-1] += val.ch;
       }
     }
-    return sortPSMap(afterTransferPS);
+
+    /**
+     * Logic: 1. get priority of subjects from programme structure after removed,
+     *        2. arrange it from high to low in an object array 
+     *        3. take subject from the array when the trimester's credit hour is not enough
+     */
+
+    /**
+     * Step 1: Get priority of all subjects from the PS after removed
+     * 
+     * - Initialize priorityList with all subjects in afterTransferPS, and set the priority to 0
+     * - Check if each subject in subjectList exists in the afterTransferPS/priorityList
+     * - if yes, check its prerequisites
+     * - if prerequisite subject also exists in priorityList/afterTransferPS, increment the priority value
+     * - Arrange the priorityList according to the value in non-increasing order
+     *  
+     */ 
+    var priorityList = new Map(); 
+    for (const [code, subj] of afterTransferPS) {
+      /**
+       * 1190 to Year 1 Trimester 1 subjects
+       * 1290 to Year 1 Trimester 2 subjects
+       * 1390 to Year 1 Trimester 3 subjects
+       * 2190 to Year 2 Trimester 1 subjects
+       */
+      let priority = subj.defaultYear*1000 + subj.defaultTri*100 + 90;
+      if(subj.defaultTri === 3) {priority += 1000}
+      if(code.includes("TPT3101")) {priority -= 2000;}
+      priorityList.set(code, priority + subj.defaultTri*100 + 90);
+    }
+  
+    for (const [key, value] of subList) {
+      if(priorityList.has(key)) { 
+        // if the subject is offered once a year: -40  (xx90 -> xx50)
+        if(value.offer.length === 2) {
+          priorityList.set(key, priorityList.get(key)-10); 
+        }
+        value.prereq.forEach(prereq => {
+          if(priorityList.has(prereq)) {
+            priorityList.set(prereq, priorityList.get(prereq)-10);
+          }
+        });
+      }
+    }
+
+    let sortedList = new Map([...priorityList.entries()].sort((a, b) => a[1] - b[1]));  // sort into non-decreasing order
+    
+    priorityList = new Map(sortedList);
+
+    // Step 2: loop until all subjects are placed
+    //    - remove existed subject of the current trimester from toBePlacedSubjects list
+    //    - check if credit hour of the trimester is enough/full
+    //    - if not, take the highest priority subject offered to replace
+    for (let thisYear = 1; thisYear <= 3; thisYear++) {
+      for (let thisTriNum = 1; thisTriNum <= 3; thisTriNum++) {
+        let thisTri = triSeq[thisTriNum-1];  
+
+        // remove existed subjects of current trimester from toBePlacedSubjects and priority list
+        for (const [code, val] of afterTransferPS) {
+          if(val.defaultYear <= thisYear && triSeq.indexOf(val.defaultTri) <= thisTriNum-1 && priorityList.has(code)){
+            priorityList.delete(code);
+          }
+        }
+        
+        if(!(afterTransferPS.get('TPT2201').defaultYear === thisYear && afterTransferPS.get('TPT2201').defaultTri === thisTri)) {
+          let maxCHOfTri = (thisTri===3) ? props.shortLimit : props.longLimit;
+          var candidateSubject = anyReplaceble(thisYear, thisTri, thisTriNum, triSeq, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS);
+          while(ch2d[thisYear-1][thisTri-1] < maxCHOfTri && candidateSubject) {
+
+            let subjDetail = afterTransferPS.get(candidateSubject);
+            ch2d[subjDetail.defaultYear-1][subjDetail.defaultTri-1] -= subjDetail.ch;
+            subjDetail.defaultTri = thisTri;
+            subjDetail.defaultYear = thisYear;
+            afterTransferPS.set(candidateSubject, subjDetail);
+            ch2d[thisYear-1][thisTri-1] += subjDetail.ch;      // [1,2,3][1,2,3][1,2,3]  triSeq=[2,3,1]  thisTri=3, thisTriNum=2
+            priorityList.delete(candidateSubject);
+
+            candidateSubject = anyReplaceble(thisYear, thisTri, thisTriNum, triSeq, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS);
+          }
+        }
+      }
+    }
+    return sortPSMap(afterTransferPS, triSeq);
   }
 
   // 
@@ -227,18 +213,20 @@ export default function PSTable(props) {
    * Check if any subject can be replaced
    * @param  {number} thisYear current year
    * @param  {number} thisTri current trimester
-   * @param  {Map} priorityList 
+   * @param  {number} thisTriNum number of trimester (eg. thisTri = 1, triSeq = [2,3,1], then thisTriNum=3)
+   * @param  {Array} triSeq the trimester sequece of the intake
+   * @param  {Map} priorityList map list of subject and its priority value
    * @param  {Map} subList map list of all subjects
    * @param  {Array} ch2d 2D array of all trimesters' credit hour
    * @param  {number} maxCHOfTri maximum credit hour of the trimester
    * @param  {Map} afterTransferPS programme structure after credit transfer
    * @returns {(string|null)} candidate subject code or null
    */
-  const anyReplaceble = (thisYear, thisTri, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS) => {
+  const anyReplaceble = (thisYear, thisTri, thisTriNum, triSeq, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS) => {
     for (const [prioritySubjectCode, value] of priorityList) {
       if( subList.get(prioritySubjectCode) && subList.get(prioritySubjectCode).offer.includes(thisTri) && 
           ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri && 
-          meetPrerequisite(prioritySubjectCode, thisYear, thisTri, afterTransferPS, subList, ch2d, maxCHOfTri)) {
+          meetPrerequisite(prioritySubjectCode, thisYear, thisTri, thisTriNum, triSeq, afterTransferPS, subList, ch2d, maxCHOfTri)) {
         return prioritySubjectCode;
       }
     }
@@ -246,20 +234,21 @@ export default function PSTable(props) {
   }
 
   /**
-   * Sort programme structure map in year and trimester order
-   * @param  {Map} toSortPS
+   * Sort programme structure map in year and trimester sequence order
+   * @param  {Map} toSortPS the programme structure to be sorted
+   * @param  {Array} triSeq the trimester sequece of the intake
    * @returns {Map} sorted programme structure
    */
-  const sortPSMap = (toSortPS) => {
+  const sortPSMap = (toSortPS, triSeq) => {
     let sortedPS = new Map();
     for (let y = 1; y <= 3; y++) {
-      for (let t = 1; t <= 3; t++) {
+      triSeq.forEach(t => {
         for (let [code, val] of toSortPS) {
           if(val.defaultYear===y && val.defaultTri===t) {
             sortedPS.set(code, val);
           }
         }
-      } 
+      });
     }
     return sortedPS;
   }
@@ -279,21 +268,21 @@ export default function PSTable(props) {
    *  - fyp: 50 credit hours
    *  - industrial training: 60 credit hours
    */
-  const meetPrerequisite = (toCheckSubject, thisYear, thisTri, afterTransferPS, subList, ch2d, maxCHOfTri) => {
+  const meetPrerequisite = (toCheckSubject, thisYear, thisTri, thisTriNum, triSeq, afterTransferPS, subList, ch2d, maxCHOfTri) => {
     let isMeet = true;
     if(toCheckSubject === "TPT2201" && ch2d[thisYear-1][thisTri-1] != 0) {     // if the trimester already has subject, then industrial training is not allowed
       return false;
     }
     if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training or fyp
       const minCHRequire = (toCheckSubject === "TPT2201") ? 60 : 50;  // 60 for internship, 50 for fyp
-      isMeet = (checkCHwoMPU(afterTransferPS, thisYear, thisTri) + sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
+      isMeet = (checkCHwoMPU(afterTransferPS, thisYear, thisTriNum, triSeq) + sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
     }
     // check if prerequisite is all taken in previous trimester 
     if(isMeet) {
       subList.get(toCheckSubject).prereq.forEach((prereqSubjCode) => {
-        // if prerequisite subject is yet to be taken (its trimester or year are greater)
+        // if prerequisite subject is yet to be taken (its trimester or year are later)
         if(afterTransferPS.get(prereqSubjCode) && (afterTransferPS.get(prereqSubjCode).defaultYear > thisYear || 
-            (afterTransferPS.get(prereqSubjCode).defaultYear === thisYear && afterTransferPS.get(prereqSubjCode).defaultTri >= thisTri))){
+            (afterTransferPS.get(prereqSubjCode).defaultYear === thisYear && triSeq.indexOf(afterTransferPS.get(prereqSubjCode).defaultTri) >= thisTriNum-1))){
           isMeet = false;
         }
       });
@@ -309,15 +298,15 @@ export default function PSTable(props) {
       fyp1Detail.defaultTri = thisTri;
       tempPS.set("TPT3101a", fyp1Detail);
       tempCh2d[thisYear-1][thisTri-1] += fyp1Detail.ch;
-      return meetPrerequisite("TPT3101b", thisYear, thisTri+1, tempPS, subList, tempCh2d, maxCHOfTri);
+      return meetPrerequisite("TPT3101b", thisYear, triSeq[thisTriNum], thisTriNum+1, triSeq, tempPS, subList, tempCh2d, maxCHOfTri);
     }
     return isMeet;
   }
 
-  const checkCHwoMPU = (afterTransferPS, thisYear, thisTri) => {
+  const checkCHwoMPU = (afterTransferPS, thisYear, thisTriNum, triSeq) => {
     let totalCH = 0;
     for (const [code, detail] of afterTransferPS) {
-      if((detail.defaultYear < thisYear || (detail.defaultYear === thisYear && detail.defaultTri < thisTri)) && !detail.name.includes("MPU")) {
+      if((detail.defaultYear < thisYear || (detail.defaultYear === thisYear && triSeq.indexOf(detail.defaultTri) < thisTriNum-1)) && !detail.name.includes("MPU")) {
         totalCH += detail.ch;
       }
     }
@@ -389,7 +378,7 @@ export default function PSTable(props) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {[1,2,3].map((tri) => (
+                    {triSeq.map((tri) => (
                       <TableRow key={tri}>
                         <TableCell component="th" scope="tri">
                           {tri}
@@ -536,7 +525,7 @@ export default function PSTable(props) {
                       </TableRow>
                     );
                   } else {
-                    return <></>;
+                    return <React.Fragment></React.Fragment>;
                   }
                 })}
               </TableBody>
