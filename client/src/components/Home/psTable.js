@@ -225,7 +225,6 @@ export default function PSTable(props) {
   const anyReplaceble = (thisYear, thisTri, thisTriNum, triSeq, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS) => {
     for (const [prioritySubjectCode, value] of priorityList) {
       if( subList.get(prioritySubjectCode) && subList.get(prioritySubjectCode).offer.includes(thisTri) && 
-          ch2d[thisYear-1][thisTri-1] + subList.get(prioritySubjectCode).ch <= maxCHOfTri && 
           meetPrerequisite(prioritySubjectCode, thisYear, thisTri, thisTriNum, triSeq, afterTransferPS, subList, ch2d, maxCHOfTri)) {
         return prioritySubjectCode;
       }
@@ -269,13 +268,14 @@ export default function PSTable(props) {
    *  - industrial training: 60 credit hours
    */
   const meetPrerequisite = (toCheckSubject, thisYear, thisTri, thisTriNum, triSeq, afterTransferPS, subList, ch2d, maxCHOfTri) => {
-    let isMeet = true;
+    let isMeet = (ch2d[thisYear-1][thisTri-1] + subList.get(toCheckSubject).ch <= maxCHOfTri);
+    if(!isMeet) {return false};
     if(toCheckSubject === "TPT2201" && ch2d[thisYear-1][thisTri-1] != 0) {     // if the trimester already has subject, then industrial training is not allowed
       return false;
     }
     if(toCheckSubject === "TPT2201" || toCheckSubject.includes("TPT3101")) {    // if is industrial training or fyp
       const minCHRequire = (toCheckSubject === "TPT2201") ? 60 : 50;  // 60 for internship, 50 for fyp
-      isMeet = (checkCHwoMPU(afterTransferPS, thisYear, thisTriNum, triSeq) + sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
+      isMeet = (isMeet && checkCHwoMPU(afterTransferPS, thisYear, thisTriNum, triSeq) + sumTransferredCH(subList) < minCHRequire) ? false : true;   // if total taken credit hour 
     }
     // check if prerequisite is all taken in previous trimester 
     if(isMeet) {
