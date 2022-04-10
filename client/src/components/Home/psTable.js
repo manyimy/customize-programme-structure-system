@@ -90,7 +90,7 @@ export default function PSTable(props) {
             for (let i = 0; i < response.data.length; i++) {
               const element = response.data[i];
               if (element.intake === props.intake) {
-                generatedPS = generateCPS(new Map(res.data), element);
+                generatedPS = MoveByPriority(new Map(res.data), element);
                 setTriSeq(element.trimesterSeq);
               }
             }
@@ -109,7 +109,7 @@ export default function PSTable(props) {
    * @param  {Map} standard standard programme structure
    * @returns {Map} generated programme structure
    */
-  const generateCPS = (subList, intake) => {
+  const MoveByPriority = (subList, intake) => {
     let afterTransferPS = new Map();       // programme structure after removal of credit transferred subjects
     let ch2d = [];                         // credit hour array
     ch2d.push([0,0,0],[0,0,0],[0,0,0]);    // stored in the order of [trimester 1, trimester 2, trimester 3] regardless of intake and trimester sequence
