@@ -10,10 +10,9 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import { ButtonGroup, Typography } from "@material-ui/core";
+import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import SaveIcon from "@material-ui/icons/Save";
 import Fab from "@material-ui/core/Fab";
@@ -25,20 +24,13 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Snackbar from "@material-ui/core/Snackbar";
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Switch from '@material-ui/core/Switch';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import FileCopyIcon from '@material-ui/icons/FileCopyOutlined';
-import PrintIcon from '@material-ui/icons/Print';
-import ShareIcon from '@material-ui/icons/Share';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit'
 import CloseIcon from '@material-ui/icons/Close';
@@ -81,6 +73,10 @@ const useStyles = makeStyles((theme) => ({
     right: "3vw",
   },
   formControl: {
+    // margin: theme.spacing(1),
+    minWidth: "100%",
+  },
+  seqFormControl: {
     // margin: theme.spacing(1),
     minWidth: "100%",
   },
@@ -693,24 +689,27 @@ export default function EditSPS(props) {
             <Grid item xs>
                 <span className={classes.seqCont}>
                   <h3>Trimester Sequence:
-                  <Select
-                    value={triSeq}
-                    onChange={(e) => setTriSeq(e.target.value)}
-                    displayEmpty
-                    className={classes.seqSelect}
-                    renderValue={(selected) => {
-                      if (!selected) {
-                        return <div style={{font: "inherit", color: "#aaa"}}>Category</div>;
-                      }
-          
-                      return selected.toString();
-                    }}
-                    inputProps={{ 'aria-label': 'Without label' }}
-                  >
-                    <MenuItem value={[1, 2, 3]}>1, 2, 3</MenuItem>
-                    <MenuItem value={[2, 3, 1]}>2, 3, 1</MenuItem>
-                    <MenuItem value={[3, 1, 2]}>3, 1, 2</MenuItem>
-                  </Select>
+                  <FormControl required className={classes.seqSelect}>
+                    <Select
+                      value={triSeq}
+                      onChange={(e) => setTriSeq(e.target.value)}
+                      displayEmpty
+                      renderValue={(selected) => {
+                        if (!selected) {
+                          return <div style={{font: "inherit", color: "#aaa"}}>Sequence</div>;
+                        
+                        }
+                        return selected.join(', ');
+                      }}
+                      inputProps={{ 'aria-label': 'Without label' }}
+                      required
+                    >
+                      <MenuItem value={[1, 2, 3]}>1, 2, 3</MenuItem>
+                      <MenuItem value={[2, 3, 1]}>2, 3, 1</MenuItem>
+                      <MenuItem value={[3, 1, 2]}>3, 1, 2</MenuItem>
+                    </Select>
+                    <FormHelperText>Required</FormHelperText>
+                  </FormControl>
                   </h3>
                 </span>
             </Grid>
@@ -894,9 +893,10 @@ export default function EditSPS(props) {
             className={classes.saveBtn}
             color="primary"
             aria-label="save"
-            disabled={((standardIndex) && standardPS[standardIndex])
+            disabled={(standardIndex && standardPS[standardIndex] && triSeq)
               ? (compareMaps(editingPS, new Map(standardPS[standardIndex].PS[selectedSpec])) && 
-                 JSON.stringify(standardPS[standardIndex].trimesterSeq)===JSON.stringify(triSeq))
+                 JSON.stringify(standardPS[standardIndex].trimesterSeq)===JSON.stringify(triSeq) && 
+                 triSeq.length!==0)
                : true}
             onClick={handleSave}
           >
