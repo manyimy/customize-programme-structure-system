@@ -162,7 +162,7 @@ export default function PSTable(props) {
         }
         value.prereq.forEach(prereq => {
           if(priorityList.has(prereq)) {
-            priorityList.set(prereq, priorityList.get(prereq)-10);
+            priorityList.set(prereq, priorityList.get(prereq)-200);
           }
         });
       }
@@ -186,7 +186,7 @@ export default function PSTable(props) {
             priorityList.delete(code);
           }
         }
-        
+
         if(!(afterTransferPS.get('TPT2201').defaultYear === thisYear && afterTransferPS.get('TPT2201').defaultTri === thisTri)) {
           let maxCHOfTri = (thisTri===3) ? props.shortLimit : props.longLimit;
           var candidateSubject = anyReplaceble(thisYear, thisTri, thisTriNum, triSeq, priorityList, subList, ch2d, maxCHOfTri, afterTransferPS);
