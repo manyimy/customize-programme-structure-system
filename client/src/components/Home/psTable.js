@@ -269,7 +269,7 @@ export default function PSTable(props) {
    */
   const meetPrerequisite = (toCheckSubject, thisYear, thisTri, thisTriNum, triSeq, afterTransferPS, subList, ch2d, maxCHOfTri) => {
     let isMeet = true;
-    if(ch2d[thisYear-1][thisTri-1] + subList.get(toCheckSubject).ch <= maxCHOfTri) {
+    if(ch2d[thisYear-1][thisTri-1] + subList.get(toCheckSubject).ch > maxCHOfTri) {
       return false
     };
     if(toCheckSubject === "TPT2201" && ch2d[thisYear-1][thisTri-1] != 0) {     // if the trimester already has subject, then industrial training is not allowed
