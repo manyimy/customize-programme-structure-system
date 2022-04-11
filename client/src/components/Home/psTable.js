@@ -161,7 +161,7 @@ export default function PSTable(props) {
           priorityList.set(key, priorityList.get(key)-10); 
         }
         value.prereq.forEach(prereq => {
-          if(priorityList.has(prereq)) {
+          if(priorityList.has(prereq) && afterTransferPS.has(prereq)) {
             priorityList.set(prereq, priorityList.get(prereq)-200);
           }
         });
