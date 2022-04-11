@@ -148,18 +148,15 @@ export default function PSTable(props) {
        * 1390 to Year 1 Trimester 3 subjects
        * 2190 to Year 2 Trimester 1 subjects
        */
-      let priority = subj.defaultYear*1000 + subj.defaultTri*100 + 90;
-      if(subj.defaultTri === 3) {priority += 1000}
+      let priority = subj.defaultYear*1000 +  triSeq.indexOf(subj.defaultTri)*100 + 90;
+      if(subj.defaultTri === 3) {priority += 1000;}
       if(code.includes("TPT3101")) {priority -= 2000;}
-      priorityList.set(code, priority + subj.defaultTri*100 + 90);
+      priorityList.set(code, priority);
     }
   
     for (const [key, value] of subList) {
       if(priorityList.has(key)) { 
-        // if the subject is offered once a year: -40  (xx90 -> xx50)
-        if(value.offer.length === 2) {
-          priorityList.set(key, priorityList.get(key)-10); 
-        }
+        priorityList.set(key, priorityList.get(key)-value.offer.length*10); 
         value.prereq.forEach(prereq => {
           if(priorityList.has(prereq) && afterTransferPS.has(prereq)) {
             priorityList.set(prereq, priorityList.get(prereq)-200);
