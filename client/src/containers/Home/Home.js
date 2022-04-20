@@ -27,6 +27,9 @@ import axios from 'axios';
 const ALL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 const useStyles = makeStyles((theme) => ({
+  stepper: {
+    padding: theme.spacing(1)
+  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: "100%",
@@ -241,7 +244,7 @@ export default function Home(props) {
   return (
     <div className={classes.container}>
       <Alert id="error-alert" severity="error" className={classes.inputAlert}>Input field(s) cannot be empty!</Alert>
-      <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
+      <Stepper className={classes.stepper} alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
