@@ -335,7 +335,7 @@ export default function Home(props) {
               <Grid item xs={3}>
                 <Typography id="discrete-slider-short" gutterBottom>
                   Short Trimester
-                  <Tooltip title="Preferred maximum credit hour for short trimester." placement="right-start" arrow>
+                  <Tooltip title="Preferred maximum credit hour for short trimester. Currently disabled to ensure better result." placement="right-start" arrow>
                     <HelpOutlineIcon fontSize='small' className={classes.helpIcon} />
                   </Tooltip>
                 </Typography>
