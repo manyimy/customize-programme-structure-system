@@ -12,7 +12,6 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 // import subjects from '../../constants/subjectList.json'
 import axios from 'axios';
-import Home from '../../containers/Home/Home';
 
 const ELECTIVE_LINK = "https://docs.google.com/spreadsheets/d/1MwtIxxwAKNwRmpsKMLed_0zS8sOP6hFm/edit?usp=sharing&ouid=107627496352738110283&rtpof=true&sd=true";
 
@@ -38,23 +37,16 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function TransferList({rightCallback}, props) {
+export default function TransferList({right, rightCallback}) {
   const classes = useStyles();
 
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = React.useState([]);
-  const [right, setRight] = React.useState([]);
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     checked: [],
-  //     left: [],
-  //     right: [],
-  //   }
-  // }
+  // const [right, setRight] = React.useState([]);
 
   // set the subjects from json file to the transfer list once this page is load
   useEffect(() =>{
+    // console.log(right);
     axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")
       .then((response) => {
         let subject = [];
@@ -64,23 +56,9 @@ export default function TransferList({rightCallback}, props) {
             return subject.push(key + " " + value.name + " - " + value.ch + "CH");
           })
         setLeft(subject);
-        console.log(props.trans);
-        setRight(props.trans ? props.trans : [])
-        // this.setState({left: subject});
+        // setRight(props.trans ? props.trans : [])
       });
   }, []);
-
-  // componentDidMount(){
-  //   axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")
-  //     .then((response) => {
-  //       let subject = [];
-  //       response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))
-  //         .map((value, index) => {
-  //           return subject.push(value.code + " " + value.name);
-  //         })
-  //       this.setState({left: subject});
-  //     });
-  // }
 
   const not = (a, b) => {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -107,7 +85,6 @@ export default function TransferList({rightCallback}, props) {
       newChecked.splice(currentIndex, 1);
     }
 
-    // this.setState({checked: newChecked});
     setChecked(newChecked);
   };
 
@@ -123,19 +100,15 @@ export default function TransferList({rightCallback}, props) {
 
   const handleCheckedRight = () => {
 
-    setRight(right.concat(leftChecked).sort());
+    // setRight(right.concat(leftChecked).sort());
     rightCallback(right.concat(leftChecked).sort());
     setLeft(not(left, leftChecked).sort());
     setChecked(not(checked, leftChecked).sort());
   };
 
   const handleCheckedLeft = () => {
-    // this.setState({left: this.state.left.concat(rightChecked).sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))})
-    // this.setState({right: not(this.state.right, rightChecked).sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))})
-    // this.setState({checked: not(this.state.checked, rightChecked)})
-
     setLeft(left.concat(rightChecked).sort());
-    setRight(not(right, rightChecked).sort());
+    // setRight(not(right, rightChecked).sort());
     rightCallback(not(right, rightChecked).sort());
     setChecked(not(checked, rightChecked).sort());
   };

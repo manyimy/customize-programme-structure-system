@@ -142,13 +142,8 @@ export default function Home(props) {
   
   const handleBack = () => {
     let prevActiveStep = activeStep;
-    setRight([]);
+    // setRight([]);
     setActiveStep(prevActiveStep - 1);
-  };
-  
-  // reset step back to 0
-  const handleReset = () => {
-    setActiveStep(0);
   };
   
   // handle intake and specialization input selection changes
@@ -378,8 +373,9 @@ export default function Home(props) {
             )}
               <Grid item xs={12}>
                 <TransferList
+                  right={right}
                   rightCallback={setRightCallback}
-                  trans={right}
+                  // trans={right}
                 />
               </Grid>
             {(window.innerWidth > 480 ? 

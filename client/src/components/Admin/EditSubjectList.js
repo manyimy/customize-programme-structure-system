@@ -110,32 +110,12 @@ export default function EditSubjectList(props) {
   const [deletingItem, setDeletingItem] = React.useState(null);
   const [removeMsg, setRemoveMsg] = React.useState('');
 
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     subjects: [],
-  //     openAddPop: false,
-  //     addPopMsg: '',
-  //     alertSev: 'error',
-  //     newCode: '',
-  //     newSubject: '',
-  //     newCH: '',
-  //     newOffer: [],
-  //     newPreReq: [],
-  //     errorCode: false,
-  //     openDialog: false,
-  //     deletingItem: null,
-  //     removeMsg: ''
-  //   }
-  // }
-
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 200;
   const MenuProps = {
     PaperProps: {
       style: {
         maxHeight: ITEM_HEIGHT * 4 + ITEM_PADDING_TOP,
-        // width: 400,
       },
     },
   };
@@ -144,44 +124,23 @@ export default function EditSubjectList(props) {
     axios.get( API_PATH + "/subjectList.json")
       .then((response) => {
         setSubjects(new Map(response.data));
-        // this.setState({
-        //   subjects: response.data.sort((a, b) => (a.code > b.code) ? 1 : ((b.code > a.code) ? -1 : 0))
-        // })
       });
   }, []);
 
-  // const onChange = (event) => {
-  //   const { name } = event.target;
-  //   this.setState({
-  //     [name]: (name === "newCH") ? Number(event.target.value) : event.target.value
-  //   });
-  // }
-
   const handleCloseSnackbar = () => {
     setOpenAddPop(false);
-    // this.setState({openAddPop: false});
   };
 
   const handleDelete = (e) => {
     e.preventDefault();
     var list = subjects;
     list.delete(deletingItem);
-    // setSubjects(list);
-    // this.setState({
-    //   subjects: list
-    // });
     axios.post(API_PATH + '/subjectList', {
       subjects: JSON.parse(JSON.stringify(Array.from(list.entries())))
     }).then((res) => {
       setAddPopMsg('Subject list updated successfully.');
       setAlertSev('success');
       setOpenAddPop(true);
-      // this.setState({
-      //   addPopMsg: 'Subject list updated successfully.',
-      //   alertSev: 'success',
-      //   openAddPop: true,
-      //   openList: false
-      // });
     }).catch((err) => {
       console.log(err);
     });
@@ -193,16 +152,10 @@ export default function EditSubjectList(props) {
     event.preventDefault();
     
     var list = subjects;
-    // if(list.filter(e => e.code === newCode || e.name === newSubject).length > 0) {
     if(list.has(newCode)) {
       setAddPopMsg('Subject name or code has already existed.');
       setAlertSev('error');
       setOpenAddPop(true);
-      // this.setState({
-      //   addPopMsg: 'Subject name or code has already existed.', 
-      //   alertSev: 'error',
-      //   openAddPop: true
-      // });
     } else {
       list.set(newCode.trim(), {
         name: newSubject.trim(),
@@ -216,25 +169,12 @@ export default function EditSubjectList(props) {
       setNewCH('');
       setNewOffer([]);
       setNewPreReq([]);
-      // this.setState({
-      //   subjects: list,
-      //   newCode: '',
-      //   newSubject: '',
-      //   newCH: '',
-      //   newPreReq: []
-      // });
       axios.post(API_PATH + '/subjectList', {
         subjects: JSON.parse(JSON.stringify(Array.from(list.entries())))
       }).then((res) => {
         setAddPopMsg('Subject list updated successfully.');
         setAlertSev('success');
         setOpenAddPop(true);
-        // this.setState({
-        //   addPopMsg: 'Subject list updated successfully.',
-        //   alertSev: 'success',
-        //   openAddPop: true,
-        //   openList: false
-        // });
       }).catch((err) => {
         console.log(err);
       });
@@ -246,32 +186,13 @@ export default function EditSubjectList(props) {
     setDeletingItem(key);
     setRemoveMsg("Are you sure to remove " + key + " " + subjects.get(key).name + " permanently?");
     setOpenDialog(true);
-    // this.setState({
-    //   deletingItem: index,
-    //   removeMsg: "Are you sure to remove " + this.state.subjects[index].code + " " + this.state.subjects[index].name + " permanently?",
-    //   openDialog: true
-    // });
   }
 
   const handleCloseDialog = (event) => {
     event.preventDefault();
     setDeletingItem(null);
     setOpenDialog(false);
-    // this.setState({
-    //   deletingItem: null,
-    //   openDialog: false
-    // });
   }
-
-  // const handleChangePreReq = (event) => {
-  //   setNewPreReq(event.target.value);
-  //   // this.setState({newPreReq: event.target.value});
-  // };
-
-  // const handleChangeOffer = (event) => {
-  //   setNewOffer(event.target.value.sort());
-  //   // this.setState({newOffer: event.target.value});
-  // };
 
   return (
     <div className={classes.root}>
@@ -408,7 +329,7 @@ export default function EditSubjectList(props) {
             color="primary"
             disabled={
               (newCode && newSubject 
-                && newCH && (newOffer.length != 0)
+                && newCH && (newOffer.length !== 0)
                 // && this.state.newCode.match(/[A-Z]{3}[0-9]{4}/)
                 ) 
                 ? false : true
