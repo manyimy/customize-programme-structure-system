@@ -552,6 +552,7 @@ export default function EditSPS(props) {
         if(element.intake === copyFromIntake) {
           copyOfSelectedPS = {
             "intake": newIntakeMonth + " " + newIntakeYear,
+            "trimesterSeq": element.trimesterSeq,
             "PS": element.PS
           };
           let copyStandard = JSON.parse(JSON.stringify(standardPS));
