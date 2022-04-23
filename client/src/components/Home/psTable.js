@@ -289,7 +289,7 @@ export default function PSTable(props) {
 
     // if fyp 1 is available, straight check if fyp2 is replacable
     if(isMeet && toCheckSubject === "TPT3101a") {
-      let tempPS = new Map(afterTransferPS);
+      let tempPS = new Map(JSON.parse(JSON.stringify(Array.from(afterTransferPS))));
       let tempCh2d = JSON.parse(JSON.stringify(ch2d));
       let fyp1Detail = tempPS.get("TPT3101a");
       tempCh2d[fyp1Detail.defaultYear-1][fyp1Detail.defaultTri-1] -= fyp1Detail.ch;
