@@ -168,6 +168,7 @@ export default function PSTable(props) {
     let sortedList = new Map([...priorityList.entries()].sort((a, b) => a[1] - b[1]));  // sort into non-decreasing order
     
     priorityList = new Map(sortedList);
+    console.log(Array.from(priorityList.entries()));
 
     // Step 2: loop until all subjects are placed
     //    - remove existed subject of the current trimester from toBePlacedSubjects list
