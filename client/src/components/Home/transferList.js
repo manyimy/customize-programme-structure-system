@@ -37,28 +37,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function TransferList({right, rightCallback}) {
+export default function TransferList({right, rightCallback, left, leftCallback}) {
   const classes = useStyles();
 
   const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([]);
-  // const [right, setRight] = React.useState([]);
-
-  // set the subjects from json file to the transfer list once this page is load
-  useEffect(() =>{
-    // console.log(right);
-    axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")
-      .then((response) => {
-        let subject = [];
-        Array.from(new Map(response.data).entries())
-          .map((entry) => {
-            const [key, value] = entry;
-            return subject.push(key + " " + value.name + " - " + value.ch + "CH");
-          })
-        setLeft(subject);
-        // setRight(props.trans ? props.trans : [])
-      });
-  }, []);
 
   const not = (a, b) => {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -100,15 +82,13 @@ export default function TransferList({right, rightCallback}) {
 
   const handleCheckedRight = () => {
 
-    // setRight(right.concat(leftChecked).sort());
     rightCallback(right.concat(leftChecked).sort());
-    setLeft(not(left, leftChecked).sort());
+    leftCallback(not(left, leftChecked).sort());
     setChecked(not(checked, leftChecked).sort());
   };
 
   const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked).sort());
-    // setRight(not(right, rightChecked).sort());
+    leftCallback(left.concat(rightChecked).sort());
     rightCallback(not(right, rightChecked).sort());
     setChecked(not(checked, rightChecked).sort());
   };

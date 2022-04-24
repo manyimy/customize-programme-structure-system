@@ -88,6 +88,7 @@ export default function Home(props) {
   );
   const [timerId, setTimerId] = useState(null);
   const [right, setRight] = useState([]);
+  const [left, setLeft] = useState([]);
   const [longTriCHLimit, setLongTriCHLimit] = useState(20);
   const [shortTriCHLimit, setShortTriCHLimit] = useState(10);
   const marksLong = [
@@ -125,10 +126,25 @@ export default function Home(props) {
       .then((response) => {
         setSpecs(response.data);
       });
+
+    axios.get(process.env.REACT_APP_API_PATH + "/subjectList.json")
+      .then((response) => {
+        let subject = [];
+        Array.from(new Map(response.data).entries())
+          .map((entry) => {
+            const [key, value] = entry;
+            return subject.push(key + " " + value.name + " - " + value.ch + "CH");
+          })
+        setLeft(subject);
+      });
   }, []);
 
   const setRightCallback = useCallback((right) => {
     setRight(right);
+  }, []);
+
+  const setLeftCallback = useCallback((left) => {
+    setLeft(left);
   }, []);
 
   const handleNext = () => {
@@ -375,6 +391,8 @@ export default function Home(props) {
                 <TransferList
                   right={right}
                   rightCallback={setRightCallback}
+                  left={left}
+                  leftCallback={setLeftCallback}
                   // trans={right}
                 />
               </Grid>
