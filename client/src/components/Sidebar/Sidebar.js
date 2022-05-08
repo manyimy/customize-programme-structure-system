@@ -34,6 +34,10 @@ const styles = theme => ({
     [theme.breakpoints.up("sm")]: {
       width: theme.spacing(9)
     }
+  },
+  link: {
+    textDecoration: "none",
+    color: theme.palette.primary.main
   }
 });
 
@@ -51,7 +55,7 @@ const Sidebar = props => {
       open={open}
     >
       <List>
-        <Link to="/" style={{ textDecoration: 'none' }}>
+        <Link to="/" className={classes.link}>
           <ListItem button>
             <ListItemIcon>
               <HomeIcon />
@@ -59,7 +63,7 @@ const Sidebar = props => {
             <ListItemText primary="Dashboard" />
           </ListItem>
         </Link>
-        <Link to="/admin" style={{ textDecoration: 'none' }}>
+        <Link to="/admin" className={classes.link}>
           <ListItem button>
             <ListItemIcon>
               <PermIdentityIcon />
@@ -67,7 +71,7 @@ const Sidebar = props => {
             <ListItemText primary="Admin" />
           </ListItem>
         </Link>
-        <Link to="/setting" style={{ textDecoration: 'none' }}>
+        <Link to="/setting" className={classes.link}>
           <ListItem button>
             <ListItemIcon>
               <SettingsIcon />
