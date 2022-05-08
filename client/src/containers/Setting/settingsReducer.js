@@ -20,7 +20,9 @@ const themeConfig = {
     // Used to shift a color's luminance by approximately
     // two indexes within its tonal palette.
     // E.g., shift from Red 500 to Red 300 or Red 700.
-    tonalOffset: 0.2
+    tonalOffset: 0.2,
+    primaryHead: indigo[100],
+    secondaryHead: green[500]
   }
 };
 
@@ -45,6 +47,8 @@ export const settings = createSlice({
             ...themeConfig.palette,
             primary: state.theme.palette.primary,
             secondary: state.theme.palette.secondary,
+            primaryHead: state.theme.palette.primary[500],
+            secondaryHead: state.theme.palette.secondary[500],
             type: "dark"
           }
         };
@@ -55,7 +59,9 @@ export const settings = createSlice({
           palette: {
             ...themeConfig.palette,
             primary: state.theme.palette.primary,
-            secondary: state.theme.palette.secondary
+            secondary: state.theme.palette.secondary,
+            primaryHead: state.theme.palette.primary[100],
+            secondaryHead: state.theme.palette.secondary[100],
           }
         };
       }
@@ -70,7 +76,9 @@ export const settings = createSlice({
             palette: {
               ...state.theme.palette,
               primary: secondaryColor,
-              secondary: primaryColor
+              secondary: primaryColor,
+              primaryHead: secondaryColor[(state.darkMode)? 500 : 100],
+              secondaryHead: primaryColor[(state.darkMode)? 500 : 100],
             }
           };
       } else {
@@ -80,7 +88,9 @@ export const settings = createSlice({
           palette: {
             ...state.theme.palette,
             primary: primaryColor,
-            secondary: secondaryColor
+            secondary: secondaryColor,
+            primaryHead: primaryColor[(state.darkMode)? 500 : 100],
+            secondaryHead: secondaryColor[(state.darkMode)? 500 : 100],
           }
         };
       }

@@ -37,10 +37,14 @@ const useStyles = makeStyles((theme) => ({
     margin: "20px 10px 50px"
   },
   psTableHead: {
-    backgroundColor: "#C5CAE9",
+    // backgroundColor: "#C5CAE9",
+    backgroundColor: theme.palette.primaryHead,
   },
   tableCaption: {
     textAlign: "right",
+  },
+  bgGray: {
+    backgroundColor: theme.palette.action.hover,
   }
 }));
 
@@ -512,11 +516,11 @@ export default function PSTable(props) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.from(selectedPS.entries()).map((entry) => {
+                {Array.from(selectedPS.entries()).map((entry, index) => {
                   const [code, val] = entry;
                   if (val.defaultYear === yearNum) {
                     return (
-                      <TableRow>
+                      <TableRow className={(val.defaultTri===triSeq[0] || val.defaultTri===triSeq[2]) ? classes.bgGray : classes.none}>
                         <TableCell align="center" datatype="String" dataStyle="Content">{val.type}</TableCell>
                         <TableCell align="center" datatype="string" dataStyle="Content">{code}</TableCell>
                         <TableCell align="center" datatype="String" dataStyle="Content">{val.name}</TableCell>

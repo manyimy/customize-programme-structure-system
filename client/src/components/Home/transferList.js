@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
   elecLink: {
     textAlign: "right",
     alignSelf: "end",
+  },
+  link: {
+    color: theme.palette.primary.main,
+    textDecoration: "none"
   }
 }));
 
@@ -152,7 +156,7 @@ export default function TransferList({right, rightCallback, left, leftCallback})
       className={classes.root}
     >
       <Grid item xs className={classes.elecLink}>
-        <a href={ELECTIVE_LINK} target="_blank">View Elective Subjects</a>
+        <a className={classes.link} href={ELECTIVE_LINK} target="_blank">View Elective Subjects</a>
       </Grid>
       <Grid item>{customList('Subject List', left)}</Grid>
       <Grid item>
